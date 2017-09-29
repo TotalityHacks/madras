@@ -1,0 +1,3 @@
+*.pyc
+madras/local_settings.py
+db.sqlite
