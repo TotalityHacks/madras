@@ -1,7 +1,7 @@
 from django.db import models
 
 from django.contrib.auth.models import User
-from apps.admin import Hackathon
+from apps.director.models import Hackathon
 
 
 class Application(models.Model):
@@ -10,9 +10,9 @@ class Application(models.Model):
     STATUS_CLOSED = "closed"
 
     STATUS_CHOICES = (
-        (STATUS_PREPARING, STATUS_PREPARING),
-        (STATUS_OPEN, STATUS_OPEN),
-        (STATUS_CLOSED, STATUS_CLOSED),
+        (STATUS_PREPARING, "Preparing"),
+        (STATUS_OPEN, "Open"),
+        (STATUS_CLOSED, "Closed"),
     )
 
     name = models.CharField(max_length=128)
@@ -27,10 +27,10 @@ class ApplicationField(models.Model):
     TYPE_LONG_ANSWER = "long_answer"
 
     TYPE_CHOICES = (
-        (TYPE_MULTIPLE_CHOICE, TYPE_MULTIPLE_CHOICE),
-        (TYPE_MULTIPLE_CHOICE_OTHER, TYPE_MULTIPLE_CHOICE_OTHER),
-        (TYPE_SHORT_ANSWER, TYPE_SHORT_ANSWER),
-        (TYPE_LONG_ANSWER, TYPE_LONG_ANSWER),
+        (TYPE_MULTIPLE_CHOICE, "Multiple Choice"),
+        (TYPE_MULTIPLE_CHOICE_OTHER, "Multiple Choice with Other"),
+        (TYPE_SHORT_ANSWER, "Short Answer"),
+        (TYPE_LONG_ANSWER, "Long Answer"),
     )
 
     application = models.ForeignKey(Application, related_name="fields")

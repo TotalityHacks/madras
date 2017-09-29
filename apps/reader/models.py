@@ -1,8 +1,8 @@
 from django.db import models
 
 from django.contrib.auth.models import User
-from apps.admin import Hackathon, Organization
-from apps.registration import Application, Applicant
+from apps.director.models import Hackathon, Organization
+from apps.registration.models import Application, Applicant
 
 
 class Reader(models.Model):
@@ -20,11 +20,11 @@ class RatingField(models.Model):
     TYPE_MULTIPLE_CHOICE = "multiple_choice"
 
     TYPE_CHOICES = (
-        (TYPE_NUMERICAL, TYPE_NUMERICAL),
-        (TYPE_MULTIPLE_CHOICE), (TYPE_MULTIPLE_CHOICE),
+        (TYPE_NUMERICAL, "Numerical"),
+        (TYPE_MULTIPLE_CHOICE, "Multiple choice"),
     )
 
-    rating = modoels.ForeignKey(Rating, related_name="fields")
+    rating = models.ForeignKey(Rating, related_name="fields")
     type = models.CharField(max_length=16, choices=TYPE_CHOICES)
     prompt = models.CharField(max_length=64)
     min_number = models.IntegerField(default=-1)
