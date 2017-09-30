@@ -18,4 +18,7 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api_auth/', include('apps.api_auth.urls', namespace="api_auth")),
+    url(r'^reader/', include('apps.reader.urls', namespace="reader")),
+    url(r'^stats/', include('apps.stats.urls', namespace="stats")),
 ]
