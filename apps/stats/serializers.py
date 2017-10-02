@@ -1,5 +1,6 @@
 from rest_framework import serializers
 
+
 class SummarySerializer(serializers.BaseSerializer):
     def to_representation(self):
         return {

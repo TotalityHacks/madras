@@ -38,7 +38,7 @@ INSTALLED_APPS = (
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'apps.api_auth',
+    'rest_framework.authtoken',
     'apps.director',
     'apps.reader',
     'apps.registration',
@@ -75,6 +75,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'madras.wsgi.application'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+    )
+}
 
 
 # Database
