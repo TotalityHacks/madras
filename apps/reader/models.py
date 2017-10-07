@@ -29,7 +29,7 @@ class RatingField(models.Model):
     prompt = models.CharField(max_length=64)
     min_number = models.IntegerField(default=-1)
     max_number = models.IntegerField(default=-1)
-    options = models.TextField(default="")
+    options = models.TextField(default="", blank=True)
 
 
 class RatingResponse(models.Model):

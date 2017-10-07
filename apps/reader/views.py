@@ -6,13 +6,14 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.reader import serializers
+from apps.reader.models import Applicant
 
 
 class Rating(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        rating = request.user.reader.hackathons.first().application.rating
+        rating = request.user.reader.hackathons.first().applications.first().rating
 
         return Response(
             serializers.RatingSchemaSerializer(rating).data,

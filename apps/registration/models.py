@@ -19,6 +19,9 @@ class Application(models.Model):
     status = models.CharField(max_length=16, choices=STATUS_CHOICES)
     hackathon = models.ForeignKey(Hackathon, related_name="applications")
 
+    def __str__(self):
+        return "{} ({})".format(self.name, self.hackathon)
+
 
 class ApplicationField(models.Model):
     TYPE_MULTIPLE_CHOICE = "multiple_choice"
@@ -37,13 +40,19 @@ class ApplicationField(models.Model):
     ordering = models.IntegerField()
     type = models.CharField(max_length=32, choices=TYPE_CHOICES)
     prompt = models.CharField(max_length=256)
-    options = models.TextField(default="")
+    options = models.TextField(default="", blank=True)
+
+    def __str__(self):
+        return "{}. {} ({})".format(self.ordering, self.prompt, self.application)
 
 
 class ApplicantTeam(models.Model):
     hackathon = models.ForeignKey(Hackathon)
     name = models.CharField(max_length=64)
     entry_code = models.CharField(max_length=64)
+
+    def __str__(self):
+        return "{} ({})".format(self.name, self.hackathon)
 
 
 class Applicant(models.Model):
@@ -52,3 +61,6 @@ class Applicant(models.Model):
     application = models.ForeignKey(Application, related_name="applicants")
     team = models.ForeignKey(ApplicantTeam, related_name="applicants", blank=True, null=True)
     data = models.TextField()
+
+    def __str__(self):
+        return "{}'s Application".format(self.user)
