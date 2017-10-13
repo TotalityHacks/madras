@@ -1,0 +1,1 @@
+web: gunicorn madras.wsgi --log-file -
