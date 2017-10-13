@@ -136,8 +136,7 @@ STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'static'),
 )
 
-# SECURE_SSL_REDIRECT = False
-USE_X_FORWARDED_HOST = True
+# SECURE_SSL_REDIRECT = True
 
 try:
     from local_settings import *
