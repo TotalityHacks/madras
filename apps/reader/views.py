@@ -28,4 +28,11 @@ class NextApplication(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        return Response(json.loads(Applicant.objects.first().data), status=status.HTTP_200_OK)
+        return Response(
+            {
+                "applicant_id": 2,
+                "num_reads": 5,
+                "data": json.loads(Applicant.objects.first().data),
+            },
+            status=status.HTTP_200_OK,
+        )

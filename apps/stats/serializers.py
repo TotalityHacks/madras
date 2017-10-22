@@ -8,3 +8,13 @@ class SummarySerializer(serializers.BaseSerializer):
             "num_total_reads": 220,
             "average_application_rating": 3.4,
         }
+
+class LeaderboardSerializer(serializers.BaseSerializer):
+    def to_representation(self):
+        return {
+            "results": [
+                {"name": "John", "num_reads": 45},
+                {"name": "Andrew", "num_reads": 32},
+                {"name": "Nick", "num_reads": 17},
+            ]
+        }
