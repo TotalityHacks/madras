@@ -1,4 +1,5 @@
 import json
+import random
 
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
@@ -28,11 +29,12 @@ class NextApplication(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        rand_app = Applicant.objects.all()[random.randint(0, Applicant.objects.all().count() - 1)]
         return Response(
             {
-                "applicant_id": 2,
-                "num_reads": 5,
-                "data": json.loads(Applicant.objects.first().data),
+                "applicant_id": rand_app.pk,
+                "num_reads": random.randint(1, 10),
+                "data": rand_app.data,
             },
             status=status.HTTP_200_OK,
         )
