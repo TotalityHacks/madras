@@ -56,7 +56,7 @@ class ApplicantTeam(models.Model):
 
 
 class Applicant(models.Model):
-    user = models.OneToOneField(User, related_name="applicant")
+    user = models.OneToOneField(User, related_name="applicant", blank=True, null=True)
     hackathon = models.ForeignKey(Hackathon, related_name="applicants")
     application = models.ForeignKey(Application, related_name="applicants")
     team = models.ForeignKey(ApplicantTeam, related_name="applicants", blank=True, null=True)
