@@ -1,13 +1,15 @@
 import json
 import random
 
+from django.shortcuts import get_object_or_404
+
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.reader import serializers
-from apps.reader.models import Applicant
+from apps.reader.models import Applicant, RatingResponse
 
 
 class Rating(APIView):
@@ -22,6 +24,12 @@ class Rating(APIView):
         )
 
     def post(self, request):
+        params = dict(request.data)
+        applicant_id = params.get("applicant_id")
+        data = json.dumps(params)
+        applicant = get_object_or_404(Applicant, pk=applicant_id)
+        RatingResponse.objects.create(
+            reader=request.user.reader, applicant=applicant, data=data)
         return Response({"detail": "success"}, status=status.HTTP_200_OK)
 
 
