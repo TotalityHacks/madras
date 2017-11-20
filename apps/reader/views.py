@@ -37,11 +37,13 @@ class NextApplication(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        rand_app = Applicant.objects.all()[random.randint(0, Applicant.objects.all().count() - 1)]
+        rand_pk = random.randint(0, Applicant.objects.all().count() - 1)
+        rand_app = Applicant.objects.get(pk=rand_pk)
         return Response(
             {
                 "applicant_id": rand_app.pk,
-                "num_reads": random.randint(1, 10),
+                "num_reads": RatingResponse.objects.filter(
+                    applicant=rand_app).count(),
                 "data": rand_app.data,
             },
             status=status.HTTP_200_OK,
