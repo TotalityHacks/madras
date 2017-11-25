@@ -41,6 +41,7 @@ class ApplicationField(models.Model):
     type = models.CharField(max_length=32, choices=TYPE_CHOICES)
     prompt = models.CharField(max_length=256)
     options = models.TextField(default="", blank=True)
+    char_limit = models.IntegerField(default=256)
 
     def __str__(self):
         return "{}. {} ({})".format(self.ordering, self.prompt, self.application)
