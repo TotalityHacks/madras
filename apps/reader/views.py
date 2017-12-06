@@ -1,6 +1,7 @@
 import json
 import random
 from reader.utils import get_metrics_github
+import collections
 
 from django.shortcuts import get_object_or_404
 
@@ -41,31 +42,17 @@ class NextApplication(APIView):
         rand_pk = random.randint(0, Applicant.objects.all().count() - 1)
         rand_app = Applicant.objects.get(pk=rand_pk)
         github_array = get_metrics_github(rand_app.github_user_name)
-        if (not github_array):
-            return Response(
+        return Response(
                 {
                     "applicant_id": rand_app.pk,
                     "num_reads": RatingResponse.objects.filter(
                         applicant=rand_app).count(),
                     "data": rand_app.data,
-                    "NumFollowers": 0,
-                    "NumRepos": 0,
-                    "NumContributions": 0,
-                    "selfStarRepos": 0
+                    "num_followers": github_array["NumFollowers"],
+                    "num_repos": github_array["NumRepos"],
+                    "num_contributions": github_array["NumContributions"],
+                    "self_star_repos": github_array["selfStarRepos"]
                 },
                 status=status.HTTP_200_OK,
-            )
-        else:
-            return Response(
-                {
-                    "applicant_id": rand_app.pk,
-                    "num_reads": RatingResponse.objects.filter(
-                        applicant=rand_app).count(),
-                    "data": rand_app.data,
-                    "NumFollowers": github_array["NumFollowers"],
-                    "NumRepos": github_array["NumRepos"],
-                    "NumContributions": github_array["NumContributions"],
-                    "selfStarRepos": github_array["selfStarRepos"]
-                },
-                status=status.HTTP_200_OK,
-            )
+        )
+        
