@@ -1,6 +1,5 @@
 import json
 import random
-from reader.utils import get_metrics_github
 import collections
 
 from django.shortcuts import get_object_or_404
@@ -12,6 +11,7 @@ from rest_framework.views import APIView
 
 from apps.reader import serializers
 from apps.reader.models import Applicant, RatingResponse
+from apps.reader.utils import get_metrics_github
 
 
 class Rating(APIView):
