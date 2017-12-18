@@ -61,7 +61,7 @@ class Applicant(models.Model):
     hackathon = models.ForeignKey(Hackathon, related_name="applicants")
     application = models.ForeignKey(Application, related_name="applicants")
     team = models.ForeignKey(ApplicantTeam, related_name="applicants", blank=True, null=True)
-    data = models.TextField()
+    data = models.TextField(blank=True, null=True)
     github_user_name  = models.CharField(max_length=39, unique=True, blank=True, null=True)
 
     def __str__(self):
