@@ -12,10 +12,9 @@ class Application(APIView):
 
     def get(self, request):
         applicant = get_object_or_404(models.Applicant, user=request.user)
-        application = get_object_or_404(models.Application, applicant=applicant.application)
 
         return Response(
-            serializers.ApplicationSchemaSerializer(application).data,
+            serializers.ApplicationSchemaSerializer(applicant.application).data,
             status=status.HTTP_200_OK,
         )
 
