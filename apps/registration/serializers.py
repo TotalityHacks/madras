@@ -4,7 +4,7 @@ from apps.registration.models import Applicant, Application, ApplicationField
 
 
 class ApplicationFieldSerializer(serializers.ModelSerializer):
-    
+
     class Meta:
         model = ApplicationField
         fields = ("ordering", "type", "options", "char_limit", "prompt")
