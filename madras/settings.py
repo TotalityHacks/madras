@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
+import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -25,7 +26,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "=u!#c-2hid%(4lq3w--$64!%qmbmmo-ae=l2_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "true").lower() == "true"
 
-# Allow all host headers 
+# Allow all host headers
 ALLOWED_HOSTS = ['*']
 
 
@@ -59,7 +60,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
-CORS_ORIGIN_ALLOW_ALL = True # who needs security anyway
+CORS_ORIGIN_ALLOW_ALL = True  # who needs security anyway
 
 ROOT_URLCONF = 'madras.urls'
 
@@ -104,10 +105,8 @@ USE_L10N = True
 USE_TZ = True
 
 
-
 # Heroku settings below
 # Parse database configuration from $DATABASE_URL
-import dj_database_url
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',

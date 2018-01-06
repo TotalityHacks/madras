@@ -1,6 +1,5 @@
 import json
 import random
-import collections
 
 from django.shortcuts import get_object_or_404
 
@@ -55,4 +54,3 @@ class NextApplication(APIView):
                 },
                 status=status.HTTP_200_OK,
         )
-        
