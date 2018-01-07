@@ -1,3 +1,8 @@
 *.pyc
-madras/local_settings.py
+__pycache__/
+
 db.sqlite3
+db.sqlite3-journal
+
+venv/
+env/

@@ -17,7 +17,7 @@ class Application(models.Model):
 
     name = models.CharField(max_length=128)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES)
-    hackathon = models.ForeignKey(Hackathon, related_name="applications")
+    hackathon = models.ForeignKey(Hackathon, related_name="applications", on_delete=models.CASCADE)
 
     def __str__(self):
         return "{} ({})".format(self.name, self.hackathon)
@@ -36,7 +36,7 @@ class ApplicationField(models.Model):
         (TYPE_LONG_ANSWER, "Long Answer"),
     )
 
-    application = models.ForeignKey(Application, related_name="fields")
+    application = models.ForeignKey(Application, related_name="fields", on_delete=models.CASCADE)
     ordering = models.IntegerField()
     type = models.CharField(max_length=32, choices=TYPE_CHOICES)
     prompt = models.CharField(max_length=256)
@@ -48,7 +48,7 @@ class ApplicationField(models.Model):
 
 
 class ApplicantTeam(models.Model):
-    hackathon = models.ForeignKey(Hackathon)
+    hackathon = models.ForeignKey(Hackathon, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     entry_code = models.CharField(max_length=64)
 
@@ -57,12 +57,13 @@ class ApplicantTeam(models.Model):
 
 
 class Applicant(models.Model):
-    user = models.OneToOneField(User, related_name="applicant", blank=True, null=True)
-    hackathon = models.ForeignKey(Hackathon, related_name="applicants")
-    application = models.ForeignKey(Application, related_name="applicants")
-    team = models.ForeignKey(ApplicantTeam, related_name="applicants", blank=True, null=True)
+    user = models.OneToOneField(User, related_name="applicant", blank=True, null=True, on_delete=models.CASCADE)
+    hackathon = models.ForeignKey(Hackathon, related_name="applicants", on_delete=models.CASCADE)
+    application = models.ForeignKey(Application, related_name="applicants", on_delete=models.CASCADE)
+    team = models.ForeignKey(ApplicantTeam, related_name="applicants", blank=True, null=True, on_delete=models.CASCADE)
     data = models.TextField(blank=True, null=True)
     github_user_name  = models.CharField(max_length=39, unique=True, blank=True, null=True)
+    address = models.CharField(max_length=128)
 
     def __str__(self):
         return "{}'s Application".format(self.user)
