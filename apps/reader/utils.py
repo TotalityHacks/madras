@@ -1,6 +1,7 @@
 import requests
-import github3 as gh
+import github3
 
+from django.conf import settings
 from github3.null import NullObject
 from bs4 import BeautifulSoup
 
@@ -18,6 +19,10 @@ def get_contributions(github_user_name):
 
 
 def get_metrics_github(github_user_name):
+    if settings.GITHUB_USERNAME:
+        gh = github3.login(settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
+    else:
+        gh = github3
     user = gh.user(github_user_name)
 
     # If no user exists, return an empty dictionary.
