@@ -2,16 +2,19 @@ import requests
 import github3 as gh
 
 from github3.null import NullObject
+from bs4 import BeautifulSoup
 
 
 def get_contributions(github_user_name):
-    url = "https://github.com/" + github_user_name
+    url = "https://github.com/{}".format(github_user_name)
     resp = requests.get(url)
-    res_body = resp.content
-    index_of_contribution = res_body.find("<h2 class='f4 text-normal mb-2'>")
-    substring_of_contribution = res_body[
-        index_of_contribution + 37: index_of_contribution + 45]
-    return [int(s) for s in substring_of_contribution.split() if s.isdigit()][0]
+    soup = BeautifulSoup(resp.content, "lxml")
+    elements = soup.findAll("h2", {"class": ["f4", "text-normal", "mb-2"]})
+    for ele in elements:
+        if "contributions" in ele.text:
+            contributions = ele.text.strip().split(" ", 1)[0].replace(",", "")
+            return int(contributions)
+    return 0
 
 
 def get_metrics_github(github_user_name):
