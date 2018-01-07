@@ -12,7 +12,8 @@ from rest_framework.views import APIView
 from apps.reader import serializers
 from apps.reader.models import Applicant, RatingResponse
 from apps.reader.utils import get_metrics_github
-
+from apps.reader.utils import calculate_travel_est
+from apps.reader.utils import address_to_lat_long
 
 class Rating(APIView):
     permission_classes = (IsAuthenticated,)
@@ -42,6 +43,7 @@ class NextApplication(APIView):
         rand_pk = random.randint(0, Applicant.objects.all().count() - 1)
         rand_app = Applicant.objects.get(pk=rand_pk)
         github_array = get_metrics_github(rand_app.github_user_name)
+        user_addresss_coords = address_to_lat_long(rand_app.address)
         return Response(
                 {
                     "applicant_id": rand_app.pk,
@@ -51,7 +53,10 @@ class NextApplication(APIView):
                     "num_followers": github_array["NumFollowers"],
                     "num_repos": github_array["NumRepos"],
                     "num_contributions": github_array["NumContributions"],
-                    "self_star_repos": github_array["selfStarRepos"]
+                    "self_star_repos": github_array["selfStarRepos"],
+                    "travel_reimbursement" : \
+                    calculate_travel_est(user_addresss_coords["lat"], \
+                        user_addresss_coords["long"])
                 },
                 status=status.HTTP_200_OK,
         )

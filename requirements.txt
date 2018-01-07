@@ -12,6 +12,7 @@ django-toolbelt==0.0.1
 djangorestframework==3.6.4
 enum34==1.1.6
 github3.py==1.0.0a4
+geopy==1.11.0
 gunicorn==19.7.1
 idna==2.6
 ipaddress==1.0.18

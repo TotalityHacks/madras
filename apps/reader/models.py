@@ -6,13 +6,13 @@ from apps.registration.models import Application, Applicant
 
 
 class Reader(models.Model):
-    user = models.OneToOneField(User, related_name="reader")
-    organization = models.ForeignKey(Organization, related_name="readers")
+    user = models.OneToOneField(User, related_name="reader", on_delete=models.CASCADE)
+    organization = models.ForeignKey(Organization, related_name="readers", on_delete=models.CASCADE)
     hackathons = models.ManyToManyField(Hackathon, related_name="readers")
 
 
 class Rating(models.Model):
-    application = models.OneToOneField(Application, related_name="rating")
+    application = models.OneToOneField(Application, related_name="rating", on_delete=models.CASCADE)
 
 
 class RatingField(models.Model):
@@ -24,7 +24,7 @@ class RatingField(models.Model):
         (TYPE_MULTIPLE_CHOICE, "Multiple choice"),
     )
 
-    rating = models.ForeignKey(Rating, related_name="fields")
+    rating = models.ForeignKey(Rating, related_name="fields", on_delete=models.CASCADE)
     type = models.CharField(max_length=16, choices=TYPE_CHOICES)
     prompt = models.CharField(max_length=64)
     min_number = models.IntegerField(default=-1)
@@ -33,6 +33,6 @@ class RatingField(models.Model):
 
 
 class RatingResponse(models.Model):
-    reader = models.ForeignKey(Reader, related_name="ratings")
-    applicant = models.ForeignKey(Applicant, related_name="ratings")
+    reader = models.ForeignKey(Reader, related_name="ratings", on_delete=models.CASCADE)
+    applicant = models.ForeignKey(Applicant, related_name="ratings", on_delete=models.CASCADE)
     data = models.TextField()
