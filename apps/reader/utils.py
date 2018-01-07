@@ -1,6 +1,6 @@
 import requests
+import github3 as gh
 
-from github3 import login
 from github3.null import NullObject
 
 
@@ -15,7 +15,6 @@ def get_contributions(github_user_name):
 
 
 def get_metrics_github(github_user_name):
-    gh = login("GITHUB_USER_NAME", password="GITHUB_PASSWORD")
     user = gh.user(github_user_name)
 
     # If no user exists, return an empty dictionary.
