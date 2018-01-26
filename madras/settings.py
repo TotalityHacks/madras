@@ -88,8 +88,8 @@ WSGI_APPLICATION = 'madras.wsgi.application'
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 EMAIL_USE_TLS = True
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'email'
-EMAIL_HOST_PASSWORD = 'password'
+EMAIL_HOST_USER = 'TOTALITY EMAIL HERE'
+EMAIL_HOST_PASSWORD = 'PASSWORD'
 EMAIL_PORT = 587
 
 REST_FRAMEWORK = {

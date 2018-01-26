@@ -25,8 +25,11 @@ class Application(models.Model):
 class Applicant(AbstractUser):
     github_user_name = models.CharField(max_length=39, unique=True, blank=True, null=True)
     email = models.EmailField(max_length=200, help_text='Required', unique=True)
+
+    username = None
+
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username']
+    REQUIRED_FIELDS = []
 
     def get_username(self):
         return self.email
