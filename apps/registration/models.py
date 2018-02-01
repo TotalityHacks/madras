@@ -1,8 +1,6 @@
 from django.db import models
 
-from django.contrib.auth.models import User
-from apps.director.models import Hackathon
-
+from django.contrib.auth.models import AbstractUser
 
 class Application(models.Model):
     STATUS_PREPARING = "preparing"
@@ -17,52 +15,19 @@ class Application(models.Model):
 
     name = models.CharField(max_length=128)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES)
-    hackathon = models.ForeignKey(Hackathon, related_name="applications")
 
     def __str__(self):
         return "{} ({})".format(self.name, self.hackathon)
 
 
-class ApplicationField(models.Model):
-    TYPE_MULTIPLE_CHOICE = "multiple_choice"
-    TYPE_MULTIPLE_CHOICE_OTHER = "multiple_choice_other"
-    TYPE_SHORT_ANSWER = "short_answer"
-    TYPE_LONG_ANSWER = "long_answer"
-
-    TYPE_CHOICES = (
-        (TYPE_MULTIPLE_CHOICE, "Multiple Choice"),
-        (TYPE_MULTIPLE_CHOICE_OTHER, "Multiple Choice with Other"),
-        (TYPE_SHORT_ANSWER, "Short Answer"),
-        (TYPE_LONG_ANSWER, "Long Answer"),
-    )
-
-    application = models.ForeignKey(Application, related_name="fields")
-    ordering = models.IntegerField()
-    type = models.CharField(max_length=32, choices=TYPE_CHOICES)
-    prompt = models.CharField(max_length=256)
-    options = models.TextField(default="", blank=True)
-    char_limit = models.IntegerField(default=256)
-
-    def __str__(self):
-        return "{}. {} ({})".format(self.ordering, self.prompt, self.application)
-
-
-class ApplicantTeam(models.Model):
-    hackathon = models.ForeignKey(Hackathon)
-    name = models.CharField(max_length=64)
-    entry_code = models.CharField(max_length=64)
-
-    def __str__(self):
-        return "{} ({})".format(self.name, self.hackathon)
-
-
-class Applicant(models.Model):
-    user = models.OneToOneField(User, related_name="applicant", blank=True, null=True)
-    hackathon = models.ForeignKey(Hackathon, related_name="applicants")
-    application = models.ForeignKey(Application, related_name="applicants")
-    team = models.ForeignKey(ApplicantTeam, related_name="applicants", blank=True, null=True)
-    data = models.TextField(blank=True, null=True)
+class Applicant(AbstractUser):
     github_user_name = models.CharField(max_length=39, unique=True, blank=True, null=True)
+    email = models.EmailField(max_length=200, help_text='Required', unique=True)
 
-    def __str__(self):
-        return "{}'s Application".format(self.user)
+    username = None
+
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    def get_username(self):
+        return self.email

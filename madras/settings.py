@@ -26,6 +26,8 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "=u!#c-2hid%(4lq3w--$64!%qmbmmo-ae=l2_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "true").lower() == "true"
 
+AUTH_USER_MODEL = "registration.Applicant"
+
 # Allow all host headers
 ALLOWED_HOSTS = ['*']
 
@@ -67,7 +69,7 @@ ROOT_URLCONF = 'madras.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -83,12 +85,34 @@ TEMPLATES = [
 WSGI_APPLICATION = 'madras.wsgi.application'
 
 
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'TOTALITY EMAIL HERE'
+EMAIL_HOST_PASSWORD = 'PASSWORD'
+EMAIL_PORT = 587
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
     )
 }
+
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+    },
+    {
+        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+    },
+]
+
 
 
 # Internationalization
