@@ -13,7 +13,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 def home(request):
-    return render(request, 'home.html')
+    pass
 
 @csrf_exempt
 def signup(request):
@@ -29,17 +29,12 @@ def signup(request):
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            # Sending activation link in terminal
-            # user.email_user(subject, message)
-            mail_subject = 'Activate your blog account.'
+            mail_subject = 'Activate your account.'
             to_email = form.cleaned_data.get('email')
             email = EmailMessage(mail_subject, message, to=[to_email])
             email.send()
             return JsonResponse({"success": True})
-            # return render(request, 'acc_active_sent.html')
-    else:
-        form = SignupForm()
-    return render(request, 'signup.html', {'form': form})
+    
 
 
 def activate(request, uidb64, token):

@@ -15,13 +15,11 @@ class Application(models.Model):
 
     name = models.CharField(max_length=128)
     status = models.CharField(max_length=16, choices=STATUS_CHOICES)
-    #hackathon = models.ForeignKey(Hackathon, related_name="applications")
 
     def __str__(self):
         return "{} ({})".format(self.name, self.hackathon)
 
 
-# Create your models here.
 class Applicant(AbstractUser):
     github_user_name = models.CharField(max_length=39, unique=True, blank=True, null=True)
     email = models.EmailField(max_length=200, help_text='Required', unique=True)

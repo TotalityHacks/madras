@@ -1,6 +1,5 @@
 from django.db import models
 
-#from django.contrib.auth.models import User
 from apps.director.models import Hackathon, Organization
 from apps.registration.models import Application, Applicant
 
