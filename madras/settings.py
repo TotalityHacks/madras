@@ -85,11 +85,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'madras.wsgi.application'
 
 
-EMAIL_USE_TLS = True
-EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'TOTALITY EMAIL HERE'
-EMAIL_HOST_PASSWORD = 'PASSWORD'
+
+EMAIL_HOST = 'smtp.sendgrid.net'
+EMAIL_HOST_USER = 'sendgrid_username'
+EMAIL_HOST_PASSWORD = 'sendgrid_password'
 EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
