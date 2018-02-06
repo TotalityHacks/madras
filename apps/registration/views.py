@@ -18,7 +18,7 @@ def home(request):
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
-        form = SignupForm(request.POST)
+        form = SignupForm(data=request.POST)
         if form.is_valid():
             user = form.save(commit=False)
             user.is_active = False
@@ -34,6 +34,8 @@ def signup(request):
             email = EmailMessage(mail_subject, message, to=[to_email])
             email.send()
             return JsonResponse({"success": True})
+        else:
+            return JsonResponse({"success": False, "err_field": form.errors, "req": request.POST})    
     
 
 
