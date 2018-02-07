@@ -1,6 +1,5 @@
 from django.http import JsonResponse
-from django.shortcuts import render, redirect
-from django.contrib.auth import login, authenticate
+from django.contrib.auth import login
 from .forms import SignupForm
 from django.contrib.sites.shortcuts import get_current_site
 from django.utils.encoding import force_bytes, force_text
@@ -15,6 +14,7 @@ from django.views.decorators.csrf import csrf_exempt
 def home(request):
     pass
 
+
 @csrf_exempt
 def signup(request):
     if request.method == 'POST':
@@ -25,7 +25,8 @@ def signup(request):
             user.save()
             current_site = get_current_site(request)
             message = render_to_string('acc_active_email.html', {
-                'user':user, 'domain':current_site.domain,
+                'user': user,
+                'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
@@ -35,8 +36,7 @@ def signup(request):
             email.send()
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, "err_field": form.errors, "req": request.POST})    
-    
+            return JsonResponse({"success": False, "err_field": form.errors, "req": request.POST})
 
 
 def activate(request, uidb64, token):
@@ -49,7 +49,6 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return  JsonResponse({"message": 'Thank you for your email confirmation. Now you can login your account.'})
+        return JsonResponse({"message": 'Thank you for your email confirmation. Now you can login your account.'})
     else:
         return JsonResponse({"message": "invalid email confirmation"})
-

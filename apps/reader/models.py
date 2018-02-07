@@ -5,6 +5,7 @@ from apps.registration.models import Application, Applicant
 
 from django.contrib.auth import get_user_model
 
+
 class Reader(models.Model):
     User = get_user_model()
     user = models.OneToOneField(User, related_name="reader")

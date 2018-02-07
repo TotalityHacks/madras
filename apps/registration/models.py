@@ -2,6 +2,7 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser
 
+
 class Application(models.Model):
     STATUS_PREPARING = "preparing"
     STATUS_OPEN = "open"
