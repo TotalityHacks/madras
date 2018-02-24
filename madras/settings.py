@@ -99,6 +99,8 @@ REST_FRAMEWORK = {
     )
 }
 
+AUTHENTICATION_BACKENDS = ['apps.registration.backends.EmailBackend']
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',

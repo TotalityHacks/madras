@@ -2,7 +2,7 @@
 
 ## Login
 Login to the API and return a token used for authenticating future requests.
-- URL: `/login`
+- URL: `/login/`
 - Method: `POST`
 - POST Parameters (JSON format)
     - `username`: The user's username.
@@ -13,9 +13,9 @@ Login to the API and return a token used for authenticating future requests.
 
 ## Registration
 Register a user
-- URL: `/signup`
+- URL: `/registration/signup/`
 - Method: `POST`
-- POST Parameters (JSON Format)
+- POST Parameters
     - `email`: The user's email.
     - `password1`: The user's password.
     - `password2`: Confirmation of user's password.
@@ -25,7 +25,7 @@ Register a user
 
 Activate a user's account
 Note: This is sent to the user in an email, should not need to be called directly.
-- URL: `/activate/{uidb4}/{token}`
+- URL: `/registration/activate/{uidb4}/{token}`
 - Method: `GET`
 - On Success: Activates the user's account, returns JSON with format `{'message': '...'}`
 - On Error: Returns JSON with format `{'error': '...'}`
