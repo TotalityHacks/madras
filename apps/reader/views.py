@@ -12,6 +12,7 @@ from apps.reader import serializers
 from apps.reader.models import Applicant, RatingResponse
 from apps.reader.utils import get_metrics_github
 
+from django.conf import settings
 
 class Rating(APIView):
     permission_classes = (IsAuthenticated,)
@@ -20,7 +21,7 @@ class Rating(APIView):
         """Get the first rating of the first application of the first hackaton."""
         rating = request.user.reader.hackathons.first().applications.first().rating
 
-        return Response(
+        return JsonResponse(
             serializers.RatingSchemaSerializer(rating).data,
             status=status.HTTP_200_OK,
         )
@@ -33,7 +34,7 @@ class Rating(APIView):
         applicant = get_object_or_404(Applicant, pk=applicant_id)
         RatingResponse.objects.create(
             reader=request.user.reader, applicant=applicant, data=data)
-        return Response({"detail": "success"}, status=status.HTTP_200_OK)
+        return JsonResponse({"detail": "success"}, status=status.HTTP_200_OK)
 
 
 class NextApplication(APIView):
@@ -43,10 +44,10 @@ class NextApplication(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_pk = random.randint(0, Applicant.objects.all().count() - 1)
-        rand_app = Applicant.objects.get(pk=rand_pk)
+        rand_app = Applicant.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUMBER_OF_READS).first()
+
         github_array = get_metrics_github(rand_app.github_user_name)
-        return Response(
+        return JsonResponse(
                 {
                     "applicant_id": rand_app.pk,
                     "num_reads": RatingResponse.objects.filter(
