@@ -36,7 +36,7 @@ def signup(request):
             email.send()
             return JsonResponse({"success": True})
         else:
-            return JsonResponse({"success": False, "err_field": form.errors, "req": request.POST})
+            return JsonResponse({"success": False, "err_field": form.errors})
 
 
 def activate(request, uidb64, token):
@@ -51,4 +51,4 @@ def activate(request, uidb64, token):
         login(request, user)
         return JsonResponse({"message": 'Thank you for your email confirmation. Now you can login your account.'})
     else:
-        return JsonResponse({"message": "invalid email confirmation"})
+        return JsonResponse({"error": "Invalid email confirmation!"})

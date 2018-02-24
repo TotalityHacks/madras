@@ -21,10 +21,10 @@ Register a user
     - `password2`: Confirmation of user's password.
     - `github_user_name`: The user's github username (Optional).- Response
 - On Success: Returns JSON in the format `{'success': true}`.
-- On Error: Returns JSON with the error response.
+- On Error: Returns JSON with the error response `{'success': false, 'err_field': ...}`.
 
 Activate a user's account
-- URL: `/activate/...`
+- URL: `/activate/{uidb4}/{token}`
 - Method: `GET`
-- On Success: Activates the user's account
-- On Error: No such page
+- On Success: Activates the user's account, returns JSON with format `{'message': '...'}`
+- On Error: Returns JSON with format `{'error': '...'}`
