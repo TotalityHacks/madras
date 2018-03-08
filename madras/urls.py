@@ -15,6 +15,7 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic import RedirectView
 
 from rest_framework.documentation import include_docs_urls
 from rest_framework.authtoken.views import obtain_auth_token
@@ -22,6 +23,7 @@ from rest_framework.authtoken.views import obtain_auth_token
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^$', RedirectView.as_view(url="/docs/", permanent=False), name="index"),
     url(r'^docs/', include_docs_urls(title="Madras")),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^login/', obtain_auth_token),
