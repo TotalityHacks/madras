@@ -24,6 +24,7 @@ Register a user
 - On Error: Returns JSON with the error response `{'success': false, 'err_field': ...}`.
 
 Activate a user's account
+
 Note: This is sent to the user in an email, should not need to be called directly.
 - URL: `/registration/activate/{uidb4}/{token}`
 - Method: `GET`
