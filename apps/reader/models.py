@@ -35,6 +35,8 @@ class RatingField(models.Model):
 
 
 class RatingResponse(models.Model):
-    reader = models.ForeignKey(Reader, related_name="ratings", on_delete=models.CASCADE)
-    applicant = models.ForeignKey(Applicant, related_name="ratings", on_delete=models.CASCADE)
-    data = models.TextField()
+    reader = models.ForeignKey(Reader, related_name="ratings")
+    applicant = models.ForeignKey(Applicant, related_name="ratings")
+    rating_number = models.IntegerField(validators=[MinValueValidator(1)
+                                       MaxValueValidator(10)])
+    comments = models.TextField(default="", blank=True)

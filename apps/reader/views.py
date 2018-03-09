@@ -30,10 +30,12 @@ class Rating(APIView):
         """Add a rating to an applicant given an applicant ID."""
         params = dict(request.data)
         applicant_id = params.get("applicant_id")
-        data = json.dumps(params)
+        rating_number = params.get("user_rating")
+        comments = params.get("comments")
         applicant = get_object_or_404(Applicant, pk=applicant_id)
         RatingResponse.objects.create(
-            reader=request.user.reader, applicant=applicant, data=data)
+            reader=request.user.reader, applicant=applicant, rating_number=rating_number,
+            comments=comments)
         return JsonResponse({"detail": "success"}, status=status.HTTP_200_OK)
 
 
