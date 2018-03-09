@@ -7,6 +7,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.schemas import AutoSchema
 
 from apps.reader import serializers
 from apps.reader.models import Applicant, RatingResponse
@@ -17,6 +18,7 @@ class Rating(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        """Get the first rating of the first application of the first hackaton."""
         rating = request.user.reader.hackathons.first().applications.first().rating
 
         return Response(
@@ -25,6 +27,7 @@ class Rating(APIView):
         )
 
     def post(self, request):
+        """Add a rating to an applicant given an applicant ID."""
         params = dict(request.data)
         applicant_id = params.get("applicant_id")
         data = json.dumps(params)
@@ -35,9 +38,12 @@ class Rating(APIView):
 
 
 class NextApplication(APIView):
+
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
+        """Get the next application that needs a review."""
+
         rand_pk = random.randint(0, Applicant.objects.all().count() - 1)
         rand_app = Applicant.objects.get(pk=rand_pk)
         github_array = get_metrics_github(rand_app.github_user_name)
