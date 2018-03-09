@@ -7,7 +7,6 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.schemas import AutoSchema
 
 from apps.reader import serializers
 from apps.reader.models import Applicant, RatingResponse
