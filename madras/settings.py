@@ -167,3 +167,5 @@ STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME")
 GITHUB_PASSWORD = os.environ.get("GITHUB_PASSWORD")
+
+LOGIN_REDIRECT_URL = '/registration'

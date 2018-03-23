@@ -1,6 +1,23 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  <h2>Welcome, {{ user.get_full_name }} <small>{{ user.username }}</small>!</h2>
-  <p>Your email address: {{ user.email }}</p>
+  {% if user.is_authenticated %}
+    <h2>Welcome, {{ user.get_full_name }} <small>{{ user.github_user_name }}</small>!</h2>
+    <p>Your email address: {{ user.email }}</p>
+    <form method="post">
+      {% csrf_token %}
+        {% for field in form %}
+        <p>
+          {{ field.as_p }}
+          {% for error in field.errors %}
+            <p style="color: red">{{ error }}</p>
+          {% endfor %}
+        </p>
+        {% endfor %}
+  
+      <button type="submit">Save</button>
+    </form>
+  {% else %}
+    <h2>You are not logged in.</h2>
+  {% endif %}
 {% endblock %}
