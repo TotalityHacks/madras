@@ -39,5 +39,5 @@ class RatingResponse(models.Model):
     reader = models.ForeignKey(Reader, related_name="ratings")
     applicant = models.ForeignKey(Applicant, related_name="ratings")
     rating_number = models.IntegerField(default=1, validators=[MinValueValidator(1),
-                                       MaxValueValidator(10)])
+                                        MaxValueValidator(10)])
     comments = models.TextField(default="", blank=True)

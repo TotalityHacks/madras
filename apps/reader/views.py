@@ -1,9 +1,5 @@
-import json
-import random
-
 from django.shortcuts import get_object_or_404
 
-from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,10 +19,7 @@ class Rating(APIView):
         """Get the first rating of the first application of the first hackaton."""
         rating = request.user.reader.hackathons.first().applications.first().rating
 
-        return JsonResponse(
-            serializers.RatingSchemaSerializer(rating).data,
-            status=status.HTTP_200_OK,
-        )
+        return Response(serializers.RatingSchemaSerializer(rating).data)
 
     def post(self, request):
         """Add a rating to an applicant given an applicant ID."""
@@ -38,7 +31,7 @@ class Rating(APIView):
         RatingResponse.objects.create(
             reader=request.user.reader, applicant=applicant, rating_number=rating_number,
             comments=comments)
-        return JsonResponse({"detail": "success"}, status=status.HTTP_200_OK)
+        return Response({"detail": "success"})
 
 
 class NextApplication(APIView):
