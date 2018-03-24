@@ -6,6 +6,8 @@ from .utils import get_metrics_github
 from ..registration.models import Applicant
 from .views import NextApplication
 from ..registration.models import Application
+from .models import Reader
+from ..director.models import Organization
 
 
 class UtilsTests(TestCase):
@@ -17,6 +19,7 @@ class UtilsTests(TestCase):
         )
 
         self.user = Applicant.objects.create(email='test@example.com', password='testing')
+        Reader.objects.create(user=self.user, organization=Organization.objects.create(name="Test Organization"))
         self.factory = APIRequestFactory()
 
     @skip("This test reaches the GitHub API request limit too easily.")
