@@ -34,4 +34,5 @@ urlpatterns = [
     url(r'^registration/', include('apps.registration.urls', namespace="registration")),
     url(r'^stats/', include('apps.stats.urls', namespace="stats")),
     url(r'^application/', include('apps.application.urls', namespace="application")),
+    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin"))
 ]
