@@ -18,7 +18,7 @@ class Application(models.Model):
     status = models.CharField(max_length=16, choices=STATUS_CHOICES)
 
     def __str__(self):
-        return "{} ({})".format(self.name, self.hackathon)
+        return "{}".format(self.name)
 
 
 class Applicant(AbstractUser):
