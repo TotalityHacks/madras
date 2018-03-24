@@ -1,6 +1,6 @@
+
 import mock
 import json
-
 
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory, force_authenticate
@@ -9,12 +9,21 @@ from unittest import skip
 from .utils import get_metrics_github
 from ..registration.models import Applicant
 from .views import NextApplication, Rating
+from ..registration.models import Application
+from .models import Reader
+from ..director.models import Organization
 
 
 class UtilsTests(TestCase):
 
     def setUp(self):
+        self.application = Application.objects.create(
+            name="Test Application",
+            status=Application.STATUS_CLOSED
+        )
+
         self.user = Applicant.objects.create(email='test@example.com', password='testing')
+        Reader.objects.create(user=self.user, organization=Organization.objects.create(name="Test Organization"))
         self.factory = APIRequestFactory()
 
     @skip("This test reaches the GitHub API request limit too easily.")
@@ -32,3 +41,4 @@ class UtilsTests(TestCase):
         request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
         force_authenticate(request, user=self.user)
         response = Rating.as_view()(request)
+        self.assertEquals(response.data["applicant_id"], self.application.id)
