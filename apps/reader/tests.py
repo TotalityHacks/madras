@@ -10,3 +10,8 @@ class UtilsTests(TestCase):
     def test_github_metrics(self):
         metrics = get_metrics_github("ezwang")
         self.assertEquals(len(metrics), 4)
+    
+
+
+
+

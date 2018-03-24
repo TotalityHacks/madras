@@ -2,6 +2,7 @@ from django.db import models
 
 from apps.director.models import Hackathon, Organization
 from apps.registration.models import Application, Applicant
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from django.contrib.auth import get_user_model
 
@@ -37,6 +38,6 @@ class RatingField(models.Model):
 class RatingResponse(models.Model):
     reader = models.ForeignKey(Reader, related_name="ratings")
     applicant = models.ForeignKey(Applicant, related_name="ratings")
-    rating_number = models.IntegerField(validators=[MinValueValidator(1)
+    rating_number = models.IntegerField(default=1, validators=[MinValueValidator(1),
                                        MaxValueValidator(10)])
     comments = models.TextField(default="", blank=True)
