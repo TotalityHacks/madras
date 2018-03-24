@@ -13,6 +13,8 @@ from apps.reader.models import Applicant, RatingResponse
 from apps.reader.utils import get_metrics_github
 
 from django.conf import settings
+from django.db.models import Count
+
 
 class Rating(APIView):
     permission_classes = (IsAuthenticated,)
@@ -46,19 +48,16 @@ class NextApplication(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_app = Applicant.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUMBER_OF_READS).first()
+        rand_app = Applicant.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
 
         github_array = get_metrics_github(rand_app.github_user_name)
-        return JsonResponse(
-                {
-                    "applicant_id": rand_app.pk,
-                    "num_reads": RatingResponse.objects.filter(
-                        applicant=rand_app).count(),
-                    "data": rand_app.data,
-                    "num_followers": github_array["NumFollowers"],
-                    "num_repos": github_array["NumRepos"],
-                    "num_contributions": github_array["NumContributions"],
-                    "self_star_repos": github_array["selfStarRepos"]
-                },
-                status=status.HTTP_200_OK,
-        )
+
+        return Response({
+            "applicant_id": rand_app.pk,
+            "num_reads": RatingResponse.objects.filter(
+                applicant=rand_app).count(),
+            "num_followers": github_array["num_followers"],
+            "num_repos": github_array["num_repos"],
+            "num_contributions": github_array["num_contributions"],
+            "self_star_repos": github_array["self_star_repos"]
+        })

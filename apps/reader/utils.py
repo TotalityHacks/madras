@@ -22,7 +22,12 @@ def get_metrics_github(github_user_name):
     if settings.GITHUB_USERNAME:
         gh = github3.login(settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
     else:
-        gh = github3
+        return {
+            "num_followers": -1,
+            "num_repos": -1,
+            "num_contributions": -1,
+            "self_star_repos": -1,
+        }
     user = gh.user(github_user_name)
 
     # If no user exists, return an empty dictionary.
