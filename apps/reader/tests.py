@@ -22,6 +22,11 @@ class UtilsTests(TestCase):
             status=Application.STATUS_CLOSED
         )
 
+        Application.objects.create(
+            name="Test Application 2",
+            status=Application.STATUS_CLOSED
+        )
+
         self.user = Applicant.objects.create(email='test@example.com', password='testing')
         Reader.objects.create(user=self.user, organization=Organization.objects.create(name="Test Organization"))
         self.factory = APIRequestFactory()
