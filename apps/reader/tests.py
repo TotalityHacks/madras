@@ -10,7 +10,7 @@ from .utils import get_metrics_github
 from ..registration.models import Applicant
 from .views import NextApplication, Rating
 from ..registration.models import Application
-from .models import Reader
+from .models import Reader, RatingResponse
 from ..director.models import Organization
 
 
@@ -42,3 +42,4 @@ class UtilsTests(TestCase):
         request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
         force_authenticate(request, user=self.user)
         response = Rating.as_view()(request)
+        self.assertEquals(1, RatingResponse.objects.count())
