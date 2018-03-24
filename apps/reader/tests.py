@@ -7,11 +7,17 @@ from unittest import skip
 from .utils import get_metrics_github
 from ..registration.models import Applicant
 from .views import NextApplication
+from ..registration.models import Application
 
 
 class UtilsTests(TestCase):
 
     def setUp(self):
+        self.application = Application.objects.create(
+            name="Test Application",
+            status=Application.STATUS_CLOSED
+        )
+
         self.user = Applicant.objects.create(email='test@example.com', password='testing')
         self.factory = APIRequestFactory()
 
@@ -24,3 +30,5 @@ class UtilsTests(TestCase):
         request = self.factory.get('/reader/next_application/')
         force_authenticate(request, user=self.user)
         response = NextApplication.as_view()(request)
+
+        self.assertEquals(response.data["applicant_id"], self.application.id)
