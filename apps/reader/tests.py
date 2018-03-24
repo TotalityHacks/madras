@@ -29,6 +29,7 @@ class UtilsTests(TestCase):
             status = Application.STATUS_CLOSED
             )
 
+
         self.user = Applicant.objects.create(email='test@example.com', password='testing')
         self.user2 = Applicant.objects.create(email='test2@example.com', password='testing2')
         Reader.objects.create(user=self.user, organization=Organization.objects.create(name="Test Organization"))
@@ -51,6 +52,7 @@ class UtilsTests(TestCase):
         force_authenticate(request, user=self.user)
         response = Rating.as_view()(request)
         self.assertEquals(1, RatingResponse.objects.count())
+
 
     def test_access_application_after_max_reivews(self):
         for i in range(5):
