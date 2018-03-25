@@ -37,6 +37,7 @@ pycparser==2.18
 pyparsing==2.2.0
 pyOpenSSL==17.5.0
 pytz==2017.3
+qrcode==6.0
 requests==2.18.4
 six==1.11.0
 static3==0.7.0
