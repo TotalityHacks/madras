@@ -48,6 +48,7 @@ INSTALLED_APPS = (
     'apps.reader',
     'apps.registration',
     'apps.stats',
+    'apps.checkin'
 )
 
 MIDDLEWARE_CLASSES = (
