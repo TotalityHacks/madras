@@ -52,6 +52,7 @@ def return_qr(email):
 
 
 def check_in(email):
+    # TODO: will need to be authenticated to admins
     try:
         applicant = Applicant.objects.get(email=email)
     except Applicant.DoesNotExist:
@@ -64,7 +65,27 @@ def check_in(email):
                               "The user specified is already checked in.",
                               409)
     event = CheckInEvent(check_in_group=group, check_in=True, time=datetime.utcnow())
-    group.checked_in=True
+    group.checked_in = True
+    event.save()
+    group.save()
+    return success_data_jsonify()
+
+
+def check_out(email):
+    # TODO: will need to be authenticated to admins
+    try:
+        applicant = Applicant.objects.get(email=email)
+    except Applicant.DoesNotExist:
+        return error_response("User does not exist.",
+                              "A user with that email address was not found in the database.",
+                              404)
+    group = CheckInGroup.objects.get_or_create(applicant=applicant)
+    if not group.checked_in:
+        return error_response("User is not checked in.",
+                              "The user must be checked in to be checked out.",
+                              409)
+    event = CheckInEvent(check_in_group=group, check_in=False, time=datetime.utcnow())
+    group.checked_in = False
     event.save()
     group.save()
     return success_data_jsonify()
