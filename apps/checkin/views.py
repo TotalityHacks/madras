@@ -14,18 +14,31 @@ import os.path
 
 static_path = "static/checkin/qr_codes/"
 
-def gen_qr_code(request):
+
+def get_qr_code(request):
     try:
         applicant = Applicant.objects.get(email=request.GET["email"])
     except Applicant.DoesNotExist:
         return JsonResponse({"success": False, "err_field": "User does not exist."})
     # TODO: check that applicant was actually admitted
-    safe_email = applicant.email.replace("@", "").replace(".", "") + ".png"
+    return JsonResponse({"success": True, "qr_image_path": "/" + return_qr(applicant.email)})
+
+
+def get_qr_codes(request):
+    # TODO: will need to be authenticated to admins
+    applicants = Applicant.objects.all()
+    # TODO: filter to only include admitted applicants
+    files = []
+    for applicant in applicants:
+        files.append(return_qr(applicant.email))
+    return JsonResponse({"success": True, "qr_image_paths": files})
+
+
+def return_qr(email):
+    safe_email = email.replace("@", "").replace(".", "") + ".png"
     relative_path = static_path + safe_email
     full_path = os.path.join(settings.PROJECT_ROOT, relative_path)
     if not os.path.exists(full_path):
         with open(full_path, "wb") as f:
             qrcode.make(safe_email).save(f, format="PNG")
-    return JsonResponse({"success": True, "qr_image_path": "/" + relative_path})
-
-
+    return relative_path
