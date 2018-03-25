@@ -14,6 +14,7 @@ from .models import CheckInGroup, CheckInEvent
 import qrcode
 import os.path
 from datetime import datetime
+from django.utils import timezone
 
 
 static_path = "static/checkin/qr_codes/"
@@ -58,6 +59,7 @@ def return_qr(email):
     return relative_path
 
 
+@csrf_exempt
 def check_in(request):
     if request.POST:
         try:
@@ -77,7 +79,7 @@ def check_in(request):
             return error_response("User already checked in.",
                                   "The user specified is already checked in.",
                                   409)
-        event = CheckInEvent(check_in_group=group, check_in=True, time=datetime.utcnow())
+        event = CheckInEvent(check_in_group=group, check_in=True, time=timezone.now())
         group.checked_in = True
         event.save()
         group.save()
@@ -87,6 +89,7 @@ def check_in(request):
     # TODO: will need to be authenticated to admins
 
 
+@csrf_exempt
 def check_out(request):
     if request.POST:
         try:
@@ -106,7 +109,7 @@ def check_out(request):
             return error_response("User not checked in.",
                                   "The user must be checked in to be checked out.",
                                   409)
-        event = CheckInEvent(check_in_group=group, check_in=False, time=datetime.utcnow())
+        event = CheckInEvent(check_in_group=group, check_in=False, time=timezone.now())
         group.checked_in = False
         event.save()
         group.save()
