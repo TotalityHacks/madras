@@ -8,6 +8,11 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from madras import settings
 from apps.registration.models import Applicant
+from urllib.parse import quote_plus
+import qrcode
+import os.path
+
+static_path = "static/checkin/qr_codes/"
 
 def gen_qr_code(request):
     try:
@@ -15,4 +20,12 @@ def gen_qr_code(request):
     except Applicant.DoesNotExist:
         return JsonResponse({"success": False, "err_field": "User does not exist."})
     # TODO: check that applicant was actually admitted
+    safe_email = applicant.email.replace("@", "").replace(".", "") + ".png"
+    relative_path = static_path + safe_email
+    full_path = os.path.join(settings.PROJECT_ROOT, relative_path)
+    if not os.path.exists(full_path):
+        with open(full_path, "wb") as f:
+            qrcode.make(safe_email).save(f, format="PNG")
+    return JsonResponse({"success": True, "qr_image_path": "/" + relative_path})
+
 
