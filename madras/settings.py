@@ -53,6 +53,7 @@ INSTALLED_APPS = (
     'apps.registration',
     'apps.application',
     'apps.stats',
+    'apps.checkin'
 )
 
 MIDDLEWARE_CLASSES = (
