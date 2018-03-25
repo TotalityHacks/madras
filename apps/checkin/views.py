@@ -1,19 +1,10 @@
 from django.http import JsonResponse
-import django.http
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
-from django.core.mail import EmailMessage
 from django.views.decorators.csrf import csrf_exempt
-from django.contrib.auth import get_user_model
 from madras import settings
 from apps.registration.models import Applicant
-from urllib.parse import quote_plus
 from .models import CheckInGroup, CheckInEvent
 import qrcode
 import os.path
-from datetime import datetime
 from django.utils import timezone
 
 
