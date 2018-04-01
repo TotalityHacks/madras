@@ -1,36 +1,26 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from madras import settings
-from apps.registration.models import Applicant
 from .models import CheckInGroup, CheckInEvent
 import qrcode
 import os.path
 from django.utils import timezone
 
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.views import APIView
+from apps.reader.models import Applicant
 
 static_path = "static/checkin/qr_codes/"
 
 
-def get_qr_code(request):
-    if request.GET:
-        try:
-            email = request.GET["email"]
-        except KeyError:
-            return error_response("Must include email.",
-                                  "You must include the user's email in the request body.",
-                                  400)
-        try:
-            applicant = Applicant.objects.get(email=email)
-        except Applicant.DoesNotExist:
-            return error_response("User does not exist.",
-                                  "A user with that email address was not found in the database.",
-                                  404)
+class GetQRCode(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
         # TODO: check that applicant was actually admitted
-        group = CheckInGroup(applicant=applicant)
+        group = CheckInGroup(applicant=request.user)
         group.save()
         return success_data_jsonify({ "qr_image_path": "/" + return_qr(group.uuid)})
-    else:
-        return error_response("Invalid method.", "Please use a get request.", 405)
 
 
 def get_qr_codes(request):
