@@ -47,7 +47,7 @@ class UserManager(BaseUserManager):
 
 
 class Applicant(AbstractUser):
-    github_user_name = models.CharField(max_length=39, blank=True, null=True)
+    github_username = models.CharField(max_length=39, blank=True, null=True)
     email = models.EmailField(max_length=200, help_text='Required', unique=True)
 
     objects = UserManager()

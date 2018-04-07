@@ -6,8 +6,8 @@ from github3.null import NullObject
 from bs4 import BeautifulSoup
 
 
-def get_contributions(github_user_name):
-    url = "https://github.com/{}".format(github_user_name)
+def get_contributions(github_username):
+    url = "https://github.com/{}".format(github_username)
     resp = requests.get(url)
     soup = BeautifulSoup(resp.content, "lxml")
     elements = soup.findAll("h2", {"class": ["f4", "text-normal", "mb-2"]})
@@ -18,7 +18,7 @@ def get_contributions(github_user_name):
     return 0
 
 
-def get_metrics_github(github_user_name):
+def get_metrics_github(github_username):
     if settings.GITHUB_USERNAME:
         gh = github3.login(settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
     else:
@@ -28,14 +28,14 @@ def get_metrics_github(github_user_name):
             "num_contributions": -1,
             "self_star_repos": -1,
         }
-    user = gh.user(github_user_name)
+    user = gh.user(github_username)
 
     # If no user exists, return an empty dictionary.
     if isinstance(user, NullObject):
         return {}
 
-    user_repos = gh.repositories_by(github_user_name)
-    user_starred = gh.starred_by(github_user_name)
+    user_repos = gh.repositories_by(github_username)
+    user_starred = gh.starred_by(github_username)
     count_of_valid_repos = 0
     for repo in user_repos:
         count_of_valid_repos += 1
@@ -43,6 +43,6 @@ def get_metrics_github(github_user_name):
     return {
         "num_followers": user.followers_count,
         "num_repos": count_of_valid_repos,
-        "num_contributions": get_contributions(github_user_name),
+        "num_contributions": get_contributions(github_username),
         "self_star_repos": len(star_repos),
     }

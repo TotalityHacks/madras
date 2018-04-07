@@ -42,7 +42,7 @@ class NextApplication(APIView):
         """Get the next application that needs a review."""
 
         rand_app = Applicant.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
-        github_array = get_metrics_github(rand_app.github_user_name)
+        github_array = get_metrics_github(rand_app.github_username)
 
         return Response({
             "applicant_id": rand_app.pk,
