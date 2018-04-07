@@ -1,12 +1,12 @@
 from rest_framework import serializers
 from django.conf import settings
 
-from .models import Applicant
+from .models import User
 
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Applicant
+        model = User
         fields = ('id', 'email', 'password', 'github_username')
         write_only_fields = ('password',)
         read_only_fields = ('id',)
@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             method().validate(password=value)
 
     def create(self, data):
-        user = Applicant.objects.create_user(data['email'], data['password'], github_username=data['github_username'])
+        user = User.objects.create_user(data['email'], data['password'], github_username=data['github_username'])
         user.is_active = False
         user.save()
         return user

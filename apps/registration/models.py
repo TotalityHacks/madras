@@ -46,7 +46,7 @@ class UserManager(BaseUserManager):
         return self._create_user(email, password, **extra_fields)
 
 
-class Applicant(AbstractUser):
+class User(AbstractUser):
     github_username = models.CharField(max_length=39, blank=True, null=True)
     email = models.EmailField(max_length=200, help_text='Required', unique=True)
 

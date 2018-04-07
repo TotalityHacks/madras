@@ -26,7 +26,7 @@ SECRET_KEY = os.environ.get("SECRET_KEY", "=u!#c-2hid%(4lq3w--$64!%qmbmmo-ae=l2_
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get("DEBUG", "true").lower() == "true"
 
-AUTH_USER_MODEL = "registration.Applicant"
+AUTH_USER_MODEL = "registration.User"
 
 # Allow all host headers
 ALLOWED_HOSTS = ['*']

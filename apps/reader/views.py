@@ -5,7 +5,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.reader import serializers
-from apps.reader.models import Applicant, RatingResponse
+from apps.reader.models import User, RatingResponse
 from apps.reader.utils import get_metrics_github
 
 from django.conf import settings
@@ -27,7 +27,7 @@ class Rating(APIView):
         applicant_id = params.get("applicant_id")
         rating_number = params.get("user_rating")
         comments = params.get("comments")
-        applicant = get_object_or_404(Applicant, pk=applicant_id)
+        applicant = get_object_or_404(User, pk=applicant_id)
         RatingResponse.objects.create(
             reader=request.user.reader, applicant=applicant, rating_number=rating_number,
             comments=comments)
@@ -41,7 +41,7 @@ class NextApplication(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_app = Applicant.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
+        rand_app = User.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
         github_array = get_metrics_github(rand_app.github_username)
 
         return Response({

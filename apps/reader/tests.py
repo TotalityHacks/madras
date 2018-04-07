@@ -5,7 +5,7 @@ from rest_framework.test import APIRequestFactory, force_authenticate
 from unittest import skip
 
 from .utils import get_metrics_github
-from ..registration.models import Applicant
+from ..registration.models import User
 from .views import NextApplication, Rating
 from ..registration.models import Application
 from .models import Reader, RatingResponse
@@ -25,8 +25,8 @@ class UtilsTests(TestCase):
             status=Application.STATUS_CLOSED
         )
 
-        self.user = Applicant.objects.create(email='test@example.com', password='testing')
-        self.user2 = Applicant.objects.create(email='test2@example.com', password='testing2')
+        self.user = User.objects.create(email='test@example.com', password='testing')
+        self.user2 = User.objects.create(email='test2@example.com', password='testing2')
         Reader.objects.create(user=self.user, organization=Organization.objects.create(name="Test Organization"))
         self.factory = APIRequestFactory()
 

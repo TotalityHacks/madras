@@ -4,13 +4,13 @@ from django.test import TestCase, Client
 from django.utils.http import urlsafe_base64_encode
 from django.utils.encoding import force_bytes
 
-from .models import Applicant
+from .models import User
 from .tokens import account_activation_token
 
 
 class AuthTests(TestCase):
     def setUp(self):
-        self.user = Applicant.objects.create(
+        self.user = User.objects.create(
             email="test@example.com",
             is_active=True
         )
@@ -40,7 +40,7 @@ class AuthTests(TestCase):
         self.assertTrue(resp_data.get("success"), resp_data)
 
         # make sure the user exists
-        new_user = Applicant.objects.filter(email="newuser@example.com")
+        new_user = User.objects.filter(email="newuser@example.com")
         self.assertTrue(new_user.exists())
         new_user = new_user.first()
 
@@ -51,4 +51,4 @@ class AuthTests(TestCase):
         self.assertEqual(resp.status_code, 200)
 
         # make sure account is activated
-        self.assertTrue(Applicant.objects.get(email="newuser@example.com").is_active)
+        self.assertTrue(User.objects.get(email="newuser@example.com").is_active)
