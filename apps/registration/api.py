@@ -40,4 +40,6 @@ class UserRegistrationView(generics.CreateAPIView):
 
 
 class ObtainAuthToken(ObtainAuthTokenBase):
+    """ Obtain an auth token used to make authorized requests to the API. """
+
     renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
