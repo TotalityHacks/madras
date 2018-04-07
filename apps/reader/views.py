@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -9,7 +10,16 @@ from apps.reader.models import User, RatingResponse
 from apps.reader.utils import get_metrics_github
 
 from django.conf import settings
+from django.urls import reverse
 from django.db.models import Count
+
+
+@api_view(['GET'])
+def home(request):
+    return Response({
+        reverse("reader:rating"): 'Get given ratings and submit new ratings.',
+        reverse("reader:next_application"): 'Get the next application to review.'
+    })
 
 
 class Rating(APIView):
