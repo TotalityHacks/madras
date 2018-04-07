@@ -16,6 +16,7 @@ from django.utils.http import urlsafe_base64_decode
 def index(request):
     return Response({
         '/registration': 'Endpoints relating to user account creation.',
+        '/reader': 'Endpoints relating to reading applications.',
         '/login': 'Obtain a token for authenticated requests.'
     })
 
