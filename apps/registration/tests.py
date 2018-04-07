@@ -31,9 +31,9 @@ class AuthTests(TestCase):
         self.assertEqual(resp.status_code, 400)
 
     def test_registration(self):
-        data = {"email": "newuser@example.com", "password1": "mikeisamazing", "password2": "mikeisamazing"}
+        data = {"email": "newuser@example.com", "password": "mikeisamazing"}
         resp = self.client.post("/registration/signup/", data=data)
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 201)
         resp_data = json.loads(resp.content.decode("utf-8"))
 
         # make sure success code is returned
