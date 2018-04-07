@@ -18,7 +18,6 @@ def home(request):
     return Response({
         reverse('registration:home'): 'Get information about registration endpoints.',
         reverse('registration:signup'): 'Create a new account.',
-        reverse('registration:activate'): 'Handler to validate user email confirmations. Should not be called directly.'
     })
 
 
