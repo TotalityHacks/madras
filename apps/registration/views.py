@@ -13,6 +13,14 @@ from django.utils.http import urlsafe_base64_decode
 
 
 @api_view(['GET'])
+def index(request):
+    return Response({
+        '/registration': 'Endpoints relating to user account creation.',
+        '/login': 'Obtain a token for authenticated requests.'
+    })
+
+
+@api_view(['GET'])
 def home(request):
     """ Show information about registration endpoints. """
     return Response({

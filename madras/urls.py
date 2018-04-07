@@ -16,13 +16,15 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from rest_framework.authtoken.views import obtain_auth_token
+from apps.registration.views import index
+from apps.registration.api import ObtainAuthToken
 
 admin.autodiscover()
 
 urlpatterns = [
+    url(r'^$', index, name='index'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^login/', obtain_auth_token),
+    url(r'^login/', ObtainAuthToken.as_view()),
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^reader/', include('apps.reader.urls', namespace="reader")),
