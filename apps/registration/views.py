@@ -1,45 +1,29 @@
 from django.http import JsonResponse
 from django.contrib.auth import login
-from .forms import SignupForm
-from django.contrib.sites.shortcuts import get_current_site
-from django.utils.encoding import force_bytes, force_text
-from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
-from django.template.loader import render_to_string
+from django.urls import reverse
+
+from rest_framework.response import Response
+from rest_framework.decorators import api_view
+
 from .tokens import account_activation_token
 from .models import Applicant
-from django.core.mail import EmailMessage
-from django.views.decorators.csrf import csrf_exempt
+
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
 
+@api_view(['GET'])
 def home(request):
-    pass
-
-
-@csrf_exempt
-def signup(request):
-    if request.method == 'POST':
-        form = SignupForm(data=request.POST)
-        if form.is_valid():
-            user = form.save(commit=False)
-            user.is_active = False
-            user.save()
-            current_site = get_current_site(request)
-            message = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            mail_subject = 'Activate your account.'
-            to_email = form.cleaned_data.get('email')
-            email = EmailMessage(mail_subject, message, to=[to_email])
-            email.send()
-            return JsonResponse({"success": True})
-        else:
-            return JsonResponse({"success": False, "err_field": form.errors})
+    """ Show information about registration endpoints. """
+    return Response({
+        reverse('registration:home'): 'Get information about registration endpoints.',
+        reverse('registration:signup'): 'Create a new account.',
+        reverse('registration:activate'): 'Handler to validate user email confirmations. Should not be called directly.'
+    })
 
 
 def activate(request, uidb64, token):
+    """ Handles the link the user uses to confirm their account. Should not be called directly. """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = Applicant.objects.get(pk=uid)
