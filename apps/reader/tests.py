@@ -1,12 +1,8 @@
-
-import mock
 import json
 
 from django.test import TestCase
 from rest_framework.test import APIRequestFactory, force_authenticate
 from unittest import skip
-from django.conf import settings
-
 
 from .utils import get_metrics_github
 from ..registration.models import Applicant
@@ -24,11 +20,10 @@ class UtilsTests(TestCase):
             status=Application.STATUS_CLOSED
         )
 
-        Application.objects.create(
+        self.application2 = Application.objects.create(
             name="Test Application 2",
-            status = Application.STATUS_CLOSED
-            )
-
+            status=Application.STATUS_CLOSED
+        )
 
         self.user = Applicant.objects.create(email='test@example.com', password='testing')
         self.user2 = Applicant.objects.create(email='test2@example.com', password='testing2')
@@ -50,17 +45,5 @@ class UtilsTests(TestCase):
         data = {"applicant_id": 1, "user_rating": 2, "comments": "hi"}
         request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
         force_authenticate(request, user=self.user)
-        response = Rating.as_view()(request)
+        Rating.as_view()(request)
         self.assertEquals(1, RatingResponse.objects.count())
-
-
-    def test_access_application_after_max_reivews(self):
-        for i in range(5):
-            data = {"applicant_id": self.application.id, "user_rating": 2, "comments": "hi"}
-            request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
-            force_authenticate(request, user=self.user)
-            response = Rating.as_view()(request)
-        request = self.factory.get('/reader/next_application/')
-        force_authenticate(request, user=self.user)
-        response = NextApplication.as_view()(request)
-        print(response.data)
