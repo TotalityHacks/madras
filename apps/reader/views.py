@@ -6,7 +6,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from apps.reader import serializers
-from apps.reader.models import User, RatingResponse
+from apps.reader.models import RatingResponse
 from apps.reader.utils import get_metrics_github
 from apps.application.models import Application
 
@@ -37,13 +37,16 @@ class Rating(APIView):
     def post(self, request):
         """Add a rating to an applicant given an applicant ID."""
         params = dict(request.data)
-        applicant_id = params.get("applicant_id")
+        application_id = params.get("application_id")
         rating_number = params.get("user_rating")
         comments = params.get("comments")
-        applicant = get_object_or_404(User, pk=applicant_id)
+        application = get_object_or_404(Application, id=application_id)
         RatingResponse.objects.create(
-            reader=request.user.reader, applicant=applicant, rating_number=rating_number,
-            comments=comments)
+            reader=request.user,
+            application=application,
+            rating_number=rating_number,
+            comments=comments
+        )
         return Response({"detail": "success"})
 
 
@@ -59,8 +62,7 @@ class NextApplication(APIView):
 
         return Response({
             "applicant_id": rand_app.pk,
-            "num_reads": RatingResponse.objects.filter(
-                applicant=rand_app).count(),
+            "num_reads": RatingResponse.objects.filter(application=rand_app).count(),
             "num_followers": github_array["num_followers"],
             "num_repos": github_array["num_repos"],
             "num_contributions": github_array["num_contributions"],
