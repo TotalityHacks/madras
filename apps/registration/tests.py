@@ -61,3 +61,12 @@ class AuthTests(TestCase):
 
         # make sure account is activated
         self.assertTrue(User.objects.get(email="newuser@example.com").is_active)
+
+    def test_registration_staff(self):
+        data = {"email": "test@totalityhacks.com", "password": "wowastaffuser"}
+        resp = self.client.post("/registration/signup/", data=data)
+        self.assertEqual(resp.status_code, 201)
+
+        user = User.objects.filter(email="test@totalityhacks.com")
+        self.assertTrue(user.exists())
+        self.assertTrue(user[0].is_staff)

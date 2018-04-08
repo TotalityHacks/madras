@@ -16,6 +16,8 @@ from .serializers import UserSerializer
 
 
 class UserRegistrationView(generics.CreateAPIView):
+    """ Create a new user. If the associated email is a staff email address, create a staff user who is able to review applications. """
+
     serializer_class = UserSerializer
 
     def create(self, request):

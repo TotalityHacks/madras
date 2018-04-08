@@ -174,3 +174,6 @@ GITHUB_PASSWORD = os.environ.get("GITHUB_PASSWORD")
 
 # total number of reviews per application
 TOTAL_NUM_REVIEWS = 5
+
+# used for determining if user is staff or applicant
+STAFF_EMAIL_SUFFIX = "totalityhacks.com"
