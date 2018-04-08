@@ -30,6 +30,15 @@ class AuthTests(TestCase):
         resp = self.client.post("/login/", json.dumps(data), content_type="application/json")
         self.assertEqual(resp.status_code, 400)
 
+    def test_login_fail_not_active(self):
+        u = self.user
+        u.is_active = False
+        u.save()
+
+        data = {"username": "test@example.com", "password": "testing"}
+        resp = self.client.post("/login/", json.dumps(data), content_type="application/json")
+        self.assertEqual(resp.status_code, 400)
+
     def test_registration(self):
         data = {"email": "newuser@example.com", "password": "mikeisamazing"}
         resp = self.client.post("/registration/signup/", data=data)

@@ -1,5 +1,7 @@
-from rest_framework import generics, status, renderers
+from rest_framework import generics, status, renderers, serializers
+from rest_framework.compat import authenticate
 from rest_framework.response import Response
+from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthTokenSerializerBase
 from rest_framework.authtoken.views import ObtainAuthToken as ObtainAuthTokenBase
 
 from django.core.mail import EmailMessage
@@ -39,7 +41,26 @@ class UserRegistrationView(generics.CreateAPIView):
         return Response({"success": True}, status=status.HTTP_201_CREATED)
 
 
+class AuthTokenSerializer(AuthTokenSerializerBase):
+    def validate(self, attrs):
+        username = attrs.get('username') or attrs.get('email')
+        password = attrs.get('password')
+
+        if username and password:
+            user = authenticate(request=self.context.get('request'), username=username, password=password)
+
+            if not user:
+                raise serializers.ValidationError('Unable to login with provided credentials. '
+                                                  'Did you verify your email address?', code='authorization')
+        else:
+            raise serializers.ValidationError('Must include "username" and "password".', code='authorization')
+
+        attrs['user'] = user
+        return attrs
+
+
 class ObtainAuthToken(ObtainAuthTokenBase):
     """ Obtain an auth token used to make authorized requests to the API. """
 
+    serializer_class = AuthTokenSerializer
     renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
