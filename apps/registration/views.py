@@ -17,7 +17,8 @@ def index(request):
     return Response({
         '/registration': 'Endpoints relating to user account creation.',
         '/reader': 'Endpoints relating to reading applications.',
-        '/login': 'Obtain a token for authenticated requests.'
+        '/login': 'Obtain a token for authenticated requests.',
+        '/logout': 'Revoke the current session and logout of the API.'
     })
 
 

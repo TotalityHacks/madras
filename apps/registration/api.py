@@ -3,6 +3,7 @@ from rest_framework.compat import authenticate
 from rest_framework.response import Response
 from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthTokenSerializerBase
 from rest_framework.authtoken.views import ObtainAuthToken as ObtainAuthTokenBase
+from rest_framework.views import APIView
 
 from django.core.mail import EmailMessage
 from django.contrib.sites.shortcuts import get_current_site
@@ -66,3 +67,12 @@ class ObtainAuthToken(ObtainAuthTokenBase):
 
     serializer_class = AuthTokenSerializer
     renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
+
+
+class Logout(APIView):
+    """ Given an auth token, revoke the auth token and logout. """
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            request.user.auth_token.delete()
+        return Response({"success": True}, status=status.HTTP_200_OK)

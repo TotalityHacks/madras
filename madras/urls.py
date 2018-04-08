@@ -17,7 +17,7 @@ from django.conf.urls import include, url
 from django.contrib import admin
 
 from apps.registration.views import index
-from apps.registration.api import ObtainAuthToken
+from apps.registration.api import ObtainAuthToken, Logout
 
 admin.autodiscover()
 
@@ -25,6 +25,7 @@ urlpatterns = [
     url(r'^$', index, name='index'),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^login/', ObtainAuthToken.as_view()),
+    url(r'^logout/', Logout.as_view()),
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^reader/', include('apps.reader.urls', namespace="reader")),
