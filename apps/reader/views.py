@@ -16,6 +16,8 @@ from django.db.models import Count
 
 @api_view(['GET'])
 def home(request):
+    """ Endpoints for processing applications. These endpoints can only be accessed to users with the staff permission. """
+
     return Response({
         reverse("reader:rating"): 'Get given ratings and submit new ratings.',
         reverse("reader:next_application"): 'Get the next application to review.'
