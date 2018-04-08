@@ -41,7 +41,10 @@ class UserRegistrationView(generics.CreateAPIView):
         email = EmailMessage(mail_subject, message, to=[to_email])
         email.send()
 
-        return Response({"success": True}, status=status.HTTP_201_CREATED)
+        return Response({
+            "success": True,
+            "message": "Account created! You will need to verify your email address before logging in."
+        }, status=status.HTTP_201_CREATED)
 
 
 class AuthTokenSerializer(AuthTokenSerializerBase):
