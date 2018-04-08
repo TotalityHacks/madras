@@ -1,7 +1,7 @@
 from django.db import models
 
 from apps.director.models import Hackathon, Organization
-from apps.registration.models import Application, User
+from apps.registration.models import Hackathon_Application, User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 from django.contrib.auth import get_user_model
@@ -15,7 +15,7 @@ class Reader(models.Model):
 
 
 class Rating(models.Model):
-    application = models.OneToOneField(Application, related_name="rating", on_delete=models.CASCADE)
+    application = models.OneToOneField(Hackathon_Application, related_name="rating", on_delete=models.CASCADE)
 
 
 class RatingField(models.Model):

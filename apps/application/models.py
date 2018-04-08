@@ -1,4 +1,6 @@
 from django.db import models
+from ..registration.models import User 
+from datetime import datetime
 
 # Create your models here.
 class Application():
