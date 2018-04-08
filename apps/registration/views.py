@@ -46,4 +46,3 @@ def activate(request, uidb64, token):
         return JsonResponse({"message": 'Thank you for your email confirmation. Now you can login your account.'})
     else:
         return JsonResponse({"error": "Invalid email confirmation!"})
-

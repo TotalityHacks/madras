@@ -7,25 +7,19 @@ from unittest import skip
 from .utils import get_metrics_github
 from ..registration.models import User
 from .views import NextApplication, Rating
-from ..registration.models import Application
+from ..application.models import Application
 from .models import Reader, RatingResponse
 
 
 class UtilsTests(TestCase):
 
     def setUp(self):
-        self.application = Application.objects.create(
-            name="Test Application",
-            status=Application.STATUS_CLOSED
-        )
-
-        self.application2 = Application.objects.create(
-            name="Test Application 2",
-            status=Application.STATUS_CLOSED
-        )
-
         self.user = User.objects.create(email='test@example.com', password='testing', is_staff=True)
         self.user2 = User.objects.create(email='test2@example.com', password='testing2')
+
+        self.application = Application.objects.create(user=self.user)
+        self.application2 = Application.objects.create(user=self.user2)
+
         Reader.objects.create(user=self.user)
         self.factory = APIRequestFactory()
 

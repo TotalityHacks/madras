@@ -47,6 +47,7 @@ INSTALLED_APPS = (
     'rest_framework.authtoken',
     'apps.reader',
     'apps.registration',
+    'apps.application',
     'apps.stats',
 )
 

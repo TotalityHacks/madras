@@ -8,6 +8,7 @@ from rest_framework.views import APIView
 from apps.reader import serializers
 from apps.reader.models import User, RatingResponse
 from apps.reader.utils import get_metrics_github
+from apps.application.models import Application
 
 from django.conf import settings
 from django.urls import reverse
@@ -53,7 +54,7 @@ class NextApplication(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_app = User.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
+        rand_app = Application.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
         github_array = get_metrics_github(rand_app.github_username)
 
         return Response({

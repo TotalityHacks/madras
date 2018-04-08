@@ -2,6 +2,7 @@ from django.db import models
 
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
+
 class Hackathon_Application(models.Model):
     STATUS_PREPARING = "preparing"
     STATUS_OPEN = "open"
@@ -18,6 +19,7 @@ class Hackathon_Application(models.Model):
 
     def __str__(self):
         return "{}".format(self.name)
+
 
 class UserManager(BaseUserManager):
     use_in_migrations = True
