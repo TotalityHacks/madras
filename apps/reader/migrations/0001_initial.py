@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('director', '0001_initial'),
+        ('registration', '0001_initial'),
     ]
 
     operations = [
@@ -45,8 +45,6 @@ class Migration(migrations.Migration):
             name='Reader',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('hackathons', models.ManyToManyField(related_name='readers', to='director.Hackathon')),
-                ('organization', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='readers', to='director.Organization')),
             ],
         ),
     ]

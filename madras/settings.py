@@ -45,7 +45,6 @@ INSTALLED_APPS = (
     'django_extensions',
     'rest_framework',
     'rest_framework.authtoken',
-    'apps.director',
     'apps.reader',
     'apps.registration',
     'apps.stats',

@@ -1,6 +1,5 @@
 from django.db import models
 
-from apps.director.models import Hackathon, Organization
 from apps.registration.models import Hackathon_Application, User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -10,8 +9,6 @@ from django.contrib.auth import get_user_model
 class Reader(models.Model):
     User = get_user_model()
     user = models.OneToOneField(User, related_name="reader", on_delete=models.CASCADE)
-    organization = models.ForeignKey(Organization, related_name="readers", on_delete=models.CASCADE)
-    hackathons = models.ManyToManyField(Hackathon, related_name="readers")
 
 
 class Rating(models.Model):
