@@ -25,7 +25,7 @@ class UtilsTests(TestCase):
             status=Application.STATUS_CLOSED
         )
 
-        self.user = User.objects.create(email='test@example.com', password='testing')
+        self.user = User.objects.create(email='test@example.com', password='testing', is_staff=True)
         self.user2 = User.objects.create(email='test2@example.com', password='testing2')
         Reader.objects.create(user=self.user, organization=Organization.objects.create(name="Test Organization"))
         self.factory = APIRequestFactory()
@@ -47,3 +47,9 @@ class UtilsTests(TestCase):
         force_authenticate(request, user=self.user)
         Rating.as_view()(request)
         self.assertEquals(1, RatingResponse.objects.count())
+
+    def test_permission_denied(self):
+        request = self.factory.get('/reader/next_application/')
+        force_authenticate(request, user=self.user2)
+        response = NextApplication.as_view()(request)
+        self.assertEquals(403, response.status_code)

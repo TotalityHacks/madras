@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -23,7 +23,7 @@ def home(request):
 
 
 class Rating(APIView):
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
 
     def get(self, request):
         """Get the first rating of the first application of the first hackaton."""
@@ -46,7 +46,7 @@ class Rating(APIView):
 
 class NextApplication(APIView):
 
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAdminUser,)
 
     def get(self, request):
         """Get the next application that needs a review."""
