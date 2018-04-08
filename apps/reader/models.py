@@ -3,13 +3,6 @@ from django.db import models
 from apps.registration.models import Hackathon_Application, User
 from django.core.validators import MaxValueValidator, MinValueValidator
 
-from django.contrib.auth import get_user_model
-
-
-class Reader(models.Model):
-    User = get_user_model()
-    user = models.OneToOneField(User, related_name="reader", on_delete=models.CASCADE)
-
 
 class Rating(models.Model):
     application = models.OneToOneField(Hackathon_Application, related_name="rating", on_delete=models.CASCADE)
@@ -33,7 +26,7 @@ class RatingField(models.Model):
 
 
 class RatingResponse(models.Model):
-    reader = models.ForeignKey(Reader, related_name="ratings")
+    reader = models.ForeignKey(User, related_name="given_ratings")
     applicant = models.ForeignKey(User, related_name="ratings")
     rating_number = models.IntegerField(default=1, validators=[MinValueValidator(1),
                                         MaxValueValidator(10)])
