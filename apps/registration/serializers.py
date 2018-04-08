@@ -7,7 +7,7 @@ from .models import User
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'email', 'password', 'github_username')
+        fields = ('id', 'email', 'password')
         write_only_fields = ('password',)
         read_only_fields = ('id',)
 
@@ -18,7 +18,7 @@ class UserSerializer(serializers.ModelSerializer):
             method().validate(password=value)
 
     def create(self, data):
-        user = User.objects.create_user(data['email'], data['password'], github_username=data.get('github_username') or None)
+        user = User.objects.create_user(data['email'], data['password'])
         user.is_active = False
         user.save()
         return user

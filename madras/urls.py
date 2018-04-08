@@ -30,4 +30,5 @@ urlpatterns = [
     url(r'^reader/', include('apps.reader.urls', namespace="reader")),
     url(r'^registration/', include('apps.registration.urls', namespace="registration")),
     url(r'^stats/', include('apps.stats.urls', namespace="stats")),
+    url(r'^application/', include('apps.application.urls', namespace="application")),
 ]
