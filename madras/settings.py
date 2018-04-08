@@ -177,3 +177,6 @@ TOTAL_NUM_REVIEWS = 5
 
 # used for determining if user is staff or applicant
 STAFF_EMAIL_SUFFIX = "totalityhacks.com"
+
+# redirect to root on login (without next parameter)
+LOGIN_REDIRECT_URL = "/"
