@@ -30,7 +30,7 @@ class Rating(APIView):
 
     def get(self, request):
         """Get the first rating of the first application of the first hackaton."""
-        rating = request.user.reader.hackathons.first().applications.first().rating
+        rating = request.user.given_ratings.first()
 
         return Response(serializers.RatingSchemaSerializer(rating).data)
 

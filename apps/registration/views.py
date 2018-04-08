@@ -19,7 +19,8 @@ def index(request):
         '/reader': 'Endpoints relating to reading applications.',
         '/login': 'Obtain a token for authenticated requests.',
         '/logout': 'Revoke the current session and logout of the API.',
-        '/stats': 'Get statistics about currently submitted and reviewed applications.'
+        '/stats': 'Get statistics about currently submitted and reviewed applications.',
+        '/application': 'Endpoints relating to submitting applications.'
     })
 
 

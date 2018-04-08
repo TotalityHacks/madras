@@ -1,7 +1,8 @@
 from django.conf.urls import url
 
-from . import api
+from . import views
 
 urlpatterns = [
-    url(r'^submit/$', api.ApplicationView.as_view(), name='submit'),
+    url(r'^$', views.home, name='home'),
+    url(r'^submit/', views.ApplicationView.as_view(), name='submit'),
 ]
