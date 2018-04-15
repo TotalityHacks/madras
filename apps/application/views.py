@@ -12,10 +12,11 @@ from .models import Question
 @api_view(['GET'])
 def home(request):
     return Response({
-        '/submit': 'Submit a new application',
-    	'/questions': 'Gets the list of questions.',
-    	'/questions/create': 'Creates a new question.',
-    	'/questions/:id': 'Gets/updates/deletes the question with the specified ID.'
+        reverse('application:home'): 'Information about application submission endpoints.',
+        reverse('application:submit'): 'Submit a new application.',
+        reverse('application:list_questions'): 'List questions required for the application.',
+        reverse('application:create_question'): 'Create a new application question.',
+        reverse('application:question', kwargs={'pk': 1234}): 'Get, modify, and delete questions.'
     })
 
 
