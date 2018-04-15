@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Application
+from .models import Application, Question
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -23,3 +23,9 @@ class ApplicationSerializer(serializers.ModelSerializer):
         )
         application.save()
         return application
+
+
+class QuestionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Question
+        fields = ('text',)
