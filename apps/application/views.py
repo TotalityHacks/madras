@@ -18,6 +18,7 @@ def home(request):
 
 
 class ApplicationView(generics.CreateAPIView):
+    """ Create a new application. Pass in key value pairs in the form 'question_X': ... where X is the ID of the question and ... is the answer. """
     serializer_class = ApplicationSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -25,4 +26,10 @@ class ApplicationView(generics.CreateAPIView):
 class QuestionView(viewsets.ModelViewSet):
     serializer_class = QuestionSerializer
     permission_classes = (IsAdminUser,)
+    queryset = Question.objects.all()
+
+
+class QuestionListView(generics.ListAPIView):
+    serializer_class = QuestionSerializer
+    permission_classes = (IsAuthenticated,)
     queryset = Question.objects.all()

@@ -13,6 +13,6 @@ class Question(models.Model):
 
 
 class Answer(models.Model):
-    application = models.ForeignKey(Application)
-    question = models.ForeignKey(Question)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
     text = models.TextField()
