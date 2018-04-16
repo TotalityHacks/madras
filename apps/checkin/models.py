@@ -8,7 +8,7 @@ class CheckInGroup(models.Model):
 
     applicant = models.ForeignKey(Applicant)
 
-    uuid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    uuid = models.UUIDField(editable=False, default=uuid.uuid4)
 
     def __str__(self):
         return self.applicant.__str__() + " checked in" if self.checked_in else " not checked in"
