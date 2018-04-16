@@ -63,10 +63,10 @@ def check_in(request):
             return error_response("User already checked in.",
                                   "The user specified is already checked in.",
                                   409)
-        event = CheckInEvent(check_in_group=group, check_in=True, time=timezone.now())
         group.checked_in = True
-        event.save()
         group.save()
+        event = CheckInEvent(check_in_group=group, check_in=True, time=timezone.now())
+        event.save()
         return success_data_jsonify()
     else:
         return error_response("Invalid method.", "Please use a post request.", 405)
