@@ -36,7 +36,7 @@ def get_qr_codes(request):
 
 
 def return_qr(uuid):
-    relative_path = static_path + uuid + ".png"
+    relative_path = static_path + str(uuid) + ".png"
     full_path = os.path.join(settings.PROJECT_ROOT, relative_path)
     if not os.path.exists(full_path):
         with open(full_path, "wb") as f:
@@ -126,3 +126,5 @@ def error_response(title, message, code):
     response.status_code = code
 
     return response
+
+
