@@ -62,6 +62,7 @@ class NextApplication(APIView):
 
         return Response({
             "applicant_id": rand_app.pk,
+            "responses": [(x.question.text, x.text) for x in rand_app.answer_set.all()],
             "num_reads": RatingResponse.objects.filter(application=rand_app).count(),
             "num_followers": github_array["num_followers"],
             "num_repos": github_array["num_repos"],
