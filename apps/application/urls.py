@@ -9,7 +9,7 @@ urlpatterns = [
     url(r'^questions/create$', views.QuestionView.as_view({'post': 'create'}), name='create_question'),
     url(r'^questions/(?P<pk>[0-9]+)/$', views.QuestionView.as_view({
         'get': 'retrieve',
-        'put': 'update',
+        'post': 'update',
         'delete': 'destroy'
     }), name='question'),
 ]

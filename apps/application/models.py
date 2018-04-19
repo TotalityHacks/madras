@@ -10,6 +10,7 @@ class Application(models.Model):
 
 class Question(models.Model):
     text = models.TextField()
+    type = models.CharField(max_length=255)
 
 
 class Answer(models.Model):
