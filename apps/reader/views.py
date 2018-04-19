@@ -14,6 +14,8 @@ from django.conf import settings
 from django.urls import reverse
 from django.db.models import Count
 
+from ..application.serializers import ApplicationSerializer
+
 
 @api_view(['GET'])
 def home(request):
@@ -60,12 +62,6 @@ class NextApplication(APIView):
         rand_app = Application.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
         github_array = get_metrics_github(rand_app.github_username)
 
-        return Response({
-            "applicant_id": rand_app.pk,
-            "responses": [(x.question.text, x.text) for x in rand_app.answer_set.all()],
-            "num_reads": RatingResponse.objects.filter(application=rand_app).count(),
-            "num_followers": github_array["num_followers"],
-            "num_repos": github_array["num_repos"],
-            "num_contributions": github_array["num_contributions"],
-            "self_star_repos": github_array["self_star_repos"]
-        })
+        data = ApplicationSerializer(rand_app).data
+        data.update(github_array)
+        return Response(data)

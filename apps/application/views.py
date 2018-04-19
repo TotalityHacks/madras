@@ -6,7 +6,7 @@ from rest_framework.decorators import api_view
 from django.urls import reverse
 
 from .serializers import ApplicationSerializer, QuestionSerializer
-from .models import Question
+from .models import Question, Application
 
 
 @api_view(['GET'])
@@ -20,10 +20,17 @@ def home(request):
     })
 
 
-class ApplicationView(generics.CreateAPIView):
+class ApplicationView(generics.ListCreateAPIView):
     """ Create a new application. Pass in key value pairs in the form 'question_X': ... where X is the ID of the question and ... is the answer. """
     serializer_class = ApplicationSerializer
     permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        try:
+            app = Application.objects.get(user=request.user)
+        except Application.DoesNotExist:
+            return Response({'error': 'No application has been submitted yet!'})
+        return Response(ApplicationSerializer(app).data)
 
 
 class QuestionView(viewsets.ModelViewSet):

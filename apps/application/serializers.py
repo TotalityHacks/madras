@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from rest_framework.utils.serializer_helpers import ReturnDict
 from django.db import transaction
 
 from .models import Application, Question, Answer
@@ -23,6 +24,18 @@ class ApplicationSerializer(serializers.ModelSerializer):
         super(ApplicationSerializer, self).__init__(*args, **kwargs)
         for question in Question.objects.all():
             self.fields["question_{}".format(question.id)] = serializers.CharField(help_text=question.text)
+
+    @property
+    def data(self):
+        for field in list(self.fields):
+            if field.startswith("question_"):
+                del self.fields[field]
+        out = super(serializers.ModelSerializer, self).data
+        out["questions"] = []
+        if "id" in out:
+            for answer in Application.objects.get(id=out["id"]).answer_set.all():
+                out["questions"].append([answer.question.text, answer.text])
+        return ReturnDict(out, serializer=self)
 
     def create(self, data):
         with transaction.atomic():
