@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from rest_framework.utils.serializer_helpers import ReturnDict
+from rest_framework.utils.serializer_helpers import ReturnDict, OrderedDict
+from rest_framework.relations import PKOnlyObject
+from rest_framework.fields import SkipField
 from django.db import transaction
 
 from .models import Application, Question, Answer
@@ -10,37 +12,26 @@ class ApplicationSerializer(serializers.ModelSerializer):
         model = Application
         exclude = ('user',)
 
-    def validate_github_username(self, data):
-        if Application.objects.filter(github_username=data).exists():
-            raise serializers.ValidationError('An application with this GitHub username already exists!')
-        return data
-
-    def validate(self, data):
-        if Application.objects.filter(user=self.context['request'].user).exists():
-            raise serializers.ValidationError('You have already submitted an application for this hackathon!')
-        return data
-
     def __init__(self, *args, **kwargs):
         super(ApplicationSerializer, self).__init__(*args, **kwargs)
         for question in Question.objects.all():
-            self.fields["question_{}".format(question.id)] = serializers.CharField(help_text=question.text)
+            self.fields["question_{}".format(question.id)] = serializers.CharField(help_text=question.text, required=False)
 
     @property
     def data(self):
-        for field in list(self.fields):
-            if field.startswith("question_"):
-                del self.fields[field]
-        out = super(serializers.ModelSerializer, self).data
-        out["questions"] = []
-        if "id" in out:
-            for answer in Application.objects.get(id=out["id"]).answer_set.all():
-                out["questions"].append([answer.question.text, answer.text])
-        return ReturnDict(out, serializer=self)
+        data = super(serializers.ModelSerializer, self).data
+        data["questions"] = []
+        if "id" in data:
+            for answer in Answer.objects.filter(application=data["id"]):
+                data["questions"].append([answer.question.text, answer.text])
+        return ReturnDict(data, serializer=self)
 
     def create(self, data):
         with transaction.atomic():
+            user = self.context['request'].user
+            Application.objects.filter(user=user).delete()
             application = Application.objects.create(
-                user=self.context['request'].user,
+                user=user,
                 github_username=data['github_username']
             )
             for item in data:
