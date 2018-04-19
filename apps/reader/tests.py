@@ -31,7 +31,7 @@ class UtilsTests(TestCase):
         request = self.factory.get('/reader/next_application/')
         force_authenticate(request, user=self.user)
         response = NextApplication.as_view()(request)
-        self.assertEquals(response.data["applicant_id"], self.application.id)
+        self.assertEquals(response.data["id"], self.application.id)
 
     def test_post_review(self):
         data = {"application_id": 1, "user_rating": 2, "comments": "hi"}
