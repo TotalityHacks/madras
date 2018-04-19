@@ -1,7 +1,5 @@
 from rest_framework import serializers
-from rest_framework.utils.serializer_helpers import ReturnDict, OrderedDict
-from rest_framework.relations import PKOnlyObject
-from rest_framework.fields import SkipField
+from rest_framework.utils.serializer_helpers import ReturnDict
 from django.db import transaction
 
 from .models import Application, Question, Answer
