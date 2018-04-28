@@ -5,7 +5,6 @@ from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthToke
 from rest_framework.authtoken.views import ObtainAuthToken as ObtainAuthTokenBase
 from rest_framework.views import APIView
 
-from django.core.mail import EmailMessage
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
