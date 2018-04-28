@@ -6,6 +6,7 @@ from rest_framework.authtoken.views import ObtainAuthToken as ObtainAuthTokenBas
 from rest_framework.views import APIView
 
 from django.core.mail import EmailMessage
+from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 
@@ -39,7 +40,8 @@ class UserRegistrationView(generics.CreateAPIView):
         })
         mail_subject = 'Activate your account!'
         to_email = user.email
-        email = EmailMessage(mail_subject, message, to=[to_email])
+        email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
+        email.attach_alternative(message, "text/html")
         email.send()
 
         return Response({
