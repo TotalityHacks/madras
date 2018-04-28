@@ -42,7 +42,13 @@ class NextApplicationView(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_app = Application.objects.annotate(reviews=Count('ratings')).filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
+        rand_app = Application.objects.annotate(reviews=Count('ratings')) \
+                                      .exclude(ratings__reader=request.user) \
+                                      .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
+
+        if rand_app is None:
+            return Response({"error": "No more applications to review!"})
+
         github_array = get_metrics_github(rand_app.github_username)
 
         data = ApplicationSerializer(rand_app).data
