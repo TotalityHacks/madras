@@ -1,9 +1,12 @@
 from django.http import JsonResponse
 from django.contrib.auth import login
 from django.urls import reverse
+from django.conf import settings
 
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
+
+from django.shortcuts import redirect
 
 from .tokens import account_activation_token
 from .models import User
@@ -44,6 +47,6 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return JsonResponse({"message": 'Thank you for your email confirmation. Now you can login your account.'})
+        return redirect(settings.HOME_PAGE_URL)
     else:
         return JsonResponse({"error": "Invalid email confirmation!"})
