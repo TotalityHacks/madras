@@ -14,6 +14,7 @@ from django.utils.http import urlsafe_base64_encode
 
 from .tokens import account_activation_token
 from .serializers import UserSerializer
+from .models import User
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -56,8 +57,10 @@ class AuthTokenSerializer(AuthTokenSerializerBase):
             user = authenticate(request=self.context.get('request'), username=username, password=password)
 
             if not user:
-                raise serializers.ValidationError('Unable to login with provided credentials. '
-                                                  'Did you verify your email address?', code='authorization')
+                if User.objects.filter(email=username).exists():
+                    if not User.objects.get(email=username).is_active:
+                        raise serializers.ValidationError('You cannot login until you have confirmed your email address.', code='authorization')
+                raise serializers.ValidationError('Unable to login with provided credentials.', code='authorization')
         else:
             raise serializers.ValidationError('Must include "username" and "password".', code='authorization')
 
