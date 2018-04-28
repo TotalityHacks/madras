@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
 from django.urls import reverse
+from ..application.models import Application
+from ..reader.models import Rating
 
 
 @api_view(['GET'])
@@ -21,13 +23,9 @@ class Summary(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        hackathon = request.user.reader.hackathons.first()
-        total_reads = 0
-        for applicant in hackathon.applicants.all():
-            total_reads += applicant.ratings.all().count()
         return Response({
-            "num_applicants": hackathon.applicants.all().count(),
-            "num_total_reads": total_reads,
+            "num_applicants": Application.objects.all().count(),
+            "num_total_reads": Rating.objects.all().count(),
         }, status=status.HTTP_200_OK)
 
 
