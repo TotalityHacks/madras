@@ -35,7 +35,7 @@ class RatingView(ListCreateAPIView):
         return RatingResponse.objects.all()
 
 
-class NextApplication(APIView):
+class NextApplicationView(APIView):
 
     permission_classes = (IsAdminUser,)
 

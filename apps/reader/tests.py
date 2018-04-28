@@ -6,7 +6,7 @@ from unittest import skip
 
 from .utils import get_metrics_github
 from ..registration.models import User
-from .views import NextApplication, Rating
+from .views import NextApplicationView, RatingView
 from ..application.models import Application
 from .models import RatingResponse
 
@@ -30,18 +30,18 @@ class UtilsTests(TestCase):
     def test_next_applicant(self):
         request = self.factory.get('/reader/next_application/')
         force_authenticate(request, user=self.user)
-        response = NextApplication.as_view()(request)
+        response = NextApplicationView.as_view()(request)
         self.assertEquals(response.data["id"], self.application.id)
 
     def test_post_review(self):
         data = {"application": 1, "rating_number": 2, "comments": "hi"}
         request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
         force_authenticate(request, user=self.user)
-        Rating.as_view()(request)
+        RatingView.as_view()(request)
         self.assertEquals(1, RatingResponse.objects.count())
 
     def test_permission_denied(self):
         request = self.factory.get('/reader/next_application/')
         force_authenticate(request, user=self.user2)
-        response = NextApplication.as_view()(request)
+        response = NextApplicationView.as_view()(request)
         self.assertEquals(403, response.status_code)
