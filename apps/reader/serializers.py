@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from apps.reader.models import Rating, RatingField
+from apps.reader.models import Rating, RatingField, RatingResponse
 
 
 class RatingFieldSerializer(serializers.ModelSerializer):
@@ -18,3 +18,15 @@ class RatingSchemaSerializer(serializers.ModelSerializer):
         model = Rating
         fields = ("application", "fields")
         read_only_fields = fields
+
+
+class RatingResponseSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = RatingResponse
+        fields = ("application", "reader", "rating_number", "comments")
+        read_only_fields = ("reader",)
+
+    def create(self, data):
+        data['reader'] = self.context['request'].user
+        return super(RatingResponseSerializer, self).create(data)

@@ -1,9 +1,8 @@
-from django.shortcuts import get_object_or_404
-
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.generics import ListCreateAPIView
 
 from apps.reader import serializers
 from apps.reader.models import RatingResponse
@@ -27,29 +26,13 @@ def home(request):
     })
 
 
-class Rating(APIView):
+class Rating(ListCreateAPIView):
+    """ Get all of the ratings given to all applications, or submit a new rating for an application. """
+    serializer_class = serializers.RatingResponseSerializer
     permission_classes = (IsAdminUser,)
 
-    def get(self, request):
-        """Get the first rating of the first application of the first hackaton."""
-        rating = request.user.given_ratings.first()
-
-        return Response(serializers.RatingSchemaSerializer(rating).data)
-
-    def post(self, request):
-        """Add a rating to an applicant given an applicant ID."""
-        params = dict(request.data)
-        application_id = params.get("application_id")
-        rating_number = params.get("user_rating")
-        comments = params.get("comments")
-        application = get_object_or_404(Application, id=application_id)
-        RatingResponse.objects.create(
-            reader=request.user,
-            application=application,
-            rating_number=rating_number,
-            comments=comments
-        )
-        return Response({"detail": "success"})
+    def get_queryset(self):
+        return RatingResponse.objects.all()
 
 
 class NextApplication(APIView):

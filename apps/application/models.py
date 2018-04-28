@@ -7,6 +7,9 @@ class Application(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     submission_date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return self.user.email
+
 
 class Question(models.Model):
     text = models.TextField()
