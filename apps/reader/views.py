@@ -5,7 +5,7 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 
 from apps.reader import serializers
-from apps.reader.models import RatingResponse
+from apps.reader.models import Rating
 from apps.reader.utils import get_metrics_github
 from apps.application.models import Application
 
@@ -28,11 +28,11 @@ def home(request):
 
 class RatingView(ListCreateAPIView):
     """ Get all of the ratings given to all applications, or submit a new rating for an application. """
-    serializer_class = serializers.RatingResponseSerializer
+    serializer_class = serializers.RatingSerializer
     permission_classes = (IsAdminUser,)
 
     def get_queryset(self):
-        return RatingResponse.objects.all()
+        return Rating.objects.all()
 
 
 class NextApplicationView(APIView):
