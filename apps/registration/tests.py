@@ -57,7 +57,7 @@ class AuthTests(TestCase):
         uid = urlsafe_base64_encode(force_bytes(new_user.pk)).decode("utf-8")
         token = account_activation_token.make_token(new_user)
         resp = self.client.get("/registration/activate/{}/{}/".format(uid, token))
-        self.assertEqual(resp.status_code, 200)
+        self.assertEqual(resp.status_code, 302)
 
         # make sure account is activated
         self.assertTrue(User.objects.get(email="newuser@example.com").is_active)
