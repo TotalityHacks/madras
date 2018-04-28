@@ -26,7 +26,7 @@ def home(request):
     })
 
 
-class Rating(ListCreateAPIView):
+class RatingView(ListCreateAPIView):
     """ Get all of the ratings given to all applications, or submit a new rating for an application. """
     serializer_class = serializers.RatingResponseSerializer
     permission_classes = (IsAdminUser,)
