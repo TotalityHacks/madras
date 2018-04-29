@@ -21,7 +21,7 @@ class GetQRCode(APIView):
         # TODO: check that applicant was actually admitted
         group = CheckInGroup(applicant=request.user)
         group.save()
-        return HttpResponse(return_qr(group.uuid), content_type="image/png")
+        return HttpResponse( qrcode.make(group.uuid), content_type="image/png")
 
 
 # def get_qr_codes(request):
@@ -36,12 +36,6 @@ class GetQRCode(APIView):
 #     return success_data_jsonify({"qr_image_paths": files})
 
 
-def return_qr(uuid):
-    relative_path = static_path + str(uuid) + ".png"
-    full_path = os.path.join(settings.PROJECT_ROOT, relative_path)
-    if not os.path.exists(full_path):
-        with open(full_path, "wb") as f:
-            qrcode.make(uuid)
 
 
 @csrf_exempt
