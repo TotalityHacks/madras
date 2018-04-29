@@ -9,6 +9,7 @@ from django.utils import timezone
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 from apps.reader.models import Applicant
+from django.http import HttpResponse
 
 static_path = "static/checkin/qr_codes/"
 
@@ -20,19 +21,19 @@ class GetQRCode(APIView):
         # TODO: check that applicant was actually admitted
         group = CheckInGroup(applicant=request.user)
         group.save()
-        return success_data_jsonify({ "qr_image_path": "/" + return_qr(group.uuid)})
+        return HttpResponse(return_qr(group.uuid), content_type="image/png")
 
 
-def get_qr_codes(request):
-    # TODO: will need to be authenticated to admins
-    applicants = Applicant.objects.all()
-    # TODO: filter to only include admitted applicants
-    files = []
-    for applicant in applicants:
-        group = CheckInGroup(applicant=applicant)
-        group.save()
-        files.append(return_qr(group.uuid))
-    return success_data_jsonify({"qr_image_paths": files})
+# def get_qr_codes(request):
+#     # TODO: will need to be authenticated to admins
+#     applicants = Applicant.objects.all()
+#     # TODO: filter to only include admitted applicants
+#     files = []
+#     for applicant in applicants:
+#         group = CheckInGroup(applicant=applicant)
+#         group.save()
+#         files.append(return_qr(group.uuid))
+#     return success_data_jsonify({"qr_image_paths": files})
 
 
 def return_qr(uuid):
@@ -40,8 +41,7 @@ def return_qr(uuid):
     full_path = os.path.join(settings.PROJECT_ROOT, relative_path)
     if not os.path.exists(full_path):
         with open(full_path, "wb") as f:
-            qrcode.make(uuid).save(f, format="PNG")
-    return relative_path
+            qrcode.make(uuid)
 
 
 @csrf_exempt
