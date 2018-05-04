@@ -29,3 +29,35 @@ Note: This is sent to the user in an email, should not need to be called directl
 - Method: `GET`
 - On Success: Activates the user's account, returns JSON with format `{'message': '...'}`
 - On Error: Returns JSON with format `{'error': '...'}`
+
+## Checkin
+Return the QR code for the currently authenticated user.
+- URL: `/checkin/get_qr_code`
+- Method: `GET`
+- On Success: Returns HTTPResponse with the generated QR code.
+- On error: No errors should occur, except for generic django errors if the user is not logged in.
+
+Return the QR code for any arbitrary user.
+- URL: `/checkin/get_qr_code_admin`
+- Method: `GET`
+- GET parameters
+    - email: the email of the user.
+- On Success: Returns HTTPResponse with the generated QR code.
+- On error: returns JSON with the error response `{'success': false, 'error': {'message': ..., 'title': ...}}`
+
+Check in a user.
+- URL: `/checkin/check_in`
+- Method: `POST`
+- POST parameters
+    - uuid: the uuid of the user's check in group, as encoded in the QR code.
+- On Success: returns JSON with the response `{'success: True'}`
+- On error: returns JSON with the error response: `{'success': false, 'error': {'message': ..., 'title': ...}}`
+
+Check out a user.
+- URL: `/checkin/check_out`
+- Method: `POST`
+- POST parameters
+    - uuid: the uuid of the user's check in group, as encoded in the QR code.
+- On Success: returns JSON with the response `{'success: True'}`
+- On error: returns JSON with the error response: `{'success': false, 'error': {'message': ..., 'title': ...}}`
+

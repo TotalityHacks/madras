@@ -1,14 +1,12 @@
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
-from madras import settings
 from .models import CheckInGroup, CheckInEvent
 import qrcode
-import os.path
 from django.utils import timezone
+from .models import Applicant
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
-from apps.reader.models import Applicant
 from django.http import HttpResponse
 
 static_path = "static/checkin/qr_codes/"
@@ -21,19 +19,25 @@ class GetQRCode(APIView):
         # TODO: check that applicant was actually admitted
         group = CheckInGroup(applicant=request.user)
         group.save()
-        return HttpResponse( qrcode.make(group.uuid), content_type="image/png")
+        return HttpResponse(qrcode.make(group.uuid), content_type="image/png")
 
 
-# def get_qr_codes(request):
-#     # TODO: will need to be authenticated to admins
-#     applicants = Applicant.objects.all()
-#     # TODO: filter to only include admitted applicants
-#     files = []
-#     for applicant in applicants:
-#         group = CheckInGroup(applicant=applicant)
-#         group.save()
-#         files.append(return_qr(group.uuid))
-#     return success_data_jsonify({"qr_image_paths": files})
+def get_qr_code(request):
+    email = request.GET["email"]
+    # TODO: will need to be authenticated to admins
+    try:
+        applicant = Applicant.objects.get(email=email)
+    except Applicant.DoesNotExist:
+        return error_response("User does not exist.",
+                              "There is no user with this name in the database.",
+                              404)
+    # TODO: filter to only include admitted applicants
+    try:
+        group = CheckInGroup.objects.get(applicant=applicant)
+    except CheckInGroup.DoesNotExist:
+        group = CheckInGroup(applicant=applicant)
+        group.save()
+    return HttpResponse(qrcode.make(group.uuid), content_type="image/png")
 
 
 
