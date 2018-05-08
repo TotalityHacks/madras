@@ -13,6 +13,7 @@ class Application(models.Model):
 
 class Question(models.Model):
     text = models.TextField()
+    prefix = models.CharField(max_length=255, blank=True, default="")
     max_length = models.IntegerField(default=65535)
     type = models.CharField(max_length=255)
 

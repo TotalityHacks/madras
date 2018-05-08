@@ -45,5 +45,5 @@ class ApplicationSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ('id', 'type', 'max_length', 'text')
+        fields = ('id', 'type', 'max_length', 'prefix', 'text')
         read_only_fields = ('id',)

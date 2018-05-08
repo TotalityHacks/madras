@@ -31,5 +31,6 @@ class RatingSerializer(serializers.ModelSerializer):
             fields_processed = RatingResponse.objects.filter(rating=response).count()
             field_count = RatingField.objects.count()
             if fields_processed < field_count:
-                raise ValidationError('Missing required fields! Please pass the following parameters to the API: {}'.format(["field_{}".format(x) for x in RatingField.objects.all().values_list("name", flat=True)]))
+                list_of_fields = ["field_{}".format(x) for x in RatingField.objects.all().values_list("name", flat=True)]
+                raise ValidationError('Missing required fields! Please pass the following parameters to the API: {}'.format(list_of_fields))
         return response
