@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework.permissions import IsAdminUser
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
@@ -47,7 +48,7 @@ class NextApplicationView(APIView):
                                       .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
 
         if rand_app is None:
-            return Response({"error": "No more applications to review!"})
+            return Response({"error": "No more applications to review!"}, status=status.HTTP_404_NOT_FOUND)
 
         github_array = get_metrics_github(rand_app.github_username)
 
