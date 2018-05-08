@@ -47,6 +47,6 @@ def activate(request, uidb64, token):
         user.is_active = True
         user.save()
         login(request, user)
-        return redirect(settings.HOME_PAGE_URL)
+        return redirect(settings.EMAIL_REDIRECT_URL)
     else:
         return JsonResponse({"error": "Invalid email confirmation!"})

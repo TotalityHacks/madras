@@ -16,8 +16,9 @@ import dj_database_url
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-# URL of the home page for URL redirection
-HOME_PAGE_URL = 'https://totalityhacks.com/'
+
+# URL of the page to redirect to after a new user has confirmed their email
+EMAIL_REDIRECT_URL = "https://totalityhacks.com/"
 
 
 # Quick-start development settings - unsuitable for production
