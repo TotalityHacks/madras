@@ -362,7 +362,7 @@
                             <!-- BANNER CONTENT -->
                             <td style="font-family:'Open Sans', Arial, Helvetica, sans-serif;font-size:11pt;color:rgb(90, 91, 84);text-align:left;line-height:24px;padding:0 20px 0 20px;">
                               <p>Please click on the link below to confirm your registration:
-                              http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}
+                              <a href="http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}">http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}</a>
 								{% endautoescape %}</p>
                               <br>
                               <table cellpadding="5" style="height:50px;">
