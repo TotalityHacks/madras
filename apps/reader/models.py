@@ -38,6 +38,6 @@ class RatingField(models.Model):
 
 
 class RatingResponse(models.Model):
-    rating = models.ForeignKey(Rating)
-    field = models.ForeignKey(RatingField)
+    rating = models.ForeignKey(Rating, on_delete=models.CASCADE)
+    field = models.ForeignKey(RatingField, on_delete=models.CASCADE)
     number = models.IntegerField(validators=[MinValueValidator(1), MaxValueValidator(5)])
