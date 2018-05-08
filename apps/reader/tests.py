@@ -16,9 +16,11 @@ class UtilsTests(TestCase):
     def setUp(self):
         self.user = User.objects.create(email='test@example.com', password='testing', is_staff=True)
         self.user2 = User.objects.create(email='test2@example.com', password='testing2')
+        self.user3 = User.objects.create(email='test3@example.com', password='testing3')
 
-        self.application = Application.objects.create(user=self.user)
-        self.application2 = Application.objects.create(user=self.user2)
+        self.saved_application = Application.objects.create(user=self.user3)
+        self.application = Application.objects.create(user=self.user, status=Application.SUBMITTED)
+        self.application2 = Application.objects.create(user=self.user2, status=Application.SUBMITTED)
 
         self.factory = APIRequestFactory()
 
