@@ -34,7 +34,7 @@ class UtilsTests(TestCase):
         self.assertEquals(response.data["id"], self.application.id)
 
     def test_post_review(self):
-        data = {"application": 1, "rating_number": 2, "comments": "hi"}
+        data = {"application": 1, "field_skill": 2, "field_community": 5, "field_passion": 3, "comments": "hi"}
         request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
         force_authenticate(request, user=self.user)
         RatingView.as_view()(request)
