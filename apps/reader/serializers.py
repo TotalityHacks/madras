@@ -14,7 +14,7 @@ class RatingSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(RatingSerializer, self).__init__(*args, **kwargs)
-        self.fields["rating"] = serializers.IntegerField(help_text="A weighted combination of all available rating fields.")
+        self.fields["rating"] = serializers.IntegerField(help_text="A weighted combination of all available rating fields.", read_only=True)
         for field in RatingField.objects.all():
             name = field.name
             self.fields["field_{}".format(name)] = serializers.IntegerField(help_text="{} ({}% of final score)".format(name.title(), field.weight))
