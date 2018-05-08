@@ -25,6 +25,7 @@ class Summary(APIView):
     def get(self, request):
         return Response({
             "num_applicants": Application.objects.all().count(),
+            "num_submitted_applicants": Application.objects.filter(status=Application.SUBMITTED).count(),
             "num_total_reads": Rating.objects.all().count(),
         }, status=status.HTTP_200_OK)
 

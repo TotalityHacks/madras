@@ -45,7 +45,8 @@ class NextApplicationView(APIView):
 
         rand_app = Application.objects.annotate(reviews=Count('ratings')) \
                                       .exclude(ratings__reader=request.user) \
-                                      .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS).first()
+                                      .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS) \
+                                      .filter(status=Application.SUBMITTED).first()
 
         if rand_app is None:
             return Response({"error": "No more applications to review!"}, status=status.HTTP_404_NOT_FOUND)
