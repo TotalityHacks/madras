@@ -171,7 +171,7 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
-# SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = True
 
 
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME")
