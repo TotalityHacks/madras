@@ -8,7 +8,7 @@ class Application(models.Model):
     submission_date = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return "({}) {}".format(self.id, self.user.email)
+        return "<Application: ({}) {}>".format(self.id, self.user.email)
 
 
 class Question(models.Model):
