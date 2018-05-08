@@ -1,3 +1,4 @@
+from rest_framework import status
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
@@ -29,7 +30,7 @@ class ApplicationView(generics.ListCreateAPIView):
         try:
             app = Application.objects.get(user=request.user)
         except Application.DoesNotExist:
-            return Response({'error': 'No application has been submitted yet!'})
+            return Response({'error': 'No application has been submitted yet!'}, status=status.HTTP_404_NOT_FOUND)
         return Response(ApplicationSerializer(app).data)
 
 
