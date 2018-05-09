@@ -51,7 +51,7 @@ def activate(request, uidb64, token):
         login(request, user)
         return redirect(settings.EMAIL_REDIRECT_URL)
     else:
-        return JsonResponse({"success": False, "error": "Invalid email confirmation!"})
+        return JsonResponse({"success": False, "error": "Invalid email confirmation token!"})
 
 
 def recover(request, uidb64, token):
@@ -63,11 +63,19 @@ def recover(request, uidb64, token):
         user = None
     if user is None or not account_activation_token.check_token(user, token):
         return JsonResponse({"success": False, "error": "Invalid password reset code!"})
+
+    context = {
+        "email": user.email,
+        "action": request.path_info
+    }
+
     if request.method == "POST":
         password = request.POST.get("password")
-        if password:
+        if password and len(password) >= 8:
             user.set_password(password)
             user.save()
-        return redirect(settings.EMAIL_REDIRECT_URL)
-    else:
-        return render(request, "reset_password.html", {"action": request.path_info})
+            return redirect(settings.EMAIL_REDIRECT_URL)
+        else:
+            context["error"] = "Password is too short!"
+
+    return render(request, "reset_password.html", context)
