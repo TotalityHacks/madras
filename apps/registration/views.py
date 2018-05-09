@@ -17,6 +17,7 @@ from django.utils.http import urlsafe_base64_decode
 
 @api_view(['GET'])
 def index(request):
+    """ The backend API for Madras, a cloud-based hackathon management system. """
     return Response({
         '/registration': 'Endpoints relating to user account creation.',
         '/reader': 'Endpoints relating to reading applications.',
