@@ -51,7 +51,10 @@ class NextApplicationView(APIView):
         if rand_app is None:
             return Response({"error": "No more applications to review!"}, status=status.HTTP_404_NOT_FOUND)
 
-        github_array = get_metrics_github(rand_app.github_username)
+        if rand_app.github_username:
+            github_array = get_metrics_github(rand_app.github_username)
+        else:
+            github_array = {}
 
         data = ApplicationSerializer(rand_app).data
         data.update(github_array)

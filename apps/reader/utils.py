@@ -2,7 +2,6 @@ import requests
 import github3
 
 from django.conf import settings
-from github3.null import NullObject
 from bs4 import BeautifulSoup
 
 
@@ -19,6 +18,8 @@ def get_contributions(github_username):
 
 
 def get_metrics_github(github_username):
+    """ Returns basic GitHub statistics given a GitHub username. """
+
     if settings.GITHUB_USERNAME:
         gh = github3.login(settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
     else:
@@ -28,10 +29,10 @@ def get_metrics_github(github_username):
             "num_contributions": -1,
             "self_star_repos": -1,
         }
-    user = gh.user(github_username)
 
-    # If no user exists, return an empty dictionary.
-    if isinstance(user, NullObject):
+    try:
+        user = gh.user(github_username)
+    except github3.exceptions.NotFoundError:
         return {}
 
     user_repos = gh.repositories_by(github_username)
