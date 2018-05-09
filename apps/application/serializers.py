@@ -51,7 +51,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
                 if item.startswith("question_"):
                     question_id = int(item.rsplit("_", 1)[-1])
                     question = Question.objects.get(id=question_id)
-                    Answer.objects.create(question=question, application=application, text=data[item])
+                    Answer.objects.update_or_create(question=question, application=application, defaults={'text': data[item]})
                     del self.fields[item]
             application.save()
         return application
