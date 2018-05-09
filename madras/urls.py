@@ -19,6 +19,8 @@ from django.contrib import admin
 from apps.registration.views import index
 from apps.registration.api import ObtainAuthToken, Logout
 
+admin.site.site_header = "Madras administration"
+
 admin.autodiscover()
 
 urlpatterns = [
