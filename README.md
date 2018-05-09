@@ -13,3 +13,11 @@ pip install -r requirements.txt
 ./manage.py migrate
 ./manage.py runserver
 ```
+
+### Environment Variables
+
+- `DEBUG`
+- `DATABASE_URL`
+- `SENDGRID_API_KEY`
+- `SENDGRID_USERNAME`
+- `SENDGRID_PASSWORD`
