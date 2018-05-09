@@ -24,6 +24,9 @@ class Question(models.Model):
     max_length = models.IntegerField(default=65535)
     type = models.CharField(max_length=255)
 
+    def __str__(self):
+        return "<Question: {}>".format(self.text[:140])
+
 
 class Answer(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
@@ -32,3 +35,6 @@ class Answer(models.Model):
 
     class Meta:
         unique_together = ('application', 'question')
+
+    def __str__(self):
+        return "<Answer: ({}) {}>".format(self.application.id, self.question.text[:140])
