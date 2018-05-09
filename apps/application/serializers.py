@@ -11,7 +11,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
         model = Application
         exclude = ('user',)
 
-    status = serializers.CharField(source='get_status_display')
+    status = serializers.CharField(source='get_status_display', read_only=True)
 
     def __init__(self, *args, **kwargs):
         super(ApplicationSerializer, self).__init__(*args, **kwargs)
