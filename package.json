@@ -1,6 +1,6 @@
 {
   "dependencies": {
-    "lumber-cli": "^4.13.3"
+    "lumber-cli": "1.7.6"
   },
   "engines": {
     "node": "8.11.1"
