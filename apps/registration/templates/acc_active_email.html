@@ -4,7 +4,9 @@
 <p>
     Please click the button below to confirm your email.
     <br />
-    <div><a style="padding: 10px; cursor: pointer; background-color: #FF9800; color: white" href="http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}">Confirm your Email</a></div>
+        <div>
+            <a style="padding: 10px; cursor: pointer; background-color: #FF9800; color: white" href="http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}">Confirm your Email</a>
+        </div>
     <br />
     Alternatively, you can click on the link below to confirm your registration:
     <div><a href="http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}">http://{{ domain }}{% url 'registration:activate' uidb64=uid token=token %}</a></div>

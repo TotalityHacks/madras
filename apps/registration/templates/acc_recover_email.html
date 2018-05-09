@@ -1,0 +1,12 @@
+{% extends "email_base.html" %}
+
+{% block content %}
+<p>
+    A password reset request was issued with your email. Please click the button below to reset your password.
+    <br />
+        <div>
+            <a style="padding: 10px; cursor: pointer; background-color: #FF9800; color: white" href="http://{{ domain }}{% url 'registration:recover' uidb64=uid token=token %}">Recover your Account</a>
+        </div>
+    <br />
+</p>
+{% endblock %}

@@ -6,7 +6,7 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render
 
 from .tokens import account_activation_token
 from .models import User
@@ -34,11 +34,12 @@ def home(request):
     return Response({
         reverse('registration:home'): 'Get information about registration endpoints.',
         reverse('registration:signup'): 'Create a new account.',
+        reverse('registration:reset'): 'Send a password reset given an email account.'
     })
 
 
 def activate(request, uidb64, token):
-    """ Handles the link the user uses to confirm their account. Should not be called directly. """
+    """ Handles the link the user uses to confirm their account. Should not be called directly through the API. """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -50,4 +51,23 @@ def activate(request, uidb64, token):
         login(request, user)
         return redirect(settings.EMAIL_REDIRECT_URL)
     else:
-        return JsonResponse({"error": "Invalid email confirmation!"})
+        return JsonResponse({"success": False, "error": "Invalid email confirmation!"})
+
+
+def recover(request, uidb64, token):
+    """ Handles a password recover request. Should not be called directly through the API. """
+    try:
+        uid = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=uid)
+    except(TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+    if user is None or not account_activation_token.check_token(user, token):
+        return JsonResponse({"success": False, "error": "Invalid password reset code!"})
+    if request.method == "POST":
+        password = request.POST.get("password")
+        if password:
+            user.set_password(password)
+            user.save()
+        return redirect(settings.EMAIL_REDIRECT_URL)
+    else:
+        return render(request, "reset_password.html", {"action": request.path_info})

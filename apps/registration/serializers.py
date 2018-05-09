@@ -24,3 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
         user.is_active = False
         user.save()
         return user
+
+
+class PasswordResetSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
