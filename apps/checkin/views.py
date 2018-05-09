@@ -21,7 +21,7 @@ class GetQRCode(APIView):
         group.save()
         return HttpResponse(qrcode.make(group.uuid), content_type="image/png")
 
-# hello
+
 def get_qr_code(request):
     email = request.GET["email"]
     # TODO: will need to be authenticated to admins
