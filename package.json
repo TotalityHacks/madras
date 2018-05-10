@@ -4,8 +4,5 @@
   },
   "scripts": {
   "postinstall": "cd madras-admin && npm install"
-  },
-  "dependencies": {
-    "lumber-cli": "1.7.6"
   }
 }
