@@ -1,18 +1,15 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('registration_application', {
+  var Model = sequelize.define('auth_group', {
     'name': {
       type: DataTypes.STRING,
     },
-    'status': {
-      type: DataTypes.STRING,
-    },
   }, {
-    tableName: 'registration_application',
+    tableName: 'auth_group',
     
     timestamps: false,
-    
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {

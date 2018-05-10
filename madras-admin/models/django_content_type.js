@@ -1,19 +1,18 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('authtoken_token', {
-    'key': {
+  var Model = sequelize.define('django_content_type', {
+    'app_label': {
       type: DataTypes.STRING,
-      primaryKey: true 
     },
-    'user_id': {
-      type: DataTypes.INTEGER,
+    'model': {
+      type: DataTypes.STRING,
     },
   }, {
-    tableName: 'authtoken_token',
+    tableName: 'django_content_type',
     underscored: true,
     timestamps: false,
-    
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {
