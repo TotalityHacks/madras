@@ -3,6 +3,9 @@
     "node": "8.11.1"
   },
   "scripts": {
-  "postinstall": "cd madras-admin && npm install && node ./bin/www"
+  "postinstall": "cd madras-admin && npm install && pm2 start ./bin/www"
+  },
+  "dependencies": {
+    "pm2": "^2.10.3"
   }
 }
