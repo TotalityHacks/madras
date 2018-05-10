@@ -5,17 +5,20 @@ module.exports = (sequelize, DataTypes) => {
     'name': {
       type: DataTypes.STRING,
     },
-    'organization_id': {
-      type: DataTypes.INTEGER,
-    },
   }, {
     tableName: 'director_hackathon',
-    underscored: true,
-    timestamps: false,
     
+    timestamps: false,
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {
+    Model.belongsTo(models.director_organization, {
+      foreignKey: 'organization_id',
+      
+      as: '_organization_id',
+    });
+    
   };
 
   return Model;

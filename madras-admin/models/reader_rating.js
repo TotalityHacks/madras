@@ -2,17 +2,20 @@
 
 module.exports = (sequelize, DataTypes) => {
   var Model = sequelize.define('reader_rating', {
-    'application_id': {
-      type: DataTypes.INTEGER,
-    },
   }, {
     tableName: 'reader_rating',
-    underscored: true,
-    timestamps: false,
     
+    timestamps: false,
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {
+    Model.belongsTo(models.registration_application, {
+      foreignKey: 'application_id',
+      
+      as: '_application_id',
+    });
+    
   };
 
   return Model;

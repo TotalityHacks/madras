@@ -17,17 +17,20 @@ module.exports = (sequelize, DataTypes) => {
     'options': {
       type: DataTypes.STRING,
     },
-    'rating_id': {
-      type: DataTypes.INTEGER,
-    },
   }, {
     tableName: 'reader_ratingfield',
     underscored: true,
     timestamps: false,
-    
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {
+    Model.belongsTo(models.reader_rating, {
+      foreignKey: 'rating_id',
+      
+      as: '_rating_id',
+    });
+    
   };
 
   return Model;

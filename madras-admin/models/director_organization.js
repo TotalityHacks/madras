@@ -1,18 +1,15 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('django_migrations', {
-    'app': {
-      type: DataTypes.STRING,
-    },
+  var Model = sequelize.define('director_organization', {
     'name': {
       type: DataTypes.STRING,
     },
   }, {
-    tableName: 'django_migrations',
+    tableName: 'director_organization',
     
     timestamps: false,
-    
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {

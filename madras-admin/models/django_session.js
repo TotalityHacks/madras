@@ -1,21 +1,22 @@
 'use strict';
 
 module.exports = (sequelize, DataTypes) => {
-  var Model = sequelize.define('auth_permission', {
-    'content_type_id': {
-      type: DataTypes.INTEGER,
+  var Model = sequelize.define('django_session', {
+    'session_key': {
+      type: DataTypes.STRING,
+      primaryKey: true 
     },
-    'codename': {
+    'session_data': {
       type: DataTypes.STRING,
     },
-    'name': {
-      type: DataTypes.STRING,
+    'expire_date': {
+      type: DataTypes.DATE,
     },
   }, {
-    tableName: 'auth_permission',
+    tableName: 'django_session',
     underscored: true,
     timestamps: false,
-    
+    schema: process.env.DATABASE_SCHEMA,
   });
 
   Model.associate = (models) => {
