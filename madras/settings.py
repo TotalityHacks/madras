@@ -44,11 +44,11 @@ INSTALLED_APPS = (
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
+    'apps.checkin',
     'apps.director',
     'apps.reader',
     'apps.registration',
     'apps.stats',
-    'apps.checkin'
 )
 
 MIDDLEWARE_CLASSES = (

@@ -20,13 +20,12 @@ from rest_framework.documentation import include_docs_urls
 from rest_framework.authtoken.views import obtain_auth_token
 
 urlpatterns = [
-    url(r'^docs/', include_docs_urls(title="Madras")),
-    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^login/', obtain_auth_token),
-
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin")),
+    url(r'^docs/', include_docs_urls(title="Madras")),
+    url(r'^login/', obtain_auth_token),
     url(r'^reader/', include('apps.reader.urls', namespace="reader")),
     url(r'^registration/', include('apps.registration.urls', namespace="registration")),
     url(r'^stats/', include('apps.stats.urls', namespace="stats")),
-    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin"))
 ]
