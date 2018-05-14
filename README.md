@@ -7,9 +7,8 @@ Madras is the backend for a cloud-based hackathon management system that aims to
 ## Setup
 
 ```bash
-virtualenv --python=python3 venv
-source venv/bin/activate
-pip install -r requirements.txt
+pipenv install
+pipenv shell
 ./manage.py migrate
 ./manage.py runserver
 ```
