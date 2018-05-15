@@ -172,6 +172,10 @@ STATICFILES_DIRS = (
 
 STATICFILES_STORAGE = 'whitenoise.django.GzipManifestStaticFilesStorage'
 
+AWS_REGION = os.environ.get("AWS_REGION")
+AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
+AWS_SERVER_PUBLIC_KEY = os.environ.get("AWS_SERVER_PUBLIC_KEY")
+AWS_SERVER_SECRET_KEY = os.environ.get("AWS_SERVER_SECRET_KEY")
 
 # If not in debug mode, make sure to redirect to SSL.
 if not DEBUG:

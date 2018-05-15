@@ -15,6 +15,10 @@ pipenv shell
 
 ### Environment Variables
 
+- `AWS_REGION`
+- `AWS_S3_BUCKET_NAME`
+- `AWS_SERVER_PUBLIC_KEY`
+- `AWS_SERVER_SECRET_KEY`
 - `DEBUG`
 - `DATABASE_URL`
 - `SENDGRID_API_KEY`
