@@ -82,7 +82,7 @@ class PasswordResetView(generics.GenericAPIView):
             "success": True,
             "message": "If your email address exists in our database,"
                        " you will receive an email with instructions for"
-                       " how to confirm your email address in a few minutes."
+                       " how to reset your password in a few minutes."
         }, status=status.HTTP_200_OK)
 
 
@@ -121,3 +121,41 @@ class Logout(APIView):
             if hasattr(request.user, "auth_token"):
                 request.user.auth_token.delete()
         return Response({"success": True}, status=status.HTTP_200_OK)
+
+
+class ResendConfirmationView(APIView):
+    """ Resend the confirmation email to an inactive user. """
+
+    serializer_class = PasswordResetSerializer
+
+    def post(self, request):
+        if not request.data['email']:
+            return Response({
+                "success": False,
+                "message": "You must enter an email to send the email verification message to."
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+        user = User.objects.filter(email=request.data['email'])
+        if user.exists() and not user.is_active:
+            user = user.first()
+
+            # send activation email to user
+            current_site = get_current_site(request)
+            message = render_to_string('acc_active_email.html', {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
+            mail_subject = 'Activate your account!'
+            to_email = user.email
+            email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
+            email.attach_alternative(message, "text/html")
+            email.send()
+
+        return Response({
+            "success": True,
+            "message": "If your email address exists in our database,"
+                       " you will receive an email with instructions for"
+                       " how to confirm your email address in a few minutes."
+        }, status=status.HTTP_200_OK)

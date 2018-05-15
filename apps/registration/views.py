@@ -34,7 +34,8 @@ def home(request):
     return Response({
         reverse('registration:home'): 'Get information about registration endpoints.',
         reverse('registration:signup'): 'Create a new account.',
-        reverse('registration:reset'): 'Send a password reset given an email account.'
+        reverse('registration:reset'): 'Send a password reset given an email account.',
+        reverse('registration:resend_email'): 'Resend a confirmation email to an unverified user.'
     })
 
 
