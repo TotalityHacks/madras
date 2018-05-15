@@ -1,4 +1,7 @@
+import uuid
+
 from django.db import models
+
 from ..registration.models import User
 
 
@@ -38,3 +41,10 @@ class Answer(models.Model):
 
     def __str__(self):
         return "<Answer: ({}) {}>".format(self.application.id, self.question.text[:140])
+
+
+class Resume(models.Model):
+
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    application = models.OneToOneField(
+        Application, on_delete=models.CASCADE, related_name="resume")
