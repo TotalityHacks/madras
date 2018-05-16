@@ -37,7 +37,6 @@ class ResumeView(generics.CreateAPIView):
     def perform_create(self, serializer):
         app = get_object_or_404(Application, user=self.request.user)
         file = serializer.validated_data['file']
-        print "file:", file
         resume = serializer.save(application=app)
         # Do upload shit here with resume.id
 
