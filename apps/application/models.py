@@ -46,5 +46,9 @@ class Answer(models.Model):
 class Resume(models.Model):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
-    application = models.OneToOneField(
-        Application, on_delete=models.CASCADE, related_name="resume")
+    application = models.ForeignKey(
+        Application, on_delete=models.CASCADE, related_name="resumes")
+
+    filename = models.CharField(max_length=512, blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)

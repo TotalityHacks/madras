@@ -3,13 +3,14 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 from django.db import transaction
 from django.urls import resolve
 
-from .models import Application, Question, Answer
+from .models import Application, Question, Resume, Answer
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
-        exclude = ('user',)
+        fields = ('github_username', 'resume', 'status', 'submission_date')
+        read_only_fields = ('resume', 'submission_date')
 
     status = serializers.CharField(source='get_status_display', read_only=True)
 
@@ -55,6 +56,20 @@ class ApplicationSerializer(serializers.ModelSerializer):
                     del self.fields[item]
             application.save()
         return application
+
+
+class ResumeSerializer(serializers.ModelSerializer):
+
+    file = serializers.FileField(write_only=True)
+
+    class Meta:
+        model = Resume
+        fields = ('created_at', 'file', 'filename', 'id',)
+        read_only_fields = ('created_at', 'id',)
+
+    def create(self, validated_data):
+        validated_data.pop('file')
+        return Resume.objects.create(**validated_data)
 
 
 class QuestionSerializer(serializers.ModelSerializer):
