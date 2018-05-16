@@ -9,8 +9,8 @@ from .models import Application, Question, Resume, Answer
 class ApplicationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Application
-        fields = ('github_username', 'resume', 'status', 'submission_date')
-        read_only_fields = ('resume', 'submission_date')
+        fields = ('github_username', 'resumes', 'status', 'submission_date')
+        read_only_fields = ('resumes', 'submission_date')
 
     status = serializers.CharField(source='get_status_display', read_only=True)
 
