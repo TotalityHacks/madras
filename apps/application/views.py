@@ -38,8 +38,8 @@ class ResumeView(generics.CreateAPIView):
     def perform_create(self, serializer):
         app = get_object_or_404(Application, user=self.request.user)
         file = serializer.validated_data['file']
+        # FileUploader().upload_file_to_s3(file)
         resume = serializer.save(application=app)
-        # FileUploader().upload_file_to_s3("test")
         # Do upload shit here with resume.id
 
 

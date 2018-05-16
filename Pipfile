@@ -6,6 +6,7 @@ name = "pypi"
 [dev-packages]
 
 [packages]
+boto3 = "==1.7.20"
 "beautifulsoup4" = "*"
 dj-database-url = "*"
 django-extensions = "*"

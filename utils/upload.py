@@ -18,8 +18,8 @@ class FileUploader:
         )
 
     def upload_file_to_s3(
-            self, local_filename, s3_bucket=settings.AWS_S3_BUCKET_NAME,
+            self, local_file, s3_bucket=settings.AWS_S3_BUCKET_NAME,
             remote_filename=None):
         if not remote_filename:
             remote_filename = str(uuid.uuid4())
-        self._s3.upload_file(local_filename, s3_bucket, remote_filename)
+        self._s3.upload_fileobj(local_file, s3_bucket, remote_filename)
