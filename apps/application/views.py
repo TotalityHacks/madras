@@ -9,6 +9,7 @@ from django.urls import reverse
 
 from .serializers import ApplicationSerializer, QuestionSerializer, ResumeSerializer
 from .models import Question, Resume, Application
+from utils.upload import FileUploader
 
 
 @api_view(['GET'])
@@ -38,6 +39,7 @@ class ResumeView(generics.CreateAPIView):
         app = get_object_or_404(Application, user=self.request.user)
         file = serializer.validated_data['file']
         resume = serializer.save(application=app)
+        # FileUploader().upload_file_to_s3("test")
         # Do upload shit here with resume.id
 
 
