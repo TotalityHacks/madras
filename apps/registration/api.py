@@ -136,7 +136,7 @@ class ResendConfirmationView(APIView):
             }, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(email=request.data['email'])
-        if user.exists() and not user.is_active:
+        if user.exists() and not user.first().is_active:
             user = user.first()
 
             # send activation email to user
