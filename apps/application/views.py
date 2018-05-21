@@ -47,6 +47,9 @@ class ApplicationView(generics.ListCreateAPIView):
     serializer_class = ApplicationSerializer
     permission_classes = (IsAuthenticated,)
 
+    def get_queryset(self):
+        return Application.objects.filter(user=self.request.user)
+
     def list(self, request):
         try:
             app = Application.objects.get(user=request.user)

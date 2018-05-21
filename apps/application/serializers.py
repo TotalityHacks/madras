@@ -45,7 +45,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
                     github_username=data['github_username']
                 )
             if current_url == 'save':
-                application.status = Application.SAVED
+                if not application.status == Application.SUBMITTED:
+                    application.status = Application.SAVED
             else:
                 application.status = Application.SUBMITTED
             for item in data:
@@ -54,6 +55,13 @@ class ApplicationSerializer(serializers.ModelSerializer):
                     question = Question.objects.get(id=question_id)
                     Answer.objects.update_or_create(question=question, application=application, defaults={'text': data[item]})
                     del self.fields[item]
+
+            # if application will be submitted, ensure that required fields are filled out
+            if application.status == Application.SUBMITTED:
+                for question in Question.objects.filter(required=True):
+                    answer = Answer.objects.filter(question=question, application=application)
+                    if not answer.exists() or not answer.first().text:
+                        raise serializers.ValidationError('"{}" is a required question!'.format(question.text))
             application.save()
         return application
 
