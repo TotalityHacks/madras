@@ -25,7 +25,9 @@ class Question(models.Model):
     text = models.TextField()
     prefix = models.CharField(max_length=255, blank=True, default="")
     max_length = models.IntegerField(default=65535)
-    type = models.CharField(max_length=255)
+    type = models.CharField(max_length=255, help_text='Indicates what kind of input this question accepts (ex: short response, text field, etc).')
+    required = models.BooleanField(default=False, help_text='Indicates whether users are required to fill out this question'
+                                                            ' before submitting the application.')
 
     def __str__(self):
         return "<Question: {}>".format(self.text[:140])
