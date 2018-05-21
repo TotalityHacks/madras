@@ -109,6 +109,12 @@ REST_FRAMEWORK = {
     )
 }
 
+# disable documentation in production
+if not DEBUG:
+    REST_FRAMEWORK['DEFAULT_RENDERER_CLASSES'] = (
+        'rest_framework.renderers.JSONRenderer',
+    )
+
 AUTHENTICATION_BACKENDS = ['apps.registration.backends.EmailBackend']
 
 AUTH_PASSWORD_VALIDATORS = [
