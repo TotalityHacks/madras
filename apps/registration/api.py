@@ -95,7 +95,7 @@ class AuthTokenSerializer(AuthTokenSerializerBase):
             user = authenticate(request=self.context.get('request'), username=username, password=password)
 
             if not user:
-                if User.objects.filter(email=username).exists():
+                if User.objects.filter(email__iexact=username).exists():
                     if not User.objects.get(email=username).is_active:
                         raise serializers.ValidationError('You cannot login until you have confirmed your email address.', code='authorization')
                 raise serializers.ValidationError('Unable to login with provided credentials.', code='authorization')
