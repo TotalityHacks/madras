@@ -1,7 +1,7 @@
 from .models import CheckInGroup, CheckInEvent
 import qrcode
 from django.utils import timezone
-from .models import Applicant
+from .models import User
 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
@@ -27,8 +27,8 @@ class GetQRCodeAdmin(APIView):
     def get(self, request):
         email = request.GET["email"]
         try:
-            applicant = Applicant.objects.get(email=email)
-        except Applicant.DoesNotExist:
+            applicant = User.objects.get(email=email)
+        except User.DoesNotExist:
             return error_response("User does not exist.",
                                   "There is no user with this name in the database.",
                                   404)
