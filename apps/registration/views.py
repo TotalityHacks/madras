@@ -13,6 +13,8 @@ from .models import User
 
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
+from django.views.decorators.csrf import csrf_exempt
+import csv
 
 
 @api_view(['GET'])
@@ -55,6 +57,10 @@ def activate(request, uidb64, token):
     else:
         return JsonResponse({"success": False, "error": "Invalid email confirmation token!"})
 
+@csrf_exempt
+def get_schools_list(request):
+    schools = list(csv.reader(open("static/schools.csv")))
+    return JsonResponse({"schools": schools})
 
 def recover(request, uidb64, token):
     """ Handles a password recover request. Should not be called directly through the API. """
