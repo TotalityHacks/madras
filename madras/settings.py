@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 import os
 import dj_database_url
+import raven
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -56,6 +57,11 @@ INSTALLED_APPS = (
     'apps.stats',
 )
 
+if not DEBUG:
+    INSTALLED_APPS = INSTALLED_APPS + (
+        'raven.contrib.django.raven_compat',
+    )
+
 MIDDLEWARE_CLASSES = (
     'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -89,6 +95,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'madras.wsgi.application'
+
+# Sentry logging settings
+RAVEN_CONFIG = {
+    'dsn': os.environ.get("SENTRY_DSN"),
+    # If you are using git, you can also automatically configure the
+    # release based on the git info.
+    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
+}
 
 
 if 'SENDGRID_USERNAME' in os.environ:
