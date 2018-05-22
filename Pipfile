@@ -20,6 +20,8 @@ requests = "*"
 whitenoise = "*"
 Django = "==1.11.5"
 "boto3" = "*"
+pillow = "*"
+qrcode = "*"
 
 [requires]
 python_version = "3.5"
