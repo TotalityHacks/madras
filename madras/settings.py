@@ -96,12 +96,17 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'madras.wsgi.application'
 
+try:
+    raven_release = raven.fetch_git_sha(os.path.abspath(os.pardir))
+except Exception:
+    raven_release = "unknown"
+
 # Sentry logging settings
 RAVEN_CONFIG = {
     'dsn': os.environ.get("SENTRY_DSN"),
     # If you are using git, you can also automatically configure the
     # release based on the git info.
-    'release': raven.fetch_git_sha(os.path.dirname(os.pardir)),
+    'release': raven_release,
 }
 
 
