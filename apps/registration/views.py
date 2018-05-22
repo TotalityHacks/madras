@@ -16,6 +16,7 @@ from django.utils.http import urlsafe_base64_decode
 from django.views.decorators.csrf import csrf_exempt
 import csv
 
+schools = list(csv.reader(open("static/schools.csv")))
 
 @api_view(['GET'])
 def index(request):
@@ -59,7 +60,6 @@ def activate(request, uidb64, token):
 
 @csrf_exempt
 def get_schools_list(request):
-    schools = list(csv.reader(open("static/schools.csv")))
     return JsonResponse({"schools": schools})
 
 def recover(request, uidb64, token):
