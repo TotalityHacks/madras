@@ -19,6 +19,7 @@ from utils.upload import FileUploader
 def home(request):
     return Response(OrderedDict((
         (reverse('application:home'), 'Information about application submission endpoints.'),
+        (reverse('application:save'), 'Save a new, possibly incomplete, application.'),
         (reverse('application:submit'), 'Submit a new application.'),
         (reverse('application:upload_resume'), 'Submit a resume for an application'),
         (reverse('application:list_questions'), 'List questions required for the application.'),

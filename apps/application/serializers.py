@@ -61,12 +61,17 @@ class ApplicationSerializer(serializers.ModelSerializer):
                 answer = Answer.objects.filter(question=question, application=application)
                 if answer.exists():
                     answer = answer.first()
+                    # allow blank answers for saved applications (not submitted)
+                    if not answer.text and not application.status == Application.SUBMITTED:
+                        continue
                     if question.type == 'number':
                         if not answer.text.isdigit():
                             raise serializers.ValidationError('"{}" must be an integer value!'.format(question.text))
                     elif question.type == 'choice':
                         if not Choice.objects.filter(question=question, value=answer.text).exists():
-                            raise serializers.ValidationError('"{}" must be one of the predetermined choices!'.format(question.text))
+                            choices = list(Choice.objects.filter(question=question).order_by('value').values_list('value', flat=True))
+                            raise serializers.ValidationError('The answer for "{}" must be one of the choices! '
+                                                              'Possible choices are: {}.'.format(question.text, choices))
 
             # if application will be submitted, ensure that required fields are filled out
             if application.status == Application.SUBMITTED:
