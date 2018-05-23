@@ -95,8 +95,8 @@ class ResumeSerializer(serializers.ModelSerializer):
 class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
-        fields = ('id', 'type', 'max_length', 'prefix', 'text', 'required')
-        read_only_fields = ('id',)
+        fields = ('id', 'type', 'max_length', 'prefix', 'text', 'required', 'choices')
+        read_only_fields = ('id', 'choices')
 
 
 class ChoiceSerializer(serializers.ModelSerializer):

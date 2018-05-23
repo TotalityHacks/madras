@@ -32,6 +32,12 @@ class Question(models.Model):
     def __str__(self):
         return "<Question: {}>".format(self.text[:140])
 
+    @property
+    def choices(self):
+        if not self.type == 'choice':
+            return None
+        return Choice.objects.filter(question=self).order_by('value').values_list('value', flat=True)
+
 
 class Answer(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
