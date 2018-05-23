@@ -38,9 +38,8 @@ class GetQRCodeAdmin(APIView):
         return HttpResponse(qrcode.make(group.id), content_type="image/png")
 
 
-
 class CheckIn(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         if request.POST:
@@ -71,7 +70,7 @@ class CheckIn(APIView):
 
 
 class CheckOut(APIView):
-    permission_classes = (IsAdminUser,)
+    permission_classes = (IsAuthenticated,)
 
     def post(self, request):
         if request.POST:
