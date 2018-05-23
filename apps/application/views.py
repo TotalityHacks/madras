@@ -1,3 +1,6 @@
+import csv
+from collections import OrderedDict
+
 from rest_framework import status
 from rest_framework import generics, viewsets
 from rest_framework.response import Response
@@ -6,13 +9,10 @@ from rest_framework.decorators import api_view
 
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
-from collections import OrderedDict
 
 from .serializers import ApplicationSerializer, QuestionSerializer, ResumeSerializer, ChoiceSerializer
 from .models import Question, Application, Choice
 from utils.upload import FileUploader
-from django.views.decorators.csrf import csrf_exempt
-import csv
 
 
 @api_view(['GET'])
@@ -31,6 +31,7 @@ def home(request):
 
 
 SCHOOLS = list(school[0] for school in csv.reader(open("static/schools.csv")))
+
 
 class ResumeView(generics.CreateAPIView):
 

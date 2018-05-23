@@ -18,4 +18,3 @@ class CheckInEvent(models.Model):
     time = models.DateTimeField()
     check_in_group = models.ForeignKey(CheckInGroup)
     check_in = models.BooleanField(default=True)
-
