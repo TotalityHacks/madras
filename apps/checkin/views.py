@@ -102,7 +102,7 @@ class CheckOut(APIView):
 
 
 # TODO: move the below functions to utils somewhere so everyone can use them
-def success_data_jsonify( code=200):
+def success_data_jsonify(code=200):
     response = Response({
     })
     response.status_code = code
@@ -112,12 +112,10 @@ def success_data_jsonify( code=200):
 
 def error_response(title, message, code):
 
-    error_dictionary = {'message' : message,
-                        'title' : title}
+    error_dictionary = {'message': message,
+                        'title': title}
 
     response = Response(error_dictionary)
     response.status_code = code
 
     return response
-
-

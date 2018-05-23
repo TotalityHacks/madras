@@ -15,7 +15,6 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 
 
-
 @api_view(['GET'])
 def index(request):
     """ The backend API for Madras, a cloud-based hackathon management system. """
@@ -55,7 +54,6 @@ def activate(request, uidb64, token):
         return redirect(settings.EMAIL_REDIRECT_URL)
     else:
         return JsonResponse({"success": False, "error": "Invalid email confirmation token!"})
-
 
 
 def recover(request, uidb64, token):
