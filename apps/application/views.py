@@ -10,6 +10,8 @@ from django.urls import reverse
 from .serializers import ApplicationSerializer, QuestionSerializer, ResumeSerializer
 from .models import Question, Application
 from utils.upload import FileUploader
+from django.views.decorators.csrf import csrf_exempt
+import csv
 
 
 @api_view(['GET'])
@@ -23,6 +25,8 @@ def home(request):
         reverse('application:question', kwargs={'pk': 1234}): 'Get, modify, and delete questions.'
     })
 
+
+SCHOOLS = list(school[0] for school in csv.reader(open("static/schools.csv")))
 
 class ResumeView(generics.CreateAPIView):
 
@@ -68,3 +72,7 @@ class QuestionListView(generics.ListAPIView):
     serializer_class = QuestionSerializer
     permission_classes = (IsAuthenticated,)
     queryset = Question.objects.all()
+
+@csrf_exempt
+def get_schools_list(request):
+    return Response({"schools": SCHOOLS})

@@ -14,4 +14,5 @@ urlpatterns = [
         'post': 'update',
         'delete': 'destroy'
     }), name='question'),
+    url(r'^schools_list/$', views.get_schools_list, name="schools_list"),
 ]
