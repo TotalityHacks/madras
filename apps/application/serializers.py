@@ -3,7 +3,7 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 from django.db import transaction
 from django.urls import resolve
 
-from .models import Application, Question, Resume, Answer
+from .models import Application, Question, Resume, Answer, Choice
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -56,6 +56,18 @@ class ApplicationSerializer(serializers.ModelSerializer):
                     Answer.objects.update_or_create(question=question, application=application, defaults={'text': data[item]})
                     del self.fields[item]
 
+            # do some basic field checking
+            for question in Question.objects.all():
+                answer = Answer.objects.filter(question=question, application=application)
+                if answer.exists():
+                    answer = answer.first()
+                    if question.type == 'number':
+                        if not answer.text.isdigit():
+                            raise serializers.ValidationError('"{}" must be an integer value!'.format(question.text))
+                    elif question.type == 'choice':
+                        if not Choice.objects.filter(question=question, value=answer.text).exists():
+                            raise serializers.ValidationError('"{}" must be one of the predetermined choices!'.format(question.text))
+
             # if application will be submitted, ensure that required fields are filled out
             if application.status == Application.SUBMITTED:
                 for question in Question.objects.filter(required=True):
@@ -84,4 +96,11 @@ class QuestionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Question
         fields = ('id', 'type', 'max_length', 'prefix', 'text', 'required')
+        read_only_fields = ('id',)
+
+
+class ChoiceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Choice
+        fields = ('id', 'question', 'value')
         read_only_fields = ('id',)

@@ -45,6 +45,11 @@ class Answer(models.Model):
         return "<Answer: ({}) {}>".format(self.application.id, self.question.text[:140])
 
 
+class Choice(models.Model):
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    value = models.TextField()
+
+
 class Resume(models.Model):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
