@@ -1,4 +1,5 @@
 import csv
+import uuid
 from collections import OrderedDict
 
 from rest_framework import status
@@ -48,7 +49,11 @@ class ResumeView(generics.CreateAPIView):
     def perform_create(self, serializer):
         app = get_object_or_404(Application, user=self.request.user)
         file = serializer.validated_data['file']
-        FileUploader().upload_file_to_s3(file)
+        serializer.validated_data['id'] = uuid.uuid4()
+        FileUploader().upload_file_to_s3(
+            serializer.validated_data['file'],
+            remote_filename=str(serializer.validated_data['id']),
+        )
         serializer.save(application=app)
 
 
