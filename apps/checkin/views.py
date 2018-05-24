@@ -51,6 +51,10 @@ class CheckIn(APIView):
 
     def post(self, request):
         if request.POST:
+            if not request.user.has_perm("can_checkin"):
+                return error_response("You do not have sufficient permission",
+                                      "Make sure your user is a member of the checkin group.",
+                                      403)
             try:
                 uuid = request.POST["id"]
             except KeyError:
@@ -74,7 +78,6 @@ class CheckIn(APIView):
             return success_data_jsonify()
         else:
             return error_response("Invalid method.", "Please use a post request.", 405)
-        # TODO: will need to be authenticated to admins
 
 
 class CheckOut(APIView):
@@ -82,31 +85,33 @@ class CheckOut(APIView):
 
     def post(self, request):
         if request.POST:
-            if request.POST:
-                try:
-                    uuid = request.POST["id"]
-                except KeyError:
-                    return error_response("Must include the CheckInGroup's id.",
-                                          "You must include the user's id from the bar code in the request body.",
-                                          400)
-                try:
-                    group = CheckInGroup.objects.get(id=uuid)
-                except CheckInGroup.DoesNotExist:
-                    return error_response("Must include the CheckInGroup's id.",
-                                          "The id you specified does not exist in the database.",
-                                          404)
-                if not group.checked_in:
-                    return error_response("User is not checked in.",
-                                          "A user must be checked in to be checked out.",
-                                          409)
-                event = CheckInEvent(check_in_group=group, check_in=False, time=timezone.now())
-                group.checked_in = False
-                event.save()
-                group.save()
-                return success_data_jsonify()
-            else:
-                return error_response("Invalid method.", "Please use a post request.", 405)
-            # TODO: will need to be authenticated to admins
+            if not request.user.has_perm("can_checkin"):
+                return error_response("You do not have sufficient permission",
+                                      "Make sure your user is a member of the checkin group.",
+                                      403)
+            try:
+                uuid = request.POST["id"]
+            except KeyError:
+                return error_response("Must include the CheckInGroup's id.",
+                                      "You must include the user's id from the bar code in the request body.",
+                                      400)
+            try:
+                group = CheckInGroup.objects.get(id=uuid)
+            except CheckInGroup.DoesNotExist:
+                return error_response("Must include the CheckInGroup's id.",
+                                      "The id you specified does not exist in the database.",
+                                      404)
+            if not group.checked_in:
+                return error_response("User is not checked in.",
+                                      "A user must be checked in to be checked out.",
+                                      409)
+            event = CheckInEvent(check_in_group=group, check_in=False, time=timezone.now())
+            group.checked_in = False
+            event.save()
+            group.save()
+            return success_data_jsonify()
+        else:
+            return error_response("Invalid method.", "Please use a post request.", 405)
 
 
 # TODO: move the below functions to utils somewhere so everyone can use them
