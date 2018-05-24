@@ -7,6 +7,8 @@ from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.http import HttpResponse
+import base64
+from io import BytesIO
 
 static_path = "static/checkin/qr_codes/"
 
@@ -18,7 +20,10 @@ class GetQRCode(APIView):
         # TODO: check that applicant was actually admitted
         group = CheckInGroup.objects.get_or_create(applicant=request.user)
         group.save()
-        return HttpResponse(qrcode.make(group.id), content_type="image/png")
+        image = qrcode.make(group.id)
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        return Response({"qrcode": base64.b64encode(buffered.getvalue())})
 
 
 class GetQRCodeAdmin(APIView):
@@ -35,7 +40,10 @@ class GetQRCodeAdmin(APIView):
         # TODO: filter to only include admitted applicants
         group = CheckInGroup.objects.get_or_create(applicant=applicant)
         group.save()
-        return HttpResponse(qrcode.make(group.id), content_type="image/png")
+        image = qrcode.make(group.id)
+        buffered = BytesIO()
+        image.save(buffered, format="JPEG")
+        return Response({"qrcode": base64.b64encode(buffered.getvalue())})
 
 
 class CheckIn(APIView):
