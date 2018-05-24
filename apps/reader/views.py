@@ -23,7 +23,8 @@ def home(request):
 
     return Response({
         reverse("reader:rating"): 'Get given ratings and submit new ratings.',
-        reverse("reader:next_application"): 'Get the next application to review.'
+        reverse("reader:next_application"): 'Get the next application to review.',
+        reverse("reader:stats"): 'Get reader statistics about the user',
     })
 
 
@@ -43,10 +44,14 @@ class NextApplicationView(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_app = Application.objects.annotate(reviews=Count('ratings')) \
-                                      .exclude(ratings__reader=request.user) \
-                                      .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS) \
-                                      .filter(status=Application.SUBMITTED).first()
+        rand_app = (
+            Application.objects
+            .annotate(reviews=Count('ratings'))
+            .exclude(ratings__reader=request.user)
+            .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS)
+            .filter(status=Application.SUBMITTED)
+            .first()
+        )
 
         if rand_app is None:
             return Response({"error": "No more applications to review!"}, status=status.HTTP_404_NOT_FOUND)
@@ -59,3 +64,13 @@ class NextApplicationView(APIView):
         data = ApplicationSerializer(rand_app).data
         data.update(github_array)
         return Response(data)
+
+
+class StatsView(APIView):
+
+    permission_classes = (IsAdminUser,)
+
+    def get(self, request):
+        return Response({
+            "num_reads": request.user.given_ratings.all().count(),
+        })
