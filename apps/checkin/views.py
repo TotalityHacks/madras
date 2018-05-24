@@ -51,7 +51,7 @@ class CheckIn(APIView):
 
     def post(self, request):
         if request.POST:
-            if not request.user.has_perm("can_checkin"):
+            if not request.user.has_perm("checkin.can_checkin"):
                 return error_response("You do not have sufficient permission",
                                       "Make sure your user is a member of the checkin group.",
                                       403)
@@ -85,7 +85,7 @@ class CheckOut(APIView):
 
     def post(self, request):
         if request.POST:
-            if not request.user.has_perm("can_checkin"):
+            if not request.user.has_perm("checkin.can_checkin"):
                 return error_response("You do not have sufficient permission",
                                       "Make sure your user is a member of the checkin group.",
                                       403)
