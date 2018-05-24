@@ -18,7 +18,7 @@ class GetQRCode(APIView):
 
     def get(self, request):
         # TODO: check that applicant was actually admitted
-        group = CheckInGroup.objects.get_or_create(applicant=request.user)
+        group = CheckInGroup.objects.get_or_create(applicant=request.user)[0]
         group.save()
         image = qrcode.make(group.id)
         buffered = BytesIO()
@@ -38,7 +38,7 @@ class GetQRCodeAdmin(APIView):
                                   "There is no user with this name in the database.",
                                   404)
         # TODO: filter to only include admitted applicants
-        group = CheckInGroup.objects.get_or_create(applicant=applicant)
+        group = CheckInGroup.objects.get_or_create(applicant=applicant)[0]
         group.save()
         image = qrcode.make(group.id)
         buffered = BytesIO()
