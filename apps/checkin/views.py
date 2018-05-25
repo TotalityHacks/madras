@@ -1,15 +1,15 @@
-import base64
-import qrcode
-from io import BytesIO
-
-from django.utils import timezone
-
 from .models import CheckInGroup, CheckInEvent
+import qrcode
+from django.utils import timezone
 from .models import User
+from ..application.models import Application
+from ..constants.models import CONSTANTS
 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+import base64
+from io import BytesIO
 
 static_path = "static/checkin/qr_codes/"
 
@@ -18,7 +18,19 @@ class GetQRCode(APIView):
     permission_classes = (IsAuthenticated,)
 
     def get(self, request):
-        # TODO: check that applicant was actually admitted
+        try:
+            application = Application.objects.get(user=request.user)
+        except Application.DoesNotExist:
+            return error_response("User does not have an application.",
+                                  "Make sure that you are logged in with the account that created the application.",
+                                  404)
+        if not CONSTANTS.objects.get().DECISIONS_RELEASED:
+            return error_response("Decisions have not been released",
+                                  "You can't check in until Totality has told you whether you've been admitted.", 403)
+        if application.admission_status != "A":
+            return error_response("User has not been admitted to Totality.",
+                                  "Current status is: " + application.get_admission_status_display(),
+                                  403)
         group = CheckInGroup.objects.get_or_create(applicant=request.user)[0]
         group.save()
         image = qrcode.make(group.id)
@@ -38,7 +50,19 @@ class GetQRCodeAdmin(APIView):
             return error_response("User does not exist.",
                                   "There is no user with this name in the database.",
                                   404)
-        # TODO: filter to only include admitted applicants
+        try:
+            application = Application.objects.get(user=request.user)
+        except Application.DoesNotExist:
+            return error_response("User does not have an application.",
+                                  "Make sure that you are logged in with the account that created the application.",
+                                  404)
+        if not CONSTANTS.objects.get().DECISIONS_RELEASED:
+            return error_response("Decisions have not been released",
+                                  "You can't check in until Totality has told you whether you've been admitted.", 403)
+        if application.admission_status != "A":
+            return error_response("You have not been admitted to Totality.",
+                                  "Current status is: " + application.get_admission_status_display(),
+                                  403)
         group = CheckInGroup.objects.get_or_create(applicant=applicant)[0]
         group.save()
         image = qrcode.make(group.id)

@@ -16,6 +16,17 @@ class Application(models.Model):
     github_username = models.CharField(max_length=39, blank=True, null=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     submission_date = models.DateTimeField(auto_now_add=True)
+    ADMITTED = 'A'
+    WAITLISTED = 'W'
+    DENIED = 'D'
+    PENDING = 'P'
+    ADMISSION_STATUS = (
+        (ADMITTED, 'Admitted'),
+        (WAITLISTED, 'Waitlisted'),
+        (DENIED, 'Denied'),
+        (PENDING, 'Pending')
+    )
+    admission_status = models.CharField(max_length=2, choices=ADMISSION_STATUS, default=PENDING)
 
     def __str__(self):
         return "<Application: ({}) {}>".format(self.id, self.user.email)

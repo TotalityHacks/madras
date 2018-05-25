@@ -55,6 +55,7 @@ INSTALLED_APPS = (
     'apps.registration',
     'apps.application',
     'apps.stats',
+    'apps.constants'
 )
 
 if not DEBUG:
