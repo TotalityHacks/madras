@@ -1,5 +1,4 @@
 import boto3
-import StringIO
 import uuid
 
 from django.conf import settings
@@ -24,9 +23,3 @@ class FileUploader:
         if not remote_filename:
             remote_filename = str(uuid.uuid4())
         self._s3.upload_fileobj(local_file, s3_bucket, remote_filename)
-
-    def download_file_from_s3(
-            self, filename, s3_bucket=settings.AWS_S3_BUCKET_NAME):
-        output = StringIO.StringIO()
-        self._s3.download_fileobj(s3_bucket, filename, output)
-        return output.getvalue()
