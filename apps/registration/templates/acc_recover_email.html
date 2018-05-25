@@ -4,9 +4,7 @@
 <p>
     A password reset request was issued with your email. Please click the button below to reset your password.
     <br />
-        <div>
-            <a style="padding: 10px; cursor: pointer; background-color: #FF9800; color: white" href="http://{{ domain }}{% url 'registration:recover' uidb64=uid token=token %}">Recover your Account</a>
-        </div>
+        <a style="padding: 10px; margin-top: 12px; margin-bottom: 12px; cursor: pointer; background-color: #e60c88; color: white;border-radius:12px; display:inline-block;" href="http://{{ domain }}{% url 'registration:recover' uidb64=uid token=token %}">Recover your Account</a>
     <br />
 </p>
 {% endblock %}
