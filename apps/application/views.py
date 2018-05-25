@@ -2,17 +2,17 @@ import csv
 import uuid
 from collections import OrderedDict
 
-from rest_framework import status
-from rest_framework import generics, viewsets
+from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.decorators import api_view
 
+from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from .serializers import ApplicationSerializer, QuestionSerializer, ResumeSerializer, ChoiceSerializer
-from .models import Question, Application, Choice
+from .models import Question, Application, Choice, Resume
 from utils.upload import FileUploader
 
 
@@ -22,7 +22,7 @@ def home(request):
         (reverse('application:home'), 'Information about application submission endpoints.'),
         (reverse('application:save'), 'Save a new, possibly incomplete, application.'),
         (reverse('application:submit'), 'Submit a new application.'),
-        (reverse('application:upload_resume'), 'Submit a resume for an application'),
+        (reverse('application:resume-list'), 'Submit a resume for an application'),
         (reverse('application:list_questions'), 'List questions required for the application.'),
         (reverse('application:create_question'), 'Create a new application question.'),
         (reverse('application:question', kwargs={'pk': 1234}), 'Get, modify, and delete questions.'),
@@ -34,10 +34,14 @@ def home(request):
 SCHOOLS = list(school[0] for school in csv.reader(open("static/schools.csv")))
 
 
-class ResumeView(generics.CreateAPIView):
+class ResumeViewSet(
+    mixins.CreateModelMixin,
+    mixins.RetrieveModelMixin,
+    viewsets.GenericViewSet):
 
     serializer_class = ResumeSerializer
     permission_classes = (IsAuthenticated,)
+    queryset = Resume.objects.all()
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
@@ -54,6 +58,17 @@ class ResumeView(generics.CreateAPIView):
             remote_filename=str(serializer.validated_data['id']),
         )
         serializer.save(application=app)
+
+    def retrieve(self, request, pk):
+        try:
+            resume = get_object_or_404(Resume, id=uuid.UUID(pk))
+        except ValueError:
+            raise Http404
+
+        resume_file = FileUploader().download_file_from_s3(str(resume.id))
+        response = HttpResponse(resume_file, content_type="application/pdf")
+        response['Content-Disposition'] = 'inline;filename=resume.pdf'
+        return response
 
 
 class ApplicationView(generics.ListCreateAPIView):
