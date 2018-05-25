@@ -1,14 +1,15 @@
-from .models import CheckInGroup, CheckInEvent
+import base64
 import qrcode
+from io import BytesIO
+
 from django.utils import timezone
+
+from .models import CheckInGroup, CheckInEvent
 from .models import User
 
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.http import HttpResponse
-import base64
-from io import BytesIO
 
 static_path = "static/checkin/qr_codes/"
 

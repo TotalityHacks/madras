@@ -31,6 +31,7 @@ def home(request):
         (reverse('application:choice', kwargs={'pk': 1234}), 'Get, modify, and delete choices.'),
     )))
 
+
 SCHOOLS = list(school[0] for school in csv.reader(open("static/schools.csv")))
 
 
@@ -50,7 +51,7 @@ class ResumeView(generics.CreateAPIView):
         file = serializer.validated_data['file']
         serializer.validated_data['id'] = uuid.uuid4()
         FileUploader().upload_file_to_s3(
-            serializer.validated_data['file'],
+            file,
             remote_filename=str(serializer.validated_data['id']),
         )
         serializer.save(application=app)
@@ -84,7 +85,7 @@ class QuestionListView(generics.ListAPIView):
     queryset = Question.objects.all()
 
 
-@api_view(['GET',])
+@api_view(['GET'])
 def get_schools_list(request):
     return Response({"schools": SCHOOLS})
 
