@@ -22,10 +22,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
     @property
     def data(self):
         data = super(serializers.ModelSerializer, self).data
-        data["questions"] = []
+        data["questions"] = {}
         if "id" in data:
             for answer in Answer.objects.filter(application=data["id"]):
-                data["questions"].append([answer.question.text, answer.text])
+                data["questions"][answer.question.text] = answer.text
         return ReturnDict(data, serializer=self)
 
     def create(self, data):
