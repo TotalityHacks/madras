@@ -35,10 +35,9 @@ def home(request):
 SCHOOLS = list(school[0] for school in csv.reader(open("static/schools.csv")))
 
 
-class ResumeViewSet(
-    mixins.CreateModelMixin,
-    mixins.RetrieveModelMixin,
-    viewsets.GenericViewSet):
+class ResumeViewSet(mixins.CreateModelMixin,
+                    mixins.RetrieveModelMixin,
+                    viewsets.GenericViewSet):
 
     serializer_class = ResumeSerializer
     permission_classes = (IsAuthenticated,)
