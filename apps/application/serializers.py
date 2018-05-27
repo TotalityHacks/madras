@@ -91,6 +91,7 @@ class ResumeSerializer(serializers.ModelSerializer):
         model = Resume
         fields = ('created_at', 'file', 'filename', 'id',)
         read_only_fields = ('created_at', 'id',)
+        ordering = ('created_at',)
 
     def create(self, validated_data):
         validated_data.pop('file')
