@@ -1,5 +1,35 @@
 [
    {
+      "id":1,
+      "type":"text",
+      "max_length":65535,
+      "prefix":"",
+      "text":"First Name",
+      "required":true,
+      "choices":null,
+      "slug": "first_name"
+   },
+   {
+      "id":2,
+      "type":"text",
+      "max_length":65535,
+      "prefix":"",
+      "text":"Last Name",
+      "required":true,
+      "choices":null,
+      "slug": "last_name"
+   },
+   {
+      "id":3,
+      "type":"number",
+      "max_length":65535,
+      "prefix":"",
+      "text":"Phone Number",
+      "required":true,
+      "choices":null,
+      "slug": "phone_number"
+   },
+   {
       "id":6,
       "type":"text",
       "max_length":65535,
@@ -30,14 +60,14 @@
       "slug": "personal_website"
    },
    {
-      "id":11,
-      "type":"essay",
-      "max_length":700,
+      "id":9,
+      "type":"text",
+      "max_length":65535,
       "prefix":"",
-      "text":"Tell us about a project you’re proud of (hackathon, personal project, job, research, etc).",
-      "required":false,
+      "text":"What school do you attend?",
+      "required":true,
       "choices":null,
-      "slug": "essay_project"
+      "slug": "school"
    },
    {
       "id":10,
@@ -50,6 +80,16 @@
       "slug": "essay_helped"
    },
    {
+      "id":11,
+      "type":"essay",
+      "max_length":700,
+      "prefix":"",
+      "text":"Tell us about a project you’re proud of (hackathon, personal project, job, research, etc).",
+      "required":false,
+      "choices":null,
+      "slug": "essay_project"
+   },
+   {
       "id":12,
       "type":"number",
       "max_length":65535,
@@ -60,24 +100,24 @@
       "slug": "college_grad_year"
    },
    {
-      "id":1,
-      "type":"text",
-      "max_length":65535,
-      "prefix":"",
-      "text":"First Name",
-      "required":true,
-      "choices":null,
-      "slug": "first_name"
-   },
-   {
-      "id":3,
+      "id":24,
       "type":"number",
       "max_length":65535,
       "prefix":"",
-      "text":"Phone Number",
+      "text":"How old will you be on October 12, 2018?",
       "required":true,
       "choices":null,
-      "slug": "phone_number"
+      "slug": "age"
+   },
+   {
+      "id":25,
+      "type":"text",
+      "max_length":65535,
+      "prefix":"",
+      "text":"What gender do you identify as?",
+      "required":true,
+      "choices":null,
+      "slug": "gender"
    },
    {
       "id":26,
@@ -108,55 +148,5 @@
       "required":true,
       "choices":null,
       "slug": "race_ethnicity"
-   },
-   {
-      "id":29,
-      "type":"check",
-      "max_length":65535,
-      "prefix":"",
-      "text":"I authorize you to share my application/registration information for event administration, raking, MLH administration, pre- and post-event informational e-mail, and occasional messages about hachathons in-line with the MLH Privacy Policy. I further agree to the terms of both the MLH Contest Terms and Conditions and the MLH Privacy Policy.",
-      "required":true,
-      "choices":null,
-      "slug": "mlh_authorization"
-   },
-   {
-      "id":2,
-      "type":"text",
-      "max_length":65535,
-      "prefix":"",
-      "text":"Last Name",
-      "required":true,
-      "choices":null,
-      "slug": "last_name"
-   },
-   {
-      "id":9,
-      "type":"text",
-      "max_length":65535,
-      "prefix":"",
-      "text":"What school do you attend?",
-      "required":true,
-      "choices":null,
-      "slug": "school"
-   },
-   {
-      "id":25,
-      "type":"text",
-      "max_length":65535,
-      "prefix":"",
-      "text":"What gender do you identify as?",
-      "required":true,
-      "choices":null,
-      "slug": "gender"
-   },
-   {
-      "id":24,
-      "type":"number",
-      "max_length":65535,
-      "prefix":"",
-      "text":"How old will you be on October 12, 2018?",
-      "required":true,
-      "choices":null,
-      "slug": "age"
    }
 ]
