@@ -6,16 +6,13 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.home, name='home'),
-    url(r'^save/', views.ApplicationView.as_view(), name='save'),
-    url(r'^submit/', views.ApplicationView.as_view(), name='submit'),
-    url(
-        r'^questions/$',
-        views.QuestionListView.as_view(),
-        name='list_questions',
-    ),
-    url(r'^schools_list/$', views.get_schools_list, name="schools_list"),
+    url(r'^schools_list/$', views.get_schools_list, name="schools-list"),
 ]
 
 router = routers.DefaultRouter()
-router.register(r'resumes', views.ResumeViewSet)
+router.register(
+    r'application', views.ApplicationViewSet, base_name="application")
+router.register(r'resumes', views.ResumeViewSet, base_name="resume")
+router.register(
+    r'submissions', views.SubmissionViewSet, base_name="submissions")
 urlpatterns += router.urls
