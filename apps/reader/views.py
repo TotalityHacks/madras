@@ -9,6 +9,7 @@ from apps.reader import serializers
 from apps.reader.models import Rating
 from apps.reader.utils import get_metrics_github
 from apps.application.models import Application
+from apps.application.serializers import SubmissionSerializer
 
 from django.conf import settings
 from django.urls import reverse
@@ -49,14 +50,17 @@ class NextApplicationView(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_app = (
+        rand_apps = (
             Application.objects
             .annotate(reviews=Count('ratings'))
             .exclude(ratings__reader=request.user)
             .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS)
-            .filter(status=Application.SUBMITTED)
-            .first()
         )
+        rand_app = None
+        for app in rand_apps:
+            if app.submissions.exists():
+                rand_app = app
+                break
 
         if rand_app is None:
             return Response(
@@ -64,13 +68,12 @@ class NextApplicationView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if rand_app.github_username:
+        if rand_app.github:
             github_array = get_metrics_github(rand_app.github_username)
         else:
             github_array = {}
 
-        # data = ApplicationSerializer(rand_app).data
-        data = {}
+        data = SubmissionSerializer(rand_app.submissions.first()).data
         data.update(github_array)
         return Response(data)
 

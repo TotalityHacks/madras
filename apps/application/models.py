@@ -72,6 +72,8 @@ class Application(models.Model):
 class Submission(models.Model):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    application = models.ForeignKey(
+        Application, on_delete=models.PROTECT, related_name="submissions")
     user = models.ForeignKey(
         User, on_delete=models.PROTECT, related_name="submissions")
 

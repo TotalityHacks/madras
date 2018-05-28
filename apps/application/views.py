@@ -104,7 +104,8 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         return Submission.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        app, _ = Application.objects.get_or_create(user=self.request.user)
+        serializer.save(application=app, user=self.request.user)
 
 
 @api_view(['GET'])
