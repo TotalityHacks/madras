@@ -5,15 +5,15 @@ from collections import OrderedDict
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import api_view
+from rest_framework.decorators import action, api_view
 
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
-from .serializers import ApplicationSerializer, ResumeSerializer
+from . import serializers
 from .services import load_questions
-from .models import Application, Resume
+from .models import Application, Resume, Submission
 from utils.upload import FileUploader
 
 
@@ -25,38 +25,32 @@ def home(request):
             'Information about application submission endpoints.'
         ),
         (
-            reverse('application:save'),
-            'Save a new, possibly incomplete, application.'),
-        (
-            reverse('application:submit'),
-            'Submit a new application.'),
-        (
             reverse('application:resume-list'),
             'Submit a resume for an application'
         ),
         (
-            reverse('application:list_questions'),
+            reverse('application:questions-list'),
             'List questions required for the application.'
         ),
     )))
 
 
-SCHOOLS = list(school[0] for school in csv.reader(open("static/schools.csv")))
-
-
 class ResumeViewSet(mixins.CreateModelMixin,
+                    mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     viewsets.GenericViewSet):
 
-    serializer_class = ResumeSerializer
+    serializer_class = serializers.ResumeSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = Resume.objects.all()
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get_queryset(self):
+        return Resume.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         app = get_object_or_404(Application, user=self.request.user)
@@ -80,35 +74,48 @@ class ResumeViewSet(mixins.CreateModelMixin,
         return response
 
 
-class ApplicationView(generics.ListCreateAPIView):
-    """Create a new application. Pass in key value pairs in the form
-    'question_X': ... where X is the ID of the question and ... is the answer.
-    """
-    serializer_class = ApplicationSerializer
+class ApplicationViewSet(mixins.RetrieveModelMixin,
+                         mixins.UpdateModelMixin,
+                         viewsets.GenericViewSet):
+
+    serializer_class = serializers.ApplicationSerializer
     permission_classes = (IsAuthenticated,)
+
+    def list(self, request):
+        app, _ = Application.objects.get_or_create(user=request.user)
+        if request.method == 'GET':
+            return Response(
+                serializers.ApplicationSerializer(app).data,
+                status=status.HTTP_200_OK,
+            )
+        else:
+            return Response("wow")
 
     def get_queryset(self):
         return Application.objects.filter(user=self.request.user)
 
-    def list(self, request):
-        try:
-            app = Application.objects.get(user=request.user)
-        except Application.DoesNotExist:
-            return Response(
-                {'error': 'No application has been submitted yet!'},
-                status=status.HTTP_404_NOT_FOUND,
-            )
-        return Response(ApplicationSerializer(app).data)
 
+class SubmissionViewSet(mixins.CreateModelMixin,
+                         mixins.ListModelMixin,
+                         viewsets.GenericViewSet):
 
-class QuestionListView(generics.ListAPIView):
+    serializer_class = serializers.SubmissionSerializer
+    permission_classes = (IsAuthenticated,)
 
-    queryset = []
+    def get_queryset(self):
+        return Submission.objects.filter(user=self.request.user)
 
-    def list(self, request):
-        return Response(load_questions(), status=status.HTTP_200_OK)
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 @api_view(['GET'])
 def get_schools_list(request):
-    return Response({"schools": SCHOOLS})
+    schools = list(
+        school[0] for school in csv.reader(open("static/schools.csv")))
+    return Response({"schools": schools})
+
+
+@api_view(['GET'])
+def get_questions_list(request):
+    return Response(load_questions(), status=status.HTTP_200_OK)

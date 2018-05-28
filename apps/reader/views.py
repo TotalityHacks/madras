@@ -14,9 +14,6 @@ from django.conf import settings
 from django.urls import reverse
 from django.db.models import Count
 
-from ..application.serializers import ApplicationSerializer
-
-
 @api_view(['GET'])
 def home(request):
     """
@@ -71,7 +68,8 @@ class NextApplicationView(APIView):
         else:
             github_array = {}
 
-        data = ApplicationSerializer(rand_app).data
+        # data = ApplicationSerializer(rand_app).data
+        data = {}
         data.update(github_array)
         return Response(data)
 
