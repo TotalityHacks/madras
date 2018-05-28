@@ -32,39 +32,16 @@ class Application(models.Model):
         return "<Application: ({}) {}>".format(self.id, self.user.email)
 
 
-class Question(models.Model):
-    text = models.TextField()
-    prefix = models.CharField(max_length=255, blank=True, default="")
-    max_length = models.IntegerField(default=65535)
-    type = models.CharField(max_length=255, help_text='Indicates what kind of input this question accepts (ex: short response, text field, etc).')
-    required = models.BooleanField(default=False, help_text='Indicates whether users are required to fill out this question'
-                                                            ' before submitting the application.')
-
-    def __str__(self):
-        return "<Question: {}>".format(self.text[:140])
-
-    @property
-    def choices(self):
-        if not self.type == 'choice':
-            return None
-        return Choice.objects.filter(question=self).order_by('value').values_list('value', flat=True)
-
-
 class Answer(models.Model):
     application = models.ForeignKey(Application, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question_id = models.IntegerField(db_index=True)
     text = models.TextField()
 
     class Meta:
-        unique_together = ('application', 'question')
+        unique_together = ('application', 'question_id')
 
     def __str__(self):
-        return "<Answer: ({}) {}>".format(self.application.id, self.question.text[:140])
-
-
-class Choice(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
-    value = models.TextField()
+        return "<Answer: ({}) {}>".format(self.application.id, self.question_id)
 
 
 class Resume(models.Model):

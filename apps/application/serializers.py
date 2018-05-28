@@ -3,7 +3,8 @@ from rest_framework.utils.serializer_helpers import ReturnDict
 from django.db import transaction
 from django.urls import resolve
 
-from .models import Application, Question, Resume, Answer, Choice
+from .models import Application, Resume, Answer
+from .services import get_question, load_questions
 
 
 class ApplicationSerializer(serializers.ModelSerializer):
@@ -16,8 +17,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
     def __init__(self, *args, **kwargs):
         super(ApplicationSerializer, self).__init__(*args, **kwargs)
-        for question in Question.objects.all():
-            self.fields["question_{}".format(question.id)] = serializers.CharField(help_text=question.text, required=False)
+        for question in load_questions():
+            self.fields["question_{}".format(question["id"])] = serializers.CharField(help_text=question["text"], required=False)
 
     @property
     def data(self):
@@ -25,7 +26,8 @@ class ApplicationSerializer(serializers.ModelSerializer):
         data["questions"] = {}
         if "id" in data:
             for answer in Answer.objects.filter(application=data["id"]):
-                data["questions"][answer.question.text] = answer.text
+                question_text = get_question(int(answer.question_id))["text"]
+                data["questions"][question_text] = answer.text
         return ReturnDict(data, serializer=self)
 
     def create(self, data):
@@ -52,33 +54,29 @@ class ApplicationSerializer(serializers.ModelSerializer):
             for item in data:
                 if item.startswith("question_"):
                     question_id = int(item.rsplit("_", 1)[-1])
-                    question = Question.objects.get(id=question_id)
-                    Answer.objects.update_or_create(question=question, application=application, defaults={'text': data[item]})
+                    Answer.objects.update_or_create(question_id=question_id, application=application, defaults={'text': data[item]})
                     del self.fields[item]
 
             # do some basic field checking
-            for question in Question.objects.all():
-                answer = Answer.objects.filter(question=question, application=application)
+            for question in load_questions():
+                answer = Answer.objects.filter(question_id=question["id"], application=application)
                 if answer.exists():
                     answer = answer.first()
                     # allow blank answers for saved applications (not submitted)
                     if not answer.text and not application.status == Application.SUBMITTED:
                         continue
-                    if question.type == 'number':
+                    if question["type"] == 'number':
                         if not answer.text.isdigit():
-                            raise serializers.ValidationError('"{}" must be an integer value!'.format(question.text))
-                    elif question.type == 'choice':
-                        if not Choice.objects.filter(question=question, value=answer.text).exists():
-                            choices = list(Choice.objects.filter(question=question).order_by('value').values_list('value', flat=True))
-                            raise serializers.ValidationError('The answer for "{}" must be one of the choices! '
-                                                              'Possible choices are: {}.'.format(question.text, choices))
+                            raise serializers.ValidationError('"{}" must be an integer value!'.format(question["text"]))
 
             # if application will be submitted, ensure that required fields are filled out
             if application.status == Application.SUBMITTED:
-                for question in Question.objects.filter(required=True):
-                    answer = Answer.objects.filter(question=question, application=application)
+                for question in load_questions():
+                    if not question["required"]:
+                        continue
+                    answer = Answer.objects.filter(question_id=question["id"], application=application)
                     if not answer.exists() or not answer.first().text:
-                        raise serializers.ValidationError('"{}" is a required question!'.format(question.text))
+                        raise serializers.ValidationError('"{}" is a required question!'.format(question["text"]))
             application.save()
         return application
 
@@ -96,17 +94,3 @@ class ResumeSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         validated_data.pop('file')
         return Resume.objects.create(**validated_data)
-
-
-class QuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Question
-        fields = ('id', 'type', 'max_length', 'prefix', 'text', 'required', 'choices')
-        read_only_fields = ('id', 'choices')
-
-
-class ChoiceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Choice
-        fields = ('id', 'question', 'value')
-        read_only_fields = ('id',)

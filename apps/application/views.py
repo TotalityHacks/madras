@@ -11,8 +11,9 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
-from .serializers import ApplicationSerializer, QuestionSerializer, ResumeSerializer, ChoiceSerializer
-from .models import Question, Application, Choice, Resume
+from .serializers import ApplicationSerializer, ResumeSerializer
+from .services import load_questions
+from .models import Application, Resume
 from utils.upload import FileUploader
 
 
@@ -24,11 +25,6 @@ def home(request):
         (reverse('application:submit'), 'Submit a new application.'),
         (reverse('application:resume-list'), 'Submit a resume for an application'),
         (reverse('application:list_questions'), 'List questions required for the application.'),
-        (reverse('application:create_question'), 'Create a new application question.'),
-        (reverse('application:question', kwargs={'pk': 1234}), 'Get, modify, and delete questions.'),
-        (reverse('application:list_choices'), 'List all choices associated with questions.'),
-        (reverse('application:create_choice'), 'Create a new choice associated with a question.'),
-        (reverse('application:choice', kwargs={'pk': 1234}), 'Get, modify, and delete choices.'),
     )))
 
 
@@ -87,30 +83,14 @@ class ApplicationView(generics.ListCreateAPIView):
         return Response(ApplicationSerializer(app).data)
 
 
-class QuestionView(viewsets.ModelViewSet):
-    serializer_class = QuestionSerializer
-    permission_classes = (IsAdminUser,)
-    queryset = Question.objects.all()
-
-
 class QuestionListView(generics.ListAPIView):
-    serializer_class = QuestionSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Question.objects.all()
+
+    queryset = []
+
+    def list(self, request):
+        return Response(load_questions(), status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
 def get_schools_list(request):
     return Response({"schools": SCHOOLS})
-
-
-class ChoiceView(viewsets.ModelViewSet):
-    serializer_class = ChoiceSerializer
-    permission_classes = (IsAdminUser,)
-    queryset = Choice.objects.all()
-
-
-class ChoiceListView(generics.ListAPIView):
-    serializer_class = ChoiceSerializer
-    permission_classes = (IsAuthenticated,)
-    queryset = Choice.objects.all()
