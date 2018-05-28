@@ -1,13 +1,16 @@
 language: python
 python:
-    - '3.5'
+- '3.5'
 sudo: false
 cache:
-    directories:
-        - "$HOME/.cache/pip"
+  directories:
+  - "$HOME/.cache/pip"
 install:
-    - pip install pipenv flake8
-    - pipenv install
+- pip install pipenv flake8
+- pipenv install
 script:
-    - pipenv run flake8 --exclude=venv,*/migrations/* .
-    - pipenv run ./manage.py test
+- pipenv run flake8 --exclude=venv,*/migrations/* .
+- pipenv run ./manage.py test
+notifications:
+  slack:
+    secure: OvpBp9J+JdYvXT3MGP6U1F5PXFU52z4OsKijI/fqdKm0LxkBvs4x3SG50bGFm39caDuqrCbeOqntADEfdGAktmRAHlhAuMNo2SIp/oSD5duA+DZlzIHA7SjkjJpYra1zZBT+HIXm0aR9IiugIBXOnIF/DhvoPzccDmBG60qlq3XxcjnU/oknmHOGF2AHlSE8FxuKHEeoJd/IvCVHIsBQD47ubJ58UrW1PKvyNMNiqd155gxVf7FexjWjtH/AcRQRat+N7lEPXi09z83L5yOLbPMvverf2gqkKfhZJ1WIWP0L4GCgUJGeDft/l8J9x2iKMcY+g3YriZfoJZXwpciFFSm5HBg/UyZNYckw7Q5wxlS2XI4Jh0w88RR8kr1HWwIf/a/egGkLu2c7dMsxZ4Emqavgos//mI6bbjW5ghoOail1e8URagd5RnnrvKuRgx+dYJaHabhw/tVkM9MSCWG8TG6DS7bpyS/xf7/FI6oyVsVsRdiF3S7DMCYxSTGXw6uhPP9+65TTPqrfCl+7f0ycX2agAZl4559BFY7s6wunLv20pnoXptEyZ+oEIyY9/NPo4NF3RS2uYTZfaH1kWWDqE3BsLHVwUDA2Oivs014O+/s6ggTcbzakVTu1ZsN+n7D7sUWdPCrQlQ8wYxtH/Ixa1kkHOw6Toda87QW/AlsGBNk=
