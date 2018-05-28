@@ -1,10 +1,6 @@
 from rest_framework import serializers
-from rest_framework.utils.serializer_helpers import ReturnDict
-from django.db import transaction
-from django.urls import resolve
 
 from .models import Application, Resume, Submission
-from .services import get_question, load_questions
 
 
 class ApplicationSerializer(serializers.ModelSerializer):

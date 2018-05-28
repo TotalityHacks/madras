@@ -35,7 +35,7 @@ STUDY_LEVEL_CHOICES = (
 
 
 class Application(models.Model):
-    
+
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     user = models.OneToOneField(
         User, on_delete=models.PROTECT, related_name="application")

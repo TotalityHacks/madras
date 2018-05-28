@@ -2,17 +2,16 @@ import csv
 import uuid
 from collections import OrderedDict
 
-from rest_framework import generics, mixins, status, viewsets
+from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from rest_framework.decorators import action, api_view
+from rest_framework.decorators import api_view
 
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from . import serializers
-from .services import load_questions
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
 
@@ -96,8 +95,8 @@ class ApplicationViewSet(mixins.RetrieveModelMixin,
 
 
 class SubmissionViewSet(mixins.CreateModelMixin,
-                         mixins.ListModelMixin,
-                         viewsets.GenericViewSet):
+                        mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
 
     serializer_class = serializers.SubmissionSerializer
     permission_classes = (IsAuthenticated,)
@@ -114,8 +113,3 @@ def get_schools_list(request):
     schools = list(
         school[0] for school in csv.reader(open("static/schools.csv")))
     return Response({"schools": schools})
-
-
-@api_view(['GET'])
-def get_questions_list(request):
-    return Response(load_questions(), status=status.HTTP_200_OK)
