@@ -52,14 +52,13 @@ class ResumeViewSet(mixins.CreateModelMixin,
         return Resume.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        app = get_object_or_404(Application, user=self.request.user)
         file = serializer.validated_data['file']
         serializer.validated_data['id'] = uuid.uuid4()
         FileUploader().upload_file_to_s3(
             file,
             remote_filename=str(serializer.validated_data['id']),
         )
-        serializer.save(application=app)
+        serializer.save(user=self.request.user)
 
     def retrieve(self, request, pk):
         try:

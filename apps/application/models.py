@@ -100,7 +100,6 @@ class Submission(models.Model):
         max_length=16, choices=RACE_ETHNICITY_CHOICES)
 
     created_at = models.DateTimeField(auto_now_add=True)
-    updated_at = models.DateTimeField(auto_now=True)
 
 
 class Resume(models.Model):

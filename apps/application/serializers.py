@@ -5,6 +5,9 @@ from .models import Application, Resume, Submission
 
 class ApplicationSerializer(serializers.ModelSerializer):
 
+    resumes = serializers.SerializerMethodField(read_only=True)
+    submitted = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Application
         fields = (
@@ -12,9 +15,16 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'github', 'linkedin', 'personal_website', 'school', 'essay_helped',
             'essay_project', 'age', 'college_grad_year', 'gender', 'major',
             'current_study_level', 'race_ethnicity', 'created_at',
-            'updated_at',
+            'updated_at', 'resumes', 'submitted',
         )
-        read_only_fields = ('id', 'user', 'created_at', 'updated_at')
+        read_only_fields = (
+            'id', 'user', 'created_at', 'updated_at', 'resumes', 'submitted',)
+
+    def get_resumes(self, instance):
+        return instance.user.resumes.all().values_list("id", flat=True)
+
+    def get_submitted(self, instance):
+        return instance.user.submissions.exists()
 
 
 class ResumeSerializer(serializers.ModelSerializer):
@@ -36,5 +46,10 @@ class SubmissionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Submission
-        fields = ApplicationSerializer.Meta.fields
-        read_only_fields = ApplicationSerializer.Meta.read_only_fields
+        fields = (
+            'id', 'user', 'first_name', 'last_name', 'phone_number', 'devpost',
+            'github', 'linkedin', 'personal_website', 'school', 'essay_helped',
+            'essay_project', 'age', 'college_grad_year', 'gender', 'major',
+            'current_study_level', 'race_ethnicity', 'created_at',
+        )
+        read_only_fields = ('id', 'user', 'created_at')
