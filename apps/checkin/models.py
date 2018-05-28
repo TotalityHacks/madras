@@ -11,7 +11,7 @@ class CheckInGroup(models.Model):
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
 
     def __str__(self):
-        return self.applicant.__str__() + " checked in" if self.checked_in else " not checked in"
+        return "{} - checked in: {}".format(self.applicant, self.checked_in)
 
 
 class CheckInEvent(models.Model):

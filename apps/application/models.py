@@ -26,7 +26,8 @@ class Application(models.Model):
         (DENIED, 'Denied'),
         (PENDING, 'Pending')
     )
-    admission_status = models.CharField(max_length=2, choices=ADMISSION_STATUS, default=PENDING)
+    admission_status = models.CharField(
+        max_length=2, choices=ADMISSION_STATUS, default=PENDING)
 
     def __str__(self):
         return "<Application: ({}) {}>".format(self.id, self.user.email)
@@ -41,7 +42,8 @@ class Answer(models.Model):
         unique_together = ('application', 'question_id')
 
     def __str__(self):
-        return "<Answer: ({}) {}>".format(self.application.id, self.question_id)
+        return "<Answer: ({}) {}>".format(
+            self.application.id, self.question_id)
 
 
 class Resume(models.Model):

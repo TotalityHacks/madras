@@ -30,14 +30,23 @@ urlpatterns = [
     url(r'^logout/', Logout.as_view()),
 
     url(r'^reader/', include('apps.reader.urls', namespace="reader")),
-    url(r'^registration/', include('apps.registration.urls', namespace="registration")),
+    url(
+        r'^registration/',
+        include('apps.registration.urls', namespace="registration"),
+    ),
     url(r'^stats/', include('apps.stats.urls', namespace="stats")),
-    url(r'^application/', include('apps.application.urls', namespace="application")),
+    url(
+        r'^application/',
+        include('apps.application.urls', namespace="application"),
+    ),
     url(r'^checkin/', include('apps.checkin.urls', namespace="checkin"))
 ]
 
 if settings.DEBUG:
     urlpatterns += [
-        url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+        url(
+            r'^api-auth/',
+            include('rest_framework.urls', namespace='rest_framework'),
+        ),
         url(r'^admin/', include(admin.site.urls)),
     ]

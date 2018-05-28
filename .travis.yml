@@ -9,5 +9,5 @@ install:
     - pip install pipenv flake8
     - pipenv install
 script:
-    - pipenv run flake8 --max-line-length=150 --exclude=venv,*/migrations/* .
+    - pipenv run flake8 --exclude=venv,*/migrations/* .
     - pipenv run ./manage.py test

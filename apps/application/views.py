@@ -4,7 +4,7 @@ from collections import OrderedDict
 
 from rest_framework import generics, mixins, status, viewsets
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
 from django.http import Http404, HttpResponse
@@ -20,11 +20,24 @@ from utils.upload import FileUploader
 @api_view(['GET'])
 def home(request):
     return Response(OrderedDict((
-        (reverse('application:home'), 'Information about application submission endpoints.'),
-        (reverse('application:save'), 'Save a new, possibly incomplete, application.'),
-        (reverse('application:submit'), 'Submit a new application.'),
-        (reverse('application:resume-list'), 'Submit a resume for an application'),
-        (reverse('application:list_questions'), 'List questions required for the application.'),
+        (
+            reverse('application:home'),
+            'Information about application submission endpoints.'
+        ),
+        (
+            reverse('application:save'),
+            'Save a new, possibly incomplete, application.'),
+        (
+            reverse('application:submit'),
+            'Submit a new application.'),
+        (
+            reverse('application:resume-list'),
+            'Submit a resume for an application'
+        ),
+        (
+            reverse('application:list_questions'),
+            'List questions required for the application.'
+        ),
     )))
 
 
@@ -68,7 +81,9 @@ class ResumeViewSet(mixins.CreateModelMixin,
 
 
 class ApplicationView(generics.ListCreateAPIView):
-    """ Create a new application. Pass in key value pairs in the form 'question_X': ... where X is the ID of the question and ... is the answer. """
+    """Create a new application. Pass in key value pairs in the form
+    'question_X': ... where X is the ID of the question and ... is the answer.
+    """
     serializer_class = ApplicationSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -79,7 +94,10 @@ class ApplicationView(generics.ListCreateAPIView):
         try:
             app = Application.objects.get(user=request.user)
         except Application.DoesNotExist:
-            return Response({'error': 'No application has been submitted yet!'}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {'error': 'No application has been submitted yet!'},
+                status=status.HTTP_404_NOT_FOUND,
+            )
         return Response(ApplicationSerializer(app).data)
 
 

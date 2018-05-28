@@ -14,13 +14,18 @@ from .models import Rating
 class UtilsTests(TestCase):
 
     def setUp(self):
-        self.user = User.objects.create(email='test@example.com', password='testing', is_staff=True)
-        self.user2 = User.objects.create(email='test2@example.com', password='testing2')
-        self.user3 = User.objects.create(email='test3@example.com', password='testing3')
+        self.user = User.objects.create(
+            email='test@example.com', password='testing', is_staff=True)
+        self.user2 = User.objects.create(
+            email='test2@example.com', password='testing2')
+        self.user3 = User.objects.create(
+            email='test3@example.com', password='testing3')
 
         self.saved_application = Application.objects.create(user=self.user3)
-        self.application = Application.objects.create(user=self.user, status=Application.SUBMITTED)
-        self.application2 = Application.objects.create(user=self.user2, status=Application.SUBMITTED)
+        self.application = Application.objects.create(
+            user=self.user, status=Application.SUBMITTED)
+        self.application2 = Application.objects.create(
+            user=self.user2, status=Application.SUBMITTED)
 
         self.factory = APIRequestFactory()
 
@@ -36,8 +41,18 @@ class UtilsTests(TestCase):
         self.assertEquals(response.data["id"], self.application.id)
 
     def test_post_review(self):
-        data = {"application": 1, "field_skill": 2, "field_community": 5, "field_passion": 3, "comments": "hi"}
-        request = self.factory.post('/reader/rating', json.dumps(data), content_type="application/json")
+        data = {
+            "application": 1,
+            "field_skill": 2,
+            "field_community": 5,
+            "field_passion": 3,
+            "comments": "hi",
+        }
+        request = self.factory.post(
+            '/reader/rating',
+            json.dumps(data),
+            content_type="application/json",
+        )
         force_authenticate(request, user=self.user)
         RatingView.as_view()(request)
         self.assertEquals(1, Rating.objects.count())

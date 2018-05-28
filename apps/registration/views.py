@@ -17,15 +17,19 @@ from django.utils.http import urlsafe_base64_decode
 
 @api_view(['GET'])
 def index(request):
-    """ The backend API for Madras, a cloud-based hackathon management system. """
+    """The API for Madras, a cloud-based hackathon management system."""
     return Response({
         '/registration': 'Endpoints relating to user account creation.',
         '/reader': 'Endpoints relating to reading applications.',
         '/login': 'Obtain a token for authenticated requests.',
         '/logout': 'Revoke the current session and logout of the API.',
-        '/stats': 'Get statistics about currently submitted and reviewed applications.',
+        '/stats': (
+            'Get statistics about currently submitted and reviewed '
+            'applications.'
+        ),
         '/application': 'Endpoints relating to submitting applications.',
-        '/checkin': 'Endpoints related to attendee checkin on the day of the event.'
+        '/checkin': (
+            'Endpoints related to attendee checkin on the day of the event.'),
     })
 
 
@@ -33,15 +37,21 @@ def index(request):
 def home(request):
     """ Show information about registration endpoints. """
     return Response({
-        reverse('registration:home'): 'Get information about registration endpoints.',
+        reverse('registration:home'): (
+            'Get information about registration endpoints.'),
         reverse('registration:signup'): 'Create a new account.',
-        reverse('registration:reset'): 'Send a password reset given an email account.',
-        reverse('registration:resend_email'): 'Resend a confirmation email to an unverified user.'
+        reverse('registration:reset'): (
+            'Send a password reset given an email account.'),
+        reverse('registration:resend_email'): (
+            'Resend a confirmation email to an unverified user.'),
     })
 
 
 def activate(request, uidb64, token):
-    """ Handles the link the user uses to confirm their account. Should not be called directly through the API. """
+    """
+    Handles the link the user uses to confirm their account.
+    Should not be called directly through the API.
+    """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
@@ -53,18 +63,23 @@ def activate(request, uidb64, token):
         login(request, user)
         return redirect(settings.EMAIL_REDIRECT_URL)
     else:
-        return JsonResponse({"success": False, "error": "Invalid email confirmation token!"})
+        return JsonResponse({
+            "success": False, "error": "Invalid email confirmation token!"})
 
 
 def recover(request, uidb64, token):
-    """ Handles a password recover request. Should not be called directly through the API. """
+    """
+    Handles a password recover request.
+    Should not be called directly through the API.
+    """
     try:
         uid = force_text(urlsafe_base64_decode(uidb64))
         user = User.objects.get(pk=uid)
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is None or not account_activation_token.check_token(user, token):
-        return JsonResponse({"success": False, "error": "Invalid password reset code!"})
+        return JsonResponse(
+            {"success": False, "error": "Invalid password reset code!"})
 
     context = {
         "email": user.email,

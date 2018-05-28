@@ -19,17 +19,24 @@ from ..application.serializers import ApplicationSerializer
 
 @api_view(['GET'])
 def home(request):
-    """ Endpoints for processing applications. These endpoints can only be accessed to users with the staff permission. """
+    """
+    Endpoints for processing applications. These endpoints can only be
+    accessed to users with the staff permission.
+    """
 
     return Response({
         reverse("reader:rating"): 'Get given ratings and submit new ratings.',
-        reverse("reader:next_application"): 'Get the next application to review.',
+        reverse("reader:next_application"): (
+            'Get the next application to review.'),
         reverse("reader:stats"): 'Get reader statistics about the user',
     })
 
 
 class RatingView(ListCreateAPIView):
-    """ Get all of the ratings given to all applications, or submit a new rating for an application. """
+    """
+    Get all of the ratings given to all applications, or submit a new rating
+    for an application.
+    """
     serializer_class = serializers.RatingSerializer
     permission_classes = (IsAdminUser,)
 
@@ -54,7 +61,10 @@ class NextApplicationView(APIView):
         )
 
         if rand_app is None:
-            return Response({"error": "No more applications to review!"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(
+                {"error": "No more applications to review!"},
+                status=status.HTTP_404_NOT_FOUND,
+            )
 
         if rand_app.github_username:
             github_array = get_metrics_github(rand_app.github_username)

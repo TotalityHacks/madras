@@ -14,7 +14,8 @@ class UserSerializer(serializers.ModelSerializer):
     def validate_password(self, value):
         for validator in settings.AUTH_PASSWORD_VALIDATORS:
             cls = validator['NAME'].rsplit(".", 1)[-1]
-            method = getattr(__import__(validator['NAME'].rsplit(".", 1)[0], fromlist=[cls]), cls)
+            method = getattr(__import__(
+                validator['NAME'].rsplit(".", 1)[0], fromlist=[cls]), cls)
             method().validate(password=value)
 
     def create(self, data):

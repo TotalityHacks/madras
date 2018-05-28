@@ -21,7 +21,8 @@ def get_metrics_github(github_username):
     """ Returns basic GitHub statistics given a GitHub username. """
 
     if settings.GITHUB_USERNAME:
-        gh = github3.login(settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
+        gh = github3.login(
+            settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
     else:
         return {
             "num_followers": -1,

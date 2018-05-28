@@ -1,8 +1,10 @@
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.compat import authenticate
 from rest_framework.response import Response
-from rest_framework.authtoken.serializers import AuthTokenSerializer as AuthTokenSerializerBase
-from rest_framework.authtoken.views import ObtainAuthToken as ObtainAuthTokenBase
+from rest_framework.authtoken.serializers import (
+    AuthTokenSerializer as AuthTokenSerializerBase)
+from rest_framework.authtoken.views import (
+    ObtainAuthToken as ObtainAuthTokenBase)
 from rest_framework.views import APIView
 
 from django.core.mail import EmailMultiAlternatives
@@ -18,7 +20,10 @@ from .models import User
 
 
 class UserRegistrationView(generics.CreateAPIView):
-    """ Create a new user. If the associated email is a staff email address, create a staff user who is able to review applications. """
+    """
+    Create a new user. If the associated email is a staff email address,
+    create a staff user who is able to review applications.
+    """
 
     serializer_class = UserSerializer
 
@@ -27,7 +32,10 @@ class UserRegistrationView(generics.CreateAPIView):
         if serializer.is_valid():
             user = serializer.create(request.data)
         else:
-            return Response({"success": False, "errors": serializer.errors}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"success": False, "errors": serializer.errors},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         # send activation email to user
         current_site = get_current_site(request)
@@ -45,7 +53,10 @@ class UserRegistrationView(generics.CreateAPIView):
 
         return Response({
             "success": True,
-            "message": "Account created! You will need to verify your email address before logging in."
+            "message": (
+                "Account created! You will need to verify your email address "
+                "before logging in."
+            ),
         }, status=status.HTTP_201_CREATED)
 
 
@@ -58,7 +69,10 @@ class PasswordResetView(generics.GenericAPIView):
         if not request.data['email']:
             return Response({
                 "success": False,
-                "message": "You must enter an email to send the password reset request to."
+                "message": (
+                    "You must enter an email to send the password reset "
+                    "request to."
+                )
             }, status=status.HTTP_400_BAD_REQUEST)
         user = User.objects.filter(email=request.data['email'])
         if user.exists():
@@ -74,7 +88,8 @@ class PasswordResetView(generics.GenericAPIView):
             })
             mail_subject = 'Password reset request for your account.'
             to_email = user.email
-            email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
+            email = EmailMultiAlternatives(
+                mail_subject, message, to=[to_email])
             email.attach_alternative(message, "text/html")
             email.send()
 
@@ -91,16 +106,32 @@ class AuthTokenSerializer(AuthTokenSerializerBase):
         username = attrs.get('username') or attrs.get('email')
         password = attrs.get('password')
 
-        if username and password:
-            user = authenticate(request=self.context.get('request'), username=username, password=password)
+        if not username or not password:
+            raise serializers.ValidationError(
+                'Must include "username" and "password".',
+                code='authorization',
+            )
 
-            if not user:
-                if User.objects.filter(email__iexact=username).exists():
-                    if not User.objects.get(email=username).is_active:
-                        raise serializers.ValidationError('You cannot login until you have confirmed your email address.', code='authorization')
-                raise serializers.ValidationError('Unable to login with provided credentials.', code='authorization')
-        else:
-            raise serializers.ValidationError('Must include "username" and "password".', code='authorization')
+        user = authenticate(
+            request=self.context.get('request'),
+            username=username,
+            password=password,
+        )
+
+        if not user:
+            if User.objects.filter(email__iexact=username).exists():
+                if not User.objects.get(email=username).is_active:
+                    raise serializers.ValidationError(
+                        (
+                            'You cannot login until you have confirmed your '
+                            'email address.'
+                        ),
+                        code='authorization',
+                    )
+            raise serializers.ValidationError(
+                'Unable to login with provided credentials.',
+                code='authorization',
+            )
 
         attrs['user'] = user
         return attrs
@@ -132,7 +163,10 @@ class ResendConfirmationView(APIView):
         if not request.data['email']:
             return Response({
                 "success": False,
-                "message": "You must enter an email to send the email verification message to."
+                "message": (
+                    "You must enter an email to send the email verification "
+                    "message to."
+                )
             }, status=status.HTTP_400_BAD_REQUEST)
 
         user = User.objects.filter(email=request.data['email'])
@@ -149,7 +183,8 @@ class ResendConfirmationView(APIView):
             })
             mail_subject = 'Activate your account!'
             to_email = user.email
-            email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
+            email = EmailMultiAlternatives(
+                mail_subject, message, to=[to_email])
             email.attach_alternative(message, "text/html")
             email.send()
 
