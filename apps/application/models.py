@@ -55,7 +55,7 @@ class Application(models.Model):
 
     age = models.PositiveIntegerField(null=True, blank=True)
     college_grad_year = models.CharField(
-        max_length=4, choices=GRAD_YEAR_CHOICES, null=True, blank=True)
+        max_length=8, choices=GRAD_YEAR_CHOICES, null=True, blank=True)
 
     gender = models.CharField(
         max_length=8, choices=GENDER_CHOICES, null=True, blank=True)
@@ -92,7 +92,7 @@ class Submission(models.Model):
 
     age = models.PositiveIntegerField()
     college_grad_year = models.CharField(
-        max_length=4, choices=GRAD_YEAR_CHOICES)
+        max_length=8, choices=GRAD_YEAR_CHOICES)
 
     gender = models.CharField(max_length=8, choices=GENDER_CHOICES)
     major = models.CharField(max_length=64)
