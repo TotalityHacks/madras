@@ -61,9 +61,9 @@ class Application(models.Model):
         max_length=8, choices=GENDER_CHOICES, null=True, blank=True)
     major = models.CharField(max_length=64, blank=True)
     current_study_level = models.CharField(
-        max_length=8, choices=STUDY_LEVEL_CHOICES, null=True, blank=True)
+        max_length=16, choices=STUDY_LEVEL_CHOICES, null=True, blank=True)
     race_ethnicity = models.CharField(
-        max_length=16, choices=RACE_ETHNICITY_CHOICES, null=True, blank=True)
+        max_length=32, choices=RACE_ETHNICITY_CHOICES, null=True, blank=True)
 
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -97,9 +97,9 @@ class Submission(models.Model):
     gender = models.CharField(max_length=8, choices=GENDER_CHOICES)
     major = models.CharField(max_length=64)
     current_study_level = models.CharField(
-        max_length=8, choices=STUDY_LEVEL_CHOICES)
+        max_length=16, choices=STUDY_LEVEL_CHOICES)
     race_ethnicity = models.CharField(
-        max_length=16, choices=RACE_ETHNICITY_CHOICES)
+        max_length=32, choices=RACE_ETHNICITY_CHOICES)
 
     created_at = models.DateTimeField(auto_now_add=True)
 
