@@ -14,5 +14,5 @@ router.register(
     r'application', views.ApplicationViewSet, base_name="application")
 router.register(r'resumes', views.ResumeViewSet, base_name="resume")
 router.register(
-    r'submissions', views.SubmissionViewSet, base_name="submissions")
+    r'submissions', views.SubmissionViewSet, base_name="submission")
 urlpatterns += router.urls

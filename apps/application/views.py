@@ -24,12 +24,16 @@ def home(request):
             'Information about application submission endpoints.'
         ),
         (
+            reverse('application:application-list'),
+            'Load and update an in-progress application'
+        ),
+        (
             reverse('application:resume-list'),
             'Submit a resume for an application'
         ),
         (
-            reverse('application:questions-list'),
-            'List questions required for the application.'
+            reverse('application:submission-list'),
+            'Submit an application'
         ),
     )))
 
