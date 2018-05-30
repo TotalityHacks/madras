@@ -3,8 +3,8 @@ from rest_framework import serializers
 from .models import Application, Resume, Submission
 from .validators import validate_resume
 
-class ApplicationSerializer(serializers.ModelSerializer):
 
+class ApplicationSerializer(serializers.ModelSerializer):
     resumes = serializers.SerializerMethodField(read_only=True)
     submitted = serializers.SerializerMethodField(read_only=True)
 
