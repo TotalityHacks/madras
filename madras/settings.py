@@ -221,6 +221,9 @@ if not DEBUG:
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME")
 GITHUB_PASSWORD = os.environ.get("GITHUB_PASSWORD")
 
+#max size of resume (in bytes)
+MAX_RESUME_SIZE = 2 * 1024 * 1024
+
 # total number of reviews per application
 TOTAL_NUM_REVIEWS = 5
 
