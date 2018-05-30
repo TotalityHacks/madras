@@ -55,7 +55,7 @@ class UserRegistrationView(generics.CreateAPIView):
             "success": True,
             "message": (
                 "Account created! You will need to verify your email address "
-                "before logging in."
+                "before logging in. You may need to check your spam."
             ),
         }, status=status.HTTP_201_CREATED)
 

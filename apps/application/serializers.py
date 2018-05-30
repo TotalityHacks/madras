@@ -1,7 +1,7 @@
 from rest_framework import serializers
 
 from .models import Application, Resume, Submission
-
+from .validators import validate_resume
 
 class ApplicationSerializer(serializers.ModelSerializer):
 
@@ -29,7 +29,7 @@ class ApplicationSerializer(serializers.ModelSerializer):
 
 class ResumeSerializer(serializers.ModelSerializer):
 
-    file = serializers.FileField(write_only=True)
+    file = serializers.FileField(write_only=True, validators=[validate_resume])
 
     class Meta:
         model = Resume
