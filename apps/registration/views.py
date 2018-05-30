@@ -59,6 +59,7 @@ def activate(request, uidb64, token):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
         user.is_active = True
+        user.email_confirmed = True
         user.save()
         login(request, user)
         return redirect(settings.EMAIL_REDIRECT_URL)
