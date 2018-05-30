@@ -64,8 +64,7 @@ def activate(request, uidb64, token):
         login(request, user)
         return redirect(settings.EMAIL_REDIRECT_URL)
     else:
-        return JsonResponse({
-            "success": False, "error": "Invalid email confirmation token!"})
+        return redirect(settings.EMAIL_REDIRECT_FAILURE_URL)
 
 
 def recover(request, uidb64, token):
