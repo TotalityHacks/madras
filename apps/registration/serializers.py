@@ -22,7 +22,6 @@ class UserSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(data['email'], data['password'])
         if data['email'].endswith('@{}'.format(settings.STAFF_EMAIL_SUFFIX)):
             user.is_staff = True
-        user.is_active = False
         user.save()
         return user
 

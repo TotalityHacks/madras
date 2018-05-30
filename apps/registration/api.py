@@ -1,4 +1,5 @@
 from rest_framework import generics, status, renderers, serializers
+from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
 from rest_framework.response import Response
 from rest_framework.authtoken.serializers import (
@@ -51,12 +52,15 @@ class UserRegistrationView(generics.CreateAPIView):
         email.attach_alternative(message, "text/html")
         email.send()
 
+        token, _ = Token.objects.get_or_create(user=user)
+
         return Response({
             "success": True,
             "message": (
                 "Account created! You will need to verify your email address "
                 "before logging in."
             ),
+            "token": token.key,
         }, status=status.HTTP_201_CREATED)
 
 
