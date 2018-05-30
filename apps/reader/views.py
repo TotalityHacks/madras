@@ -69,7 +69,7 @@ class NextApplicationView(APIView):
             )
 
         if rand_app.github:
-            github_array = get_metrics_github(rand_app.github_username)
+            github_array = get_metrics_github(rand_app.github)
         else:
             github_array = {}
 
