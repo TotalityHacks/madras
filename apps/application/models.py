@@ -58,7 +58,7 @@ class Application(models.Model):
         max_length=8, choices=GRAD_YEAR_CHOICES, null=True, blank=True)
 
     gender = models.CharField(
-        max_length=8, choices=GENDER_CHOICES, null=True, blank=True)
+        max_length=16, choices=GENDER_CHOICES, null=True, blank=True)
     major = models.CharField(max_length=64, blank=True)
     current_study_level = models.CharField(
         max_length=16, choices=STUDY_LEVEL_CHOICES, null=True, blank=True)
@@ -94,7 +94,7 @@ class Submission(models.Model):
     college_grad_year = models.CharField(
         max_length=8, choices=GRAD_YEAR_CHOICES)
 
-    gender = models.CharField(max_length=8, choices=GENDER_CHOICES)
+    gender = models.CharField(max_length=16, choices=GENDER_CHOICES)
     major = models.CharField(max_length=64)
     current_study_level = models.CharField(
         max_length=16, choices=STUDY_LEVEL_CHOICES)
