@@ -57,8 +57,11 @@ class SubmissionSerializer(serializers.ModelSerializer):
             'github', 'linkedin', 'personal_website', 'school', 'essay_helped',
             'essay_project', 'age', 'college_grad_year', 'gender', 'major',
             'current_study_level', 'race_ethnicity', 'created_at', 'resumes',
+            'application_id',
         )
-        read_only_fields = ('id', 'user', 'created_at', 'resumes',)
+        read_only_fields = (
+            'id', 'user', 'created_at', 'resumes', 'application_id',
+        )
 
     def get_resumes(self, instance):
         return (
