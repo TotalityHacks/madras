@@ -21,7 +21,11 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'id', 'user', 'created_at', 'updated_at', 'resumes', 'submitted',)
 
     def get_resumes(self, instance):
-        return instance.user.resumes.all().values_list("id", flat=True)
+        return (
+            instance.user.resumes.all()
+            .order_by("-created_at")
+            .values_list("id", flat=True)
+        )
 
     def get_submitted(self, instance):
         return instance.user.submissions.exists()
@@ -44,12 +48,21 @@ class ResumeSerializer(serializers.ModelSerializer):
 
 class SubmissionSerializer(serializers.ModelSerializer):
 
+    resumes = serializers.SerializerMethodField(read_only=True)
+
     class Meta:
         model = Submission
         fields = (
             'id', 'user', 'first_name', 'last_name', 'phone_number', 'devpost',
             'github', 'linkedin', 'personal_website', 'school', 'essay_helped',
             'essay_project', 'age', 'college_grad_year', 'gender', 'major',
-            'current_study_level', 'race_ethnicity', 'created_at',
+            'current_study_level', 'race_ethnicity', 'created_at', 'resumes',
         )
-        read_only_fields = ('id', 'user', 'created_at')
+        read_only_fields = ('id', 'user', 'created_at', 'resumes',)
+
+    def get_resumes(self, instance):
+        return (
+            instance.user.resumes.all()
+            .order_by("-created_at")
+            .values_list("id", flat=True)
+        )

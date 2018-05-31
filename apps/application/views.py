@@ -39,18 +39,21 @@ def home(request):
 
 
 class ResumeViewSet(mixins.CreateModelMixin,
+                    mixins.ListModelMixin,
                     mixins.RetrieveModelMixin,
                     viewsets.GenericViewSet):
 
     serializer_class = serializers.ResumeSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = Resume.objects.all()
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def get_queryset(self):
+        return Resume.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
         file = serializer.validated_data['file']
@@ -66,7 +69,7 @@ class ResumeViewSet(mixins.CreateModelMixin,
             resume = get_object_or_404(Resume, id=uuid.UUID(pk))
         except ValueError:
             raise Http404
-
+        raise Exception("success")
         resume_file = FileUploader().download_file_from_s3(str(resume.id))
         response = HttpResponse(resume_file, content_type="application/pdf")
         response['Content-Disposition'] = 'inline;filename=resume.pdf'
