@@ -69,7 +69,6 @@ class ResumeViewSet(mixins.CreateModelMixin,
             resume = get_object_or_404(Resume, id=uuid.UUID(pk))
         except ValueError:
             raise Http404
-        raise Exception("success")
         resume_file = FileUploader().download_file_from_s3(str(resume.id))
         response = HttpResponse(resume_file, content_type="application/pdf")
         response['Content-Disposition'] = 'inline;filename=resume.pdf'
