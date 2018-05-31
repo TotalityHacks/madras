@@ -12,4 +12,4 @@ def validate_resume(value):
             'Upload should be a pdf')
     limit = settings.MAX_RESUME_SIZE
     if value.size > limit:
-        raise ValidationError('File too large. Size should not exceed 2 MiB.')
+        raise ValidationError('File too large. Size should not exceed 4 MiB.')
