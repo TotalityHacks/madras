@@ -71,7 +71,8 @@ class ResumeViewSet(mixins.CreateModelMixin,
             raise Http404
         resume_file = FileUploader().download_file_from_s3(str(resume.id))
         response = HttpResponse(resume_file, content_type="application/pdf")
-        response['Content-Disposition'] = 'inline;filename=resume.pdf'
+        response['Content-Disposition'] = "inline;filename=resume.pdf"
+        response['X-Frame-Options'] = '*'
         return response
 
 
