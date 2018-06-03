@@ -7,6 +7,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import api_view
 
+from django.conf import settings
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
@@ -58,10 +59,11 @@ class ResumeViewSet(mixins.CreateModelMixin,
     def perform_create(self, serializer):
         file = serializer.validated_data['file']
         serializer.validated_data['id'] = uuid.uuid4()
-        FileUploader().upload_file_to_s3(
-            file,
-            remote_filename=str(serializer.validated_data['id']),
-        )
+        if not settings.DEBUG:
+            FileUploader().upload_file_to_s3(
+                file,
+                remote_filename=str(serializer.validated_data['id']),
+            )
         serializer.save(user=self.request.user)
 
     def retrieve(self, request, pk):
@@ -69,7 +71,10 @@ class ResumeViewSet(mixins.CreateModelMixin,
             resume = get_object_or_404(Resume, id=uuid.UUID(pk))
         except ValueError:
             raise Http404
-        resume_file = FileUploader().download_file_from_s3(str(resume.id))
+        if not settings.DEBUG:
+            resume_file = FileUploader().download_file_from_s3(str(resume.id))
+        else:
+            resume_file = "dummy"
         response = HttpResponse(resume_file, content_type="application/pdf")
         response['Content-Disposition'] = "inline;filename=resume.pdf"
         response['X-Frame-Options'] = '*'

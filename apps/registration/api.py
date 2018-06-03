@@ -147,6 +147,19 @@ class ObtainAuthToken(ObtainAuthTokenBase):
     serializer_class = AuthTokenSerializer
     renderer_classes = (renderers.JSONRenderer, renderers.BrowsableAPIRenderer)
 
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(
+            data=request.data, context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        if not request.session.session_key:
+            request.session.cycle_key()
+        return Response({
+            'token': token.key,
+            'sessionid': request.session.session_key,
+        })
+
 
 class Logout(APIView):
     """ Given an auth token, revoke the auth token and logout. """

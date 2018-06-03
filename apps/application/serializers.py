@@ -21,11 +21,10 @@ class ApplicationSerializer(serializers.ModelSerializer):
             'id', 'user', 'created_at', 'updated_at', 'resumes', 'submitted',)
 
     def get_resumes(self, instance):
-        return (
-            instance.user.resumes.all()
-            .order_by("-created_at")
-            .values_list("id", flat=True)
-        )
+        return ResumeSerializer(
+            instance.user.resumes.all().order_by("-created_at"),
+            many=True,
+        ).data
 
     def get_submitted(self, instance):
         return instance.user.submissions.exists()
