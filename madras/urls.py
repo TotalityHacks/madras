@@ -39,7 +39,8 @@ urlpatterns = [
         r'^application/',
         include('apps.application.urls', namespace="application"),
     ),
-    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin"))
+    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin")),
+    url(r'^events/', include('apps.events.urls', namespace="events"))
 ]
 
 if settings.DEBUG:
