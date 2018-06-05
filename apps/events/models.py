@@ -3,8 +3,8 @@ from ..locations.models import Location
 
 
 class Category(models.Model):
-    color = models.CharField()
-    name = models.CharField()
+    color = models.CharField(max_length=10)
+    name = models.CharField(max_length=20)
 
     def dictionary_representation(self):
         return {
@@ -15,8 +15,8 @@ class Category(models.Model):
 
 
 class Event(models.Model):
-    title = models.CharField()
-    description = models.CharField()
+    title = models.CharField(max_length=20)
+    description = models.CharField(max_length=200)
     start_time = models.DateTimeField()
     end_time = models.DateTimeField()
     location = models.ForeignKey(Location)

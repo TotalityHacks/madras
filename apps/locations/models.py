@@ -2,7 +2,7 @@ from django.db import models
 
 
 class Location(models.Model):
-    title = models.CharField()
+    title = models.CharField(max_length=10)
     url = models.URLField()
 
     def dictionary_representation(self):
