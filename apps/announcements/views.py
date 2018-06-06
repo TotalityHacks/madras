@@ -21,8 +21,8 @@ def announcements(request):
             a.save()
         return success_data_jsonify({})
     else:
-        events = Announcement.objects.all()
-        event_array = []
-        for event in events:
-            event_array.append(event.dictionary_representation())
-        return success_data_jsonify(event_array)
+        all_announcements = Announcement.objects.all()
+        announcement_array = []
+        for announcement in all_announcements:
+            announcement_array.append(announcement.dictionary_representation())
+        return success_data_jsonify(announcement_array)
