@@ -24,6 +24,7 @@ pillow = "*"
 qrcode = "*"
 raven = "*"
 pyjwt = "*"
+wallet = {git = "https://github.com/ofw/wallet-py3k"}
 
 [requires]
 python_version = "3.5"

@@ -16,11 +16,15 @@ from django.contrib.auth import authenticate
 import jwt
 from madras.settings import SECRET_KEY
 import json
-
+from django.http import HttpResponse
+from wsgiref.util import FileWrapper
+from wallet.models import Pass, Barcode, EventTicket, Location, BarcodeFormat
+import os
+import hashlib
 
 @api_view(['POST'])
 def get_qr_code(request):
-    params = json.loads(request.body)
+    params = json.loads(request.body.decode("utf-8"))
     if "username" not in params:
         return error_response("You must include your username in the request.", 400)
     if "password" not in params:
@@ -28,7 +32,6 @@ def get_qr_code(request):
     user = authenticate(username=params["username"], password=params["password"])
     if user is None:
         return error_response("Invalid Login Credentials", 401)
-
     try:
         application = Application.objects.get(user=user)
     except Application.DoesNotExist:
@@ -49,7 +52,7 @@ def get_qr_code(request):
     group = CheckInGroup.objects.get_or_create(applicant=user)[0]
     group.save()
 
-    token = jwt.encode({"username": user.username}, SECRET_KEY)
+    token = jwt.encode({"group_id": group.id}, SECRET_KEY)
 
     return success_data_jsonify({
         "qr_code": group.id,
@@ -58,6 +61,83 @@ def get_qr_code(request):
         "token": token,
         "id": user.id
     })
+
+
+@api_view(['GET'])
+def wallet(request):
+
+    headers = request.META
+    if "Authorization" not in headers:
+        return error_response("No authorization header provided.", 401)
+    token = headers["Authorization"].split("Bearer ")[1]
+    group_id = jwt.decode(token, SECRET_KEY)["group_id"]
+    try:
+        group = CheckInGroup.objects.get(id=group_id)
+    except CheckInGroup.DoesNotExist:
+        return error_response("Invalid jwt; no group exists with this id.", 401)
+
+    user = group.applicant
+    cardInfo = EventTicket()
+    cardInfo.addPrimaryField('name', user.name, 'Name')
+    cardInfo.addHeaderField('header', 'October 12-14, 2018', 'Brooklyn Expo Center')
+
+    if user.school:
+        cardInfo.addSecondaryField('loc', user.school, 'School')
+    cardInfo.addSecondaryField('email', user.username, 'Email')
+
+    organizationName = 'TotalityHacks'
+    passTypeIdentifier = 'pass.com.totalityhacks.totalityhacks'
+    teamIdentifier = '' # TODO: Actually put this here.
+
+    passfile = Pass(cardInfo,
+                    passTypeIdentifier=passTypeIdentifier,
+                    organizationName=organizationName,
+                    teamIdentifier=teamIdentifier)
+
+    passfile.labelColor = 'rgb(255,255,255)'
+    passfile.foregroundColor = 'rgb(255,255,255)'
+
+    passfile.relevantDate = '2018-10-12T10:00-01:00' # TODO: Make sure this is correct
+
+    latitude = 40.728157
+    longitude = -73.957797
+
+    location = Location(latitude, longitude)
+    location.distance = 600
+
+    passfile.serialNumber = hashlib.sha256(user.username).hexdigest()
+    passfile.locations = [location]
+    passfile.barcode = Barcode(message=user.username, format=BarcodeFormat.QR)
+
+    dir = os.path.dirname(__file__)
+
+    passfile.addFile('icon.png', open(os.path.join(dir, 'passbook/icon.png'), 'r'))
+    passfile.addFile('icon@2x.png', open(os.path.join(dir, 'passbook/icon@2x.png'), 'r'))
+    passfile.addFile('icon@3x.png', open(os.path.join(dir, 'passbook/icon@3x.png'), 'r'))
+
+    passfile.addFile('logo.png', open(os.path.join(dir, 'passbook/logo.png'), 'r'))
+    passfile.addFile('logo@2x.png', open(os.path.join(dir, 'passbook/logo@2x.png'), 'r'))
+    passfile.addFile('logo@3x.png', open(os.path.join(dir, 'passbook/logo@3x.png'), 'r'))
+
+    passfile.addFile('background.png', open(os.path.join(dir, 'passbook/background.png'), 'r'))
+    passfile.addFile('background@2x.png', open(os.path.join(dir, 'passbook/background@2x.png'), 'r'))
+    passfile.addFile('background@3x.png', open(os.path.join(dir, 'passbook/background@3x.png'), 'r'))
+
+    key_path = 'secure/' # TODO: Make sure we add the key here
+
+    key_filename = os.path.join(dir, key_path)
+    cert_filename = os.path.join(dir, 'passbook/certificate.pem')
+    wwdr_filename = os.path.join(dir, 'passbook/WWDR.pem')
+
+    password = os.environ['PASSBOOK_PASSWORD'] # TODO: Set this variable
+
+    file = passfile.create(cert_filename, key_filename, wwdr_filename, password)
+
+    file.seek(0)
+
+    response = HttpResponse(FileWrapper(file.getvalue()), content_type='application/vnd.apple.pkpass')
+    response['Content-Disposition'] = 'attachment; filename=pass.pkpass'
+    return response
 
 
 class GetQRCodeAdmin(APIView):
