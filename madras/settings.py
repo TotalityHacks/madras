@@ -59,7 +59,8 @@ INSTALLED_APPS = (
     'apps.stats',
     'apps.constants',
     'apps.locations',
-    'apps.events'
+    'apps.events',
+    'apps.announcements'
 )
 
 if not DEBUG:
