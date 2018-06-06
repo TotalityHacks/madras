@@ -22,14 +22,18 @@ from wallet.models import Pass, Barcode, EventTicket, Location, BarcodeFormat
 import os
 import hashlib
 
+
 @api_view(['POST'])
 def get_qr_code(request):
     params = json.loads(request.body.decode("utf-8"))
     if "username" not in params:
-        return error_response("You must include your username in the request.", 400)
+        return error_response("You must include your username in the request.",
+                              400)
     if "password" not in params:
-        return error_response("You must include your password in the request", 400)
-    user = authenticate(username=params["username"], password=params["password"])
+        return error_response("You must include your password in the request",
+                              400)
+    user = authenticate(username=params["username"],
+                        password=params["password"])
     if user is None:
         return error_response("Invalid Login Credentials", 401)
     try:
@@ -74,12 +78,14 @@ def wallet(request):
     try:
         group = CheckInGroup.objects.get(id=group_id)
     except CheckInGroup.DoesNotExist:
-        return error_response("Invalid jwt; no group exists with this id.", 401)
+        return error_response("Invalid jwt; no group exists with this id.",
+                              401)
 
     user = group.applicant
     cardInfo = EventTicket()
     cardInfo.addPrimaryField('name', user.name, 'Name')
-    cardInfo.addHeaderField('header', 'October 12-14, 2018', 'Brooklyn Expo Center')
+    cardInfo.addHeaderField('header', 'October 12-14, 2018',
+                            'Brooklyn Expo Center')
 
     if user.school:
         cardInfo.addSecondaryField('loc', user.school, 'School')
@@ -97,7 +103,8 @@ def wallet(request):
     passfile.labelColor = 'rgb(255,255,255)'
     passfile.foregroundColor = 'rgb(255,255,255)'
 
-    passfile.relevantDate = '2018-10-12T10:00-01:00' # TODO: Make sure this is correct
+    # TODO: make sure this is correct
+    passfile.relevantDate = '2018-10-12T10:00-01:00'
 
     latitude = 40.728157
     longitude = -73.957797
@@ -111,17 +118,28 @@ def wallet(request):
 
     dir = os.path.dirname(__file__)
 
-    passfile.addFile('icon.png', open(os.path.join(dir, 'passbook/icon.png'), 'r'))
-    passfile.addFile('icon@2x.png', open(os.path.join(dir, 'passbook/icon@2x.png'), 'r'))
-    passfile.addFile('icon@3x.png', open(os.path.join(dir, 'passbook/icon@3x.png'), 'r'))
+    passfile.addFile('icon.png',
+                     open(os.path.join(dir, 'passbook/icon.png'), 'r'))
+    passfile.addFile('icon@2x.png',
+                     open(os.path.join(dir, 'passbook/icon@2x.png'), 'r'))
+    passfile.addFile('icon@3x.png',
+                     open(os.path.join(dir, 'passbook/icon@3x.png'), 'r'))
 
-    passfile.addFile('logo.png', open(os.path.join(dir, 'passbook/logo.png'), 'r'))
-    passfile.addFile('logo@2x.png', open(os.path.join(dir, 'passbook/logo@2x.png'), 'r'))
-    passfile.addFile('logo@3x.png', open(os.path.join(dir, 'passbook/logo@3x.png'), 'r'))
+    passfile.addFile('logo.png',
+                     open(os.path.join(dir, 'passbook/logo.png'), 'r'))
+    passfile.addFile('logo@2x.png',
+                     open(os.path.join(dir, 'passbook/logo@2x.png'), 'r'))
+    passfile.addFile('logo@3x.png',
+                     open(os.path.join(dir, 'passbook/logo@3x.png'), 'r'))
 
-    passfile.addFile('background.png', open(os.path.join(dir, 'passbook/background.png'), 'r'))
-    passfile.addFile('background@2x.png', open(os.path.join(dir, 'passbook/background@2x.png'), 'r'))
-    passfile.addFile('background@3x.png', open(os.path.join(dir, 'passbook/background@3x.png'), 'r'))
+    passfile.addFile('background.png',
+                     open(os.path.join(dir, 'passbook/background.png'), 'r'))
+    passfile.addFile('background@2x.png',
+                     open(os.path.join(dir, 'passbook/background@2x.png'),
+                          'r'))
+    passfile.addFile('background@3x.png',
+                     open(os.path.join(dir, 'passbook/background@3x.png'),
+                          'r'))
 
     key_path = 'secure/' # TODO: Make sure we add the key here
 
@@ -135,7 +153,8 @@ def wallet(request):
 
     file.seek(0)
 
-    response = HttpResponse(FileWrapper(file.getvalue()), content_type='application/vnd.apple.pkpass')
+    response = HttpResponse(FileWrapper(file.getvalue()),
+                            content_type='application/vnd.apple.pkpass')
     response['Content-Disposition'] = 'attachment; filename=pass.pkpass'
     return response
 
@@ -255,5 +274,3 @@ class CheckOut(APIView):
         else:
             return error_response(
                 "Invalid method.", 405)
-
-

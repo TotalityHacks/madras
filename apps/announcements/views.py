@@ -1,5 +1,5 @@
 from apps.announcements.models import Announcement
-from apps.checkin.views import error_response, success_data_jsonify
+from apps.checkin.views import success_data_jsonify
 from rest_framework.decorators import api_view
 import os
 import datetime
@@ -14,8 +14,9 @@ def announcements(request):
         form = request.POST
         body = form['Body']
         from_number = form['From']
+        # TODO: Set the below variables
         account_sid = form['AccountSid']
-        if from_number in APPROVED_NUMBERS and account_sid == os.environ['TWILIO_SID']:  # TODO: Set this variable
+        if from_number in APPROVED_NUMBERS and account_sid == os.environ['TWILIO_SID']:
             a = Announcement()
             a.message = body
             a.time = datetime.datetime.now()

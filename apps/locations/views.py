@@ -1,6 +1,6 @@
 from apps.locations.models import Location
 from rest_framework.decorators import api_view
-from apps.checkin.views import success_data_jsonify, error_response
+from apps.checkin.views import success_data_jsonify
 
 
 @api_view(['GET'])

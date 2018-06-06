@@ -65,7 +65,7 @@ INSTALLED_APPS = (
 )
 
 FCM_DJANGO_SETTINGS = {
-        "FCM_SERVER_KEY": "[your api key]", # TODO: add actual API Key here
+        "FCM_SERVER_KEY": "[your api key]",  # TODO: add actual API Key here
 }
 
 if not DEBUG:
