@@ -1,7 +1,6 @@
 from .models import CheckInGroup, CheckInEvent
 import qrcode
 from django.utils import timezone
-from .models import User
 from ..application.models import Application
 from ..constants.models import CONSTANTS
 
@@ -16,11 +15,16 @@ from ..registration.models import User
 from django.contrib.auth import authenticate
 import jwt
 from madras.settings import SECRET_KEY
+import json
 
 
 @api_view(['POST'])
 def get_qr_code(request):
-    params = request.POST
+    params = json.loads(request.body)
+    if "username" not in params:
+        return error_response("You must include your username in the request.", 400)
+    if "password" not in params:
+        return error_response("You must include your password in the request", 400)
     user = authenticate(username=params["username"], password=params["password"])
     if user is None:
         return error_response("Invalid Login Credentials", 401)
@@ -34,12 +38,12 @@ def get_qr_code(request):
         )
     if not CONSTANTS.objects.get().DECISIONS_RELEASED:
         return error_response(
-            "Decisions have not been released",
+            "Decisions have not been released.",
             403,
         )
     if application.admission_status != "A":
         return error_response(
-            "User has not been admitted to Totality.",
+            "You have not been admitted to Totality.",
             403,
         )
     group = CheckInGroup.objects.get_or_create(applicant=user)[0]
@@ -130,7 +134,7 @@ class CheckIn(APIView):
             return success_data_jsonify({})
         else:
             return error_response(
-              "Invalid method.", "Please use a post request.", 405)
+              "Invalid method.", 405)
 
 
 class CheckOut(APIView):
@@ -170,6 +174,6 @@ class CheckOut(APIView):
             return success_data_jsonify({})
         else:
             return error_response(
-                "Invalid method.", "Please use a post request.", 405)
+                "Invalid method.", 405)
 
 
