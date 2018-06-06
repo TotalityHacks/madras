@@ -23,6 +23,7 @@ Django = "==1.11.5"
 pillow = "*"
 qrcode = "*"
 raven = "*"
+pyjwt = "*"
 
 [requires]
 python_version = "3.5"

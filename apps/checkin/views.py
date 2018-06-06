@@ -8,49 +8,52 @@ from ..constants.models import CONSTANTS
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.decorators import api_view
 import base64
 from io import BytesIO
+from ..events.views import error_response, success_data_jsonify
+from ..registration.models import User
+from django.contrib.auth import authenticate
+import jwt
+from madras.settings import SECRET_KEY
 
-static_path = "static/checkin/qr_codes/"
 
+@api_view(['POST'])
+def get_qr_code(request):
+    params = request.POST
+    user = authenticate(username=params["username"], password=params["password"])
+    if user is None:
+        return error_response("Invalid Login Credentials", 401)
 
-class GetQRCode(APIView):
-    permission_classes = (IsAuthenticated,)
+    try:
+        application = Application.objects.get(user=user)
+    except Application.DoesNotExist:
+        return error_response(
+            "You do not have an application.",
+            404,
+        )
+    if not CONSTANTS.objects.get().DECISIONS_RELEASED:
+        return error_response(
+            "Decisions have not been released",
+            403,
+        )
+    if application.admission_status != "A":
+        return error_response(
+            "User has not been admitted to Totality.",
+            403,
+        )
+    group = CheckInGroup.objects.get_or_create(applicant=user)[0]
+    group.save()
 
-    def get(self, request):
-        try:
-            application = Application.objects.get(user=request.user)
-        except Application.DoesNotExist:
-            return error_response(
-                "User does not have an application.",
-                (
-                    "Make sure that you are logged in with the account that "
-                    "created the application."
-                ),
-                404,
-            )
-        if not CONSTANTS.objects.get().DECISIONS_RELEASED:
-            return error_response(
-                "Decisions have not been released",
-                (
-                    "You can't check in until Totality has told you whether "
-                    "you've been admitted."
-                ),
-                403,
-            )
-        if application.admission_status != "A":
-            return error_response(
-                "User has not been admitted to Totality.",
-                "Current status is: {}".format(
-                    application.get_admission_status_display()),
-                403,
-            )
-        group = CheckInGroup.objects.get_or_create(applicant=request.user)[0]
-        group.save()
-        image = qrcode.make(group.id)
-        buffered = BytesIO()
-        image.save(buffered, format="JPEG")
-        return Response({"qrcode": base64.b64encode(buffered.getvalue())})
+    token = jwt.encode({"username": user.username}, SECRET_KEY)
+
+    return success_data_jsonify({
+        "qr_code": group.id,
+        "name": application.first_name + " " + application.last_name,
+        "school": application.school,
+        "token": token,
+        "id": user.id
+    })
 
 
 class GetQRCodeAdmin(APIView):
@@ -63,7 +66,6 @@ class GetQRCodeAdmin(APIView):
         except User.DoesNotExist:
             return error_response(
                 "User does not exist.",
-                "There is no user with this name in the database.",
                 404,
             )
         try:
@@ -71,26 +73,16 @@ class GetQRCodeAdmin(APIView):
         except Application.DoesNotExist:
             return error_response(
                 "User does not have an application.",
-                (
-                    "Make sure that you are logged in with the account that "
-                    "created the application."
-                ),
                 404,
             )
         if not CONSTANTS.objects.get().DECISIONS_RELEASED:
             return error_response(
                 "Decisions have not been released",
-                (
-                    "You can't check in until Totality has told you whether "
-                    "you've been admitted."
-                ),
                 403.
             )
         if application.admission_status != "A":
             return error_response(
                 "User has not been admitted to Totality.",
-                "Current status is: {}".format(
-                    application.get_admission_status_display()),
                 403,
             )
         group = CheckInGroup.objects.get_or_create(applicant=applicant)[0]
@@ -108,8 +100,7 @@ class CheckIn(APIView):
         if request.POST:
             if not request.user.has_perm("checkin.can_checkin"):
                 return error_response(
-                  "You do not have sufficient permission",
-                  "Make sure your user is a member of the checkin group.",
+                  "You do not have sufficient permission to check a user in.",
                   403,
                 )
             try:
@@ -117,10 +108,6 @@ class CheckIn(APIView):
             except KeyError:
                 return error_response(
                     "Must include id of the CheckinGroup.",
-                    (
-                        "You must include the id from the bar code in the "
-                        "request body."
-                    ),
                     400,
                 )
             try:
@@ -128,13 +115,11 @@ class CheckIn(APIView):
             except CheckInGroup.DoesNotExist:
                 return error_response(
                     "Must include id of the CheckinGroup.",
-                    "The id you specified does not exist in the database.",
                     404,
                 )
             if group.checked_in:
                 return error_response(
                     "User already checked in.",
-                    "The user specified is already checked in.",
                     409,
                 )
             group.checked_in = True
@@ -142,7 +127,7 @@ class CheckIn(APIView):
             event = CheckInEvent(
                 check_in_group=group, check_in=True, time=timezone.now())
             event.save()
-            return success_data_jsonify()
+            return success_data_jsonify({})
         else:
             return error_response(
               "Invalid method.", "Please use a post request.", 405)
@@ -156,7 +141,6 @@ class CheckOut(APIView):
             if not request.user.has_perm("checkin.can_checkin"):
                 return error_response(
                   "You do not have sufficient permission",
-                  "Make sure your user is a member of the checkin group.",
                   403,
                 )
             try:
@@ -164,10 +148,6 @@ class CheckOut(APIView):
             except KeyError:
                 return error_response(
                     "Must include id of the CheckinGroup.",
-                    (
-                        "You must include the id from the bar code in the "
-                        "request body."
-                    ),
                     400,
                 )
             try:
@@ -175,13 +155,11 @@ class CheckOut(APIView):
             except CheckInGroup.DoesNotExist:
                 return error_response(
                     "Must include id of the CheckinGroup.",
-                    "The id you specified does not exist in the database.",
                     404,
                 )
             if not group.checked_in:
                 return error_response(
                     "User is not checked in.",
-                    "A user must be checked in to be checked out.",
                     409,
                 )
             event = CheckInEvent(
@@ -189,25 +167,9 @@ class CheckOut(APIView):
             group.checked_in = False
             event.save()
             group.save()
-            return success_data_jsonify()
+            return success_data_jsonify({})
         else:
             return error_response(
                 "Invalid method.", "Please use a post request.", 405)
 
 
-# TODO: move the below functions to utils somewhere so everyone can use them
-def success_data_jsonify(code=200):
-    response = Response({})
-    response.status_code = code
-
-    return response
-
-
-def error_response(title, message, code):
-
-    error_dictionary = {'message': message, 'title': title}
-
-    response = Response(error_dictionary)
-    response.status_code = code
-
-    return response
