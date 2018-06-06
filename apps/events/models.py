@@ -34,4 +34,3 @@ class Event(models.Model):
             "location": self.location.dictionary_representation(),
             "category": self.category.dictionary_representation()
         }
-
