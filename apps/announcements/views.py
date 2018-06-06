@@ -3,6 +3,7 @@ from apps.checkin.views import error_response, success_data_jsonify
 from rest_framework.decorators import api_view
 import os
 import datetime
+from fcm_django.models import FCMDevice
 
 APPROVED_NUMBERS = []  # TODO: Add numbers here
 
@@ -19,6 +20,8 @@ def announcements(request):
             a.message = body
             a.time = datetime.datetime.now()
             a.save()
+            device = FCMDevice.objects.all()
+            device.send_message(title=a.message)
         return success_data_jsonify({})
     else:
         all_announcements = Announcement.objects.all()

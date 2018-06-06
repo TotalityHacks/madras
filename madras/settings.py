@@ -60,8 +60,13 @@ INSTALLED_APPS = (
     'apps.constants',
     'apps.locations',
     'apps.events',
-    'apps.announcements'
+    'apps.announcements',
+    'fcm_django'
 )
+
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": "[your api key]", # TODO: add actual API Key here
+}
 
 if not DEBUG:
     INSTALLED_APPS = INSTALLED_APPS + (
