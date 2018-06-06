@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from apps.announcements.views import get_announcements
+from apps.announcements.views import announcements
 
 urlpatterns = [
-    url(r'', get_announcements, name="get_announcements")
+    url(r'', announcements, name="announcements"),
 ]
