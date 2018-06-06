@@ -93,7 +93,7 @@ def wallet(request):
 
     organizationName = 'TotalityHacks'
     passTypeIdentifier = 'pass.com.totalityhacks.totalityhacks'
-    teamIdentifier = '' # TODO: Actually put this here.
+    teamIdentifier = ''  # TODO: Actually put this here.
 
     passfile = Pass(cardInfo,
                     passTypeIdentifier=passTypeIdentifier,
@@ -141,15 +141,16 @@ def wallet(request):
                      open(os.path.join(dir, 'passbook/background@3x.png'),
                           'r'))
 
-    key_path = 'secure/' # TODO: Make sure we add the key here
+    key_path = 'secure/'  # TODO: Make sure we add the key here
 
     key_filename = os.path.join(dir, key_path)
     cert_filename = os.path.join(dir, 'passbook/certificate.pem')
     wwdr_filename = os.path.join(dir, 'passbook/WWDR.pem')
 
-    password = os.environ['PASSBOOK_PASSWORD'] # TODO: Set this variable
+    password = os.environ['PASSBOOK_PASSWORD']  # TODO: Set this variable
 
-    file = passfile.create(cert_filename, key_filename, wwdr_filename, password)
+    file = passfile.create(cert_filename, key_filename, wwdr_filename,
+                           password)
 
     file.seek(0)
 
