@@ -9,5 +9,6 @@ urlpatterns = [
         views.NextApplicationView.as_view(),
         name="next_application",
     ),
+    url(r'^skip/$', views.SkipView.as_view(), name="skip"),
     url(r'^stats/$', views.StatsView.as_view(), name="stats"),
 ]
