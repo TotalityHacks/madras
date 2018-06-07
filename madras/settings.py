@@ -233,3 +233,6 @@ STAFF_EMAIL_SUFFIX = "totalityhacks.com"
 
 # redirect to root on login (without next parameter)
 LOGIN_REDIRECT_URL = "/"
+
+# the number of days to wait until we should send the drip email
+DRIP_EMAIL_DAYS = 3
