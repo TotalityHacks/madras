@@ -1,6 +1,8 @@
-from rest_framework import serializers
+from rest_framework import serializers, status
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
+
+from rest_framework.response import Response
 
 from apps.reader.models import Rating, RatingField, RatingResponse
 
@@ -27,6 +29,9 @@ class RatingSerializer(serializers.ModelSerializer):
 
     def create(self, data):
         request = self.context['request']
+        if dict(request.data) == {}:
+            return Response({"error": "Invalid Rating Submitted!"},
+            status=status.HTTP_400_BAD_REQUEST)
         data['reader'] = request.user
         with transaction.atomic():
             Rating.objects.filter(
