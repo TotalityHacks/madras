@@ -30,8 +30,10 @@ class RatingSerializer(serializers.ModelSerializer):
     def create(self, data):
         request = self.context['request']
         if dict(request.data) == {}:
-            return Response({"error": "Invalid Rating Submitted!"},
-            status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"error": "Invalid Rating Submitted!"},
+                status=status.HTTP_400_BAD_REQUEST
+            )
         data['reader'] = request.user
         with transaction.atomic():
             Rating.objects.filter(
