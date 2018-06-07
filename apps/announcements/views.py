@@ -23,7 +23,7 @@ def announcements(request):
             a.time = datetime.datetime.now()
             a.save()
             device = FCMDevice.objects.all()
-            device.send_message(title=a.message)
+            device.send_message(message=a.message)
         return success_data_jsonify({})
     else:
         all_announcements = Announcement.objects.all()
