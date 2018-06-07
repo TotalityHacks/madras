@@ -17,7 +17,7 @@ class Command(BaseCommand):
         now = timezone.now()
         time_threshold = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
         users = User.objects.annotate(num_submissions=Count("submissions")) \
-                            .filter(num_submissions=True) \
+                            .filter(num_submissions=0) \
                             .filter(date_joined__lt=time_threshold) \
                             .filter(sent_drip_email=False)
         num_users = users.count()
