@@ -6,14 +6,14 @@ from rest_framework.views import APIView
 from rest_framework.generics import ListCreateAPIView
 
 from apps.reader import serializers
-from apps.reader.models import Rating
+from apps.reader.models import Rating, Skip
 from apps.reader.utils import get_metrics_github
 from apps.application.models import Application
 from apps.application.serializers import SubmissionSerializer
 
 from django.conf import settings
 from django.urls import reverse
-from django.db.models import Count
+from django.db.models import Count, Q
 
 
 @api_view(['GET'])
@@ -28,6 +28,7 @@ def home(request):
         reverse("reader:next_application"): (
             'Get the next application to review.'),
         reverse("reader:stats"): 'Get reader statistics about the user',
+        reverse("reader:skip"): 'Skips an application.',
     })
 
 
@@ -53,7 +54,8 @@ class NextApplicationView(APIView):
         rand_apps = (
             Application.objects
             .annotate(reviews=Count('ratings'))
-            .exclude(ratings__reader=request.user)
+            .exclude(Q(ratings__reader=request.user) |
+                     Q(skip__user=request.user))
             .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS)
         )
         rand_app = None
@@ -76,6 +78,19 @@ class NextApplicationView(APIView):
         data = SubmissionSerializer(rand_app.submissions.first()).data
         data.update(github_array)
         return Response(data)
+
+
+class SkipView(ListCreateAPIView):
+    """
+    List all applications marked as skipped for the current user or skip an
+    application, which makes it not appear when the user requests additional
+    applications to review.
+    """
+    serializer_class = serializers.SkipSerializer
+    permission_classes = (IsAdminUser,)
+
+    def get_queryset(self):
+        return Skip.objects.all()
 
 
 class StatsView(APIView):

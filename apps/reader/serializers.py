@@ -2,9 +2,10 @@ from rest_framework import serializers, status
 from django.db import transaction
 from rest_framework.exceptions import ValidationError
 
-from rest_framework.response import Response
 
-from apps.reader.models import Rating, RatingField, RatingResponse
+from rest_framework.response import Response
+from .models import Rating, RatingField, RatingResponse, Skip
+
 
 
 class RatingSerializer(serializers.ModelSerializer):
@@ -57,3 +58,19 @@ class RatingSerializer(serializers.ModelSerializer):
                     'parameters to the API: {}'.format(list_of_fields)
                 )
         return response
+
+
+class SkipSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Skip
+        fields = ("id", "application", "user")
+        read_only_fields = ("id", "user")
+
+    def create(self, data):
+        request = self.context['request']
+        data['user'] = request.user
+        if Skip.objects.filter(**data).exists():
+            raise serializers.ValidationError(
+                "You have already skipped this application!"
+            )
+        return super(SkipSerializer, self).create(data)
