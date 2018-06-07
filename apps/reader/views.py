@@ -54,7 +54,8 @@ class NextApplicationView(APIView):
         rand_apps = (
             Application.objects
             .annotate(reviews=Count('ratings'))
-            .exclude(Q(ratings__reader=request.user) | Q(skip__user=request.user))
+            .exclude(Q(ratings__reader=request.user) |
+                     Q(skip__user=request.user))
             .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS)
         )
         rand_app = None
@@ -81,7 +82,9 @@ class NextApplicationView(APIView):
 
 class SkipView(ListCreateAPIView):
     """
-    List all applications marked as skipped for the current user or skip an application.
+    List all applications marked as skipped for the current user or skip an
+    application, which makes it not appear when the user requests additional
+    applications to review.
     """
     serializer_class = serializers.SkipSerializer
     permission_classes = (IsAdminUser,)

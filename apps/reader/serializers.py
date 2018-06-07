@@ -62,5 +62,7 @@ class SkipSerializer(serializers.ModelSerializer):
         request = self.context['request']
         data['user'] = request.user
         if Skip.objects.filter(**data).exists():
-            raise serializers.ValidationError("You have already skipped this application!")
+            raise serializers.ValidationError(
+                "You have already skipped this application!"
+            )
         return super(SkipSerializer, self).create(data)
