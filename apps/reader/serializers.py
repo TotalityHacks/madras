@@ -7,7 +7,6 @@ from rest_framework.response import Response
 from .models import Rating, RatingField, RatingResponse, Skip
 
 
-
 class RatingSerializer(serializers.ModelSerializer):
 
     class Meta:
