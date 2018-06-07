@@ -93,7 +93,7 @@ def wallet(request):
 
     organizationName = 'TotalityHacks'
     passTypeIdentifier = 'pass.com.totalityhacks.totalityhacks'
-    teamIdentifier = ''  # TODO: Actually put this here.
+    teamIdentifier = "3R5J785EXT"
 
     passfile = Pass(cardInfo,
                     passTypeIdentifier=passTypeIdentifier,
@@ -103,8 +103,7 @@ def wallet(request):
     passfile.labelColor = 'rgb(255,255,255)'
     passfile.foregroundColor = 'rgb(255,255,255)'
 
-    # TODO: make sure this is correct
-    passfile.relevantDate = '2018-10-12T10:00-01:00'
+    passfile.relevantDate = '2018-10-12T20:00-04:00'
 
     latitude = 40.728157
     longitude = -73.957797
