@@ -11,9 +11,9 @@ def get_events(request):
     if "category_id" in params:
         events = events.filter(category=params["category_id"])
     if "start_time" in params:
-        events = events.filter(start_time__gt=parse(params["start_time"]))
+        events = events.filter(start_time__gte=parse(params["start_time"]))
     if "end_time" in params:
-        events = events.filter(start_time__lt=parse(params["end_time"]))
+        events = events.filter(start_time__lte=parse(params["end_time"]))
     event_array = []
     for event in events:
         event_array.append(event.dictionary_representation())
