@@ -62,7 +62,10 @@ class NextApplicationView(APIView):
                 reviews=Count('ratings'),
                 submissions_count=Count('submissions'),
             )
-            .exclude(Q(id__in=already_reviewed_application_ids) | Q(skip__user=request.user))
+            .exclude(
+                Q(id__in=already_reviewed_application_ids) |
+                Q(skip__user=request.user)
+            )
             .filter(
                 reviews__lt=settings.TOTAL_NUM_REVIEWS,
                 submissions_count__gt=0,
