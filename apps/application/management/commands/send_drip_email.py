@@ -15,13 +15,14 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         now = timezone.now()
-        time_threshold = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
+        end_range = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
+        start_range = end_range - timedelta(days=1)
         users = (
             User.objects
             .annotate(num_submissions=Count("submissions"))
             .filter(num_submissions=0)
-            .filter(date_joined__lt=time_threshold)
-            .filter(sent_drip_email=False)
+            .filter(date_joined__lt=end_range)
+            .filter(date_joined__gt=start_range)
         )
 
         for user in users:
@@ -36,9 +37,6 @@ class Command(BaseCommand):
             )
             email.attach_alternative(message, "text/html")
             email.send()
-
-            user.sent_drip_email = True
-            user.save(update_fields=["sent_drip_email"])
 
         self.stdout.write(
             "Sent drip email to {} user(s).".format(users.count())

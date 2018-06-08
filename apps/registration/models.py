@@ -33,8 +33,6 @@ class User(AbstractUser):
         max_length=200, help_text='Required', unique=True)
     email_confirmed = models.BooleanField(default=False)
 
-    sent_drip_email = models.BooleanField(default=False)
-
     objects = UserManager()
 
     @property
