@@ -21,7 +21,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # URL of the page to redirect to after a new user has confirmed their email
 EMAIL_REDIRECT_URL = "https://apply.totalityhacks.com/#login"
 EMAIL_REDIRECT_FAILURE_URL = "https://apply.totalityhacks.com/#resend"
-EMAIL_REDIRECT_DRIP_URL = "https://apply.totalityhacks.com/"
 
 
 # Quick-start development settings - unsuitable for production
