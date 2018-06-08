@@ -31,7 +31,7 @@ class Command(BaseCommand):
                 "registration_url": settings.EMAIL_REDIRECT_URL,
             })
             email = EmailMultiAlternatives(
-                "Don't forget to register for TotalityHacks!",
+                "Don't forget to submit your application for TotalityHacks!",
                 message,
                 to=[user.email],
             )
