@@ -51,18 +51,23 @@ class NextApplicationView(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        rand_apps = (
-            Application.objects
-            .annotate(reviews=Count('ratings'))
-            .exclude(Q(ratings__reader=request.user) |
-                     Q(skip__user=request.user))
-            .filter(reviews__lt=settings.TOTAL_NUM_REVIEWS)
+        already_reviewed_application_ids = set(
+            Rating.objects
+            .filter(reader=request.user)
+            .values_list("application_id", flat=True)
         )
-        rand_app = None
-        for app in rand_apps:
-            if app.submissions.exists():
-                rand_app = app
-                break
+        rand_app = (
+            Application.objects
+            .annotate(
+                reviews=Count('ratings'),
+                submissions_count=Count('submissions'),
+            )
+            .exclude(Q(id__in=already_reviewed_application_ids) | Q(skip__user=request.user))
+            .filter(
+                reviews__lt=settings.TOTAL_NUM_REVIEWS,
+                submissions_count__gt=0,
+            )
+        ).first()
 
         if rand_app is None:
             return Response(
