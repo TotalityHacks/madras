@@ -51,12 +51,6 @@ class NextApplicationView(APIView):
     def get(self, request):
         """Get the next application that needs a review."""
 
-        already_reviewed_application_ids = set(
-            Rating.objects
-            .filter(reader=request.user)
-            .values_list("application_id", flat=True)
-        )
-
         rand_app = (
             Application.objects
             .annotate(
@@ -71,7 +65,7 @@ class NextApplicationView(APIView):
                 ),
             )
             .exclude(
-                id__in=already_reviewed_application_ids
+                ratings__reader=request.user
             )
             .filter(
                 reviews__lt=settings.TOTAL_NUM_REVIEWS,
