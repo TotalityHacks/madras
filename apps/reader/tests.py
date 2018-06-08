@@ -48,6 +48,30 @@ class UtilsTests(TestCase):
         response = NextApplicationView.as_view()(request)
         self.assertEquals(response.data["id"], str(self.submission.id))
 
+    def test_next_applicant_after_review(self):
+        # Create review
+        data = {
+            "application": str(self.application.id),
+            "field_skill": 2,
+            "field_community": 5,
+            "field_passion": 3,
+            "comments": "hi",
+        }
+        request = self.factory.post(
+            '/reader/rating',
+            json.dumps(data),
+            content_type="application/json",
+        )
+        force_authenticate(request, user=self.user)
+        RatingView.as_view()(request)
+        self.assertEquals(1, Rating.objects.count())
+
+        # Ensure that the 2nd application is shown
+        request = self.factory.get('/reader/next_application/')
+        force_authenticate(request, user=self.user)
+        response = NextApplicationView.as_view()(request)
+        self.assertEquals(response.data["id"], str(self.submission2.id))
+
     def test_post_review(self):
         data = {
             "application": str(self.application.id),
