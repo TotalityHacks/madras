@@ -15,8 +15,20 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         now = timezone.now()
-        end_range = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
-        start_range = end_range - timedelta(days=1)
+        start_range = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
+        start_range = start_range.replace(
+            hour=0,
+            minute=0,
+            second=0,
+            microsecond=0
+        )
+        end_range = start_range + timedelta(days=1)
+
+        self.stdout.write(
+            "Sending drip email for users that registered between {} and {}..."
+            .format(start_range, end_range)
+        )
+
         users = (
             User.objects
             .annotate(num_submissions=Count("submissions"))
