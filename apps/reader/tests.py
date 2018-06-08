@@ -8,7 +8,7 @@ from .utils import get_metrics_github
 from ..registration.models import User
 from .views import NextApplicationView, RatingView
 from ..application.models import Application
-# from .models import Rating
+from .models import Rating
 
 
 class UtilsTests(TestCase):
@@ -43,7 +43,7 @@ class UtilsTests(TestCase):
 
     def test_post_review(self):
         data = {
-            "application": 1,
+            "application": str(self.application.id),
             "field_skill": 2,
             "field_community": 5,
             "field_passion": 3,
@@ -56,7 +56,7 @@ class UtilsTests(TestCase):
         )
         force_authenticate(request, user=self.user)
         RatingView.as_view()(request)
-        # self.assertEquals(1, Rating.objects.count())
+        self.assertEquals(1, Rating.objects.count())
 
     def test_permission_denied(self):
         request = self.factory.get('/reader/next_application/')
