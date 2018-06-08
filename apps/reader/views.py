@@ -13,7 +13,7 @@ from apps.application.serializers import SubmissionSerializer
 
 from django.conf import settings
 from django.urls import reverse
-from django.db.models import Count, Q
+from django.db.models import Count, Sum, Case, When, IntegerField
 
 
 @api_view(['GET'])
@@ -56,20 +56,28 @@ class NextApplicationView(APIView):
             .filter(reader=request.user)
             .values_list("application_id", flat=True)
         )
+
         rand_app = (
             Application.objects
             .annotate(
                 reviews=Count('ratings'),
                 submissions_count=Count('submissions'),
+                skips=Sum(
+                    Case(
+                        When(skip__user=request.user, then=1),
+                        default=0,
+                        output_field=IntegerField(),
+                    ),
+                ),
             )
             .exclude(
-                Q(id__in=already_reviewed_application_ids) |
-                Q(skip__user=request.user)
+                id__in=already_reviewed_application_ids
             )
             .filter(
                 reviews__lt=settings.TOTAL_NUM_REVIEWS,
                 submissions_count__gt=0,
             )
+            .order_by('skips')
         ).first()
 
         if rand_app is None:
