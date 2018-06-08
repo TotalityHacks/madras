@@ -222,6 +222,8 @@ if not DEBUG:
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME")
 GITHUB_PASSWORD = os.environ.get("GITHUB_PASSWORD")
 
+SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
+
 # max size of resume (in bytes)
 MAX_RESUME_SIZE = 4 * 1024 * 1024
 
