@@ -13,6 +13,17 @@ from apps.registration.models import User
 class Command(BaseCommand):
     help = "Sends a drip email to people who have registered but not applied."
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--no-start-time",
+            action="store_true",
+            dest="start",
+            default=False,
+            help="Ignore the start range when sending emails. "
+                 "Used to send emails to people who registered "
+                 "before the script was installed."
+        )
+
     def handle(self, *args, **kwargs):
         now = timezone.now()
         start_range = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
@@ -24,18 +35,26 @@ class Command(BaseCommand):
         )
         end_range = start_range + timedelta(days=1)
 
-        self.stdout.write(
-            "Sending drip email for users that registered between {} and {}..."
-            .format(start_range, end_range)
-        )
+        if not kwargs["start"]:
+            self.stdout.write(
+                "Sending drip email for users registered between {} and {}..."
+                .format(start_range, end_range)
+            )
+        else:
+            self.stdout.write(
+                "Sending drip email for users registered before {}..."
+                .format(end_range)
+            )
 
         users = (
             User.objects
             .annotate(num_submissions=Count("submissions"))
             .filter(num_submissions=0)
             .filter(date_joined__lt=end_range)
-            .filter(date_joined__gt=start_range)
         )
+
+        if not kwargs["start"]:
+            users = users.filter(date_joined__gt=start_range)
 
         for user in users:
             message = render_to_string("drip_email.html", {
