@@ -23,6 +23,12 @@ class Command(BaseCommand):
                  "Used to send emails to people who registered "
                  "before the script was installed."
         )
+        parser.add_argument(
+            "--dry-run",
+            action="store_true",
+            default=False,
+            help="Don't actually send emails."
+        )
 
     def handle(self, *args, **kwargs):
         now = timezone.now()
@@ -67,7 +73,8 @@ class Command(BaseCommand):
                 to=[user.email],
             )
             email.attach_alternative(message, "text/html")
-            email.send()
+            if not kwargs["dry_run"]:
+                email.send()
 
         self.stdout.write(
             "Sent drip email to {} user(s).".format(users.count())
