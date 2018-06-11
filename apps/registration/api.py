@@ -55,10 +55,11 @@ class UserRegistrationView(generics.CreateAPIView):
         email.attach_alternative(message, "text/html")
         email.send()
 
-        Slacker(settings.SLACK_TOKEN).chat.post_message(
-            settings.SLACK_CHANNEL,
-            "A new user {} just made an account!".format(user.username),
-        )
+        if settings.SLACK_TOKEN:
+            Slacker(settings.SLACK_TOKEN).chat.post_message(
+                settings.SLACK_CHANNEL,
+                "A new user {} just made an account!".format(user.username),
+            )
 
         token, _ = Token.objects.get_or_create(user=user)
 

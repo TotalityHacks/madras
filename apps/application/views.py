@@ -119,7 +119,7 @@ class SubmissionViewSet(mixins.CreateModelMixin,
     def perform_create(self, serializer):
         app, _ = Application.objects.get_or_create(user=self.request.user)
 
-        if not app.submissions.exists():
+        if not app.submissions.exists() and settings.SLACK_TOKEN:
             Slacker(settings.SLACK_TOKEN).chat.post_message(
                 settings.SLACK_CHANNEL,
                 ":tada: New application submission! {} :tada:".format(
