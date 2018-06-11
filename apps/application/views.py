@@ -1,6 +1,7 @@
 import csv
 import uuid
 from collections import OrderedDict
+from slacker import Slacker
 
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
@@ -118,6 +119,14 @@ class SubmissionViewSet(mixins.CreateModelMixin,
     def perform_create(self, serializer):
         app, _ = Application.objects.get_or_create(user=self.request.user)
 
+        if not app.submissions.exists():
+            Slacker(settings.SLACK_TOKEN).chat.post_message(
+                settings.SLACK_CHANNEL,
+                ":tada: New application submission! {} :tada:".format(
+                    self.request.user.username),
+            )
+        serializer.save(application=app, user=self.request.user)
+
         # send confirmation email to user
         user = self.request.user
         message = render_to_string('app_submitted.html', {})
@@ -126,8 +135,6 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
         email.attach_alternative(message, "text/html")
         email.send()
-
-        serializer.save(application=app, user=self.request.user)
 
 
 @api_view(['GET'])

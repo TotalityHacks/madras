@@ -1,3 +1,5 @@
+from slacker import Slacker
+
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
@@ -8,6 +10,7 @@ from rest_framework.authtoken.views import (
     ObtainAuthToken as ObtainAuthTokenBase)
 from rest_framework.views import APIView
 
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
@@ -51,6 +54,11 @@ class UserRegistrationView(generics.CreateAPIView):
         email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
         email.attach_alternative(message, "text/html")
         email.send()
+
+        Slacker(settings.SLACK_TOKEN).chat.post_message(
+            settings.SLACK_CHANNEL,
+            "A new user {} just made an account!".format(user.username),
+        )
 
         token, _ = Token.objects.get_or_create(user=user)
 
