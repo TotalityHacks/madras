@@ -238,4 +238,4 @@ STAFF_EMAIL_SUFFIX = "totalityhacks.com"
 LOGIN_REDIRECT_URL = "/"
 
 # the number of days to wait until we should send the drip email
-DRIP_EMAIL_DAYS = 3
+DRIP_EMAIL_DAYS = [3, 7]
