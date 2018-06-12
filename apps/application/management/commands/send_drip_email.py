@@ -32,37 +32,41 @@ class Command(BaseCommand):
 
     def handle(self, *args, **kwargs):
         now = timezone.now()
-        start_range = now - timedelta(days=settings.DRIP_EMAIL_DAYS)
-        start_range = start_range.replace(
-            hour=0,
-            minute=0,
-            second=0,
-            microsecond=0
-        )
-        end_range = start_range + timedelta(days=1)
-
-        if not kwargs["start"]:
-            self.stdout.write(
-                "Sending drip email for users registered between {} and {}..."
-                .format(start_range, end_range)
+        all_users = User.objects.none()
+        for drip_day in settings.DRIP_EMAIL_DAYS:
+            start_range = now - timedelta(days=drip_day)
+            start_range = start_range.replace(
+                hour=0,
+                minute=0,
+                second=0,
+                microsecond=0
             )
-        else:
-            self.stdout.write(
-                "Sending drip email for users registered before {}..."
-                .format(end_range)
+            end_range = start_range + timedelta(days=1)
+
+            if not kwargs["start"]:
+                self.stdout.write(
+                    "Sending drip email for users registered between {} and {}..."
+                    .format(start_range, end_range)
+                )
+            else:
+                self.stdout.write(
+                    "Sending drip email for users registered before {}..."
+                    .format(end_range)
+                )
+
+            users = (
+                User.objects
+                .annotate(num_submissions=Count("submissions"))
+                .filter(num_submissions=0)
+                .filter(date_joined__lt=end_range)
             )
 
-        users = (
-            User.objects
-            .annotate(num_submissions=Count("submissions"))
-            .filter(num_submissions=0)
-            .filter(date_joined__lt=end_range)
-        )
+            if not kwargs["start"]:
+                users = users.filter(date_joined__gt=start_range)
 
-        if not kwargs["start"]:
-            users = users.filter(date_joined__gt=start_range)
+            all_users |= users
 
-        for user in users:
+        for user in users.distinct():
             message = render_to_string("drip_email.html", {
                 "user": user,
                 "registration_url": settings.EMAIL_REDIRECT_URL,
