@@ -133,7 +133,7 @@ class AuthTokenSerializer(AuthTokenSerializerBase):
 
         if not user:
             if User.objects.filter(email__iexact=username).exists():
-                if not User.objects.get(email=username).is_active:
+                if not User.objects.get(email__iexact=username).is_active:
                     raise serializers.ValidationError(
                         (
                             'You cannot login until you have confirmed your '
