@@ -5,12 +5,16 @@ from django.core.management.base import BaseCommand
 
 from apps.application.models import Application, Submission
 
-MESSAGE_FORMAT = (
+SLACK_MESSAGE_FORMAT = (
     ":trumpet: Daily Applications Report :trumpet: ```"
     "In-progress applications: {num_apps}\n"
     "Submitted applications: {num_submitted_apps}\n"
     "```"
 )
+SLACK_REPORT_CHANNELS = [
+    settings.SLACK_CHANNEL,
+    "#outreach",
+]
 
 
 class Command(BaseCommand):
@@ -19,10 +23,11 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         num_submitted = len(set(
             Submission.objects.all().values_list("application_id", flat=True)))
-        Slacker(settings.SLACK_TOKEN).chat.post_message(
-            settings.SLACK_CHANNEL,
-            MESSAGE_FORMAT.format(
-                num_apps=Application.objects.all().count(),
-                num_submitted_apps=num_submitted,
+        for slack_channel in SLACK_REPORT_CHANNELS:
+            Slacker(settings.SLACK_TOKEN).chat.post_message(
+                slack_channel,
+                SLACK_MESSAGE_FORMAT.format(
+                    num_apps=Application.objects.all().count(),
+                    num_submitted_apps=num_submitted,
+                )
             )
-        )
