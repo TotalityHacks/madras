@@ -1,3 +1,5 @@
+import datetime
+
 from slacker import Slacker
 
 from rest_framework import generics, status, renderers, serializers
@@ -15,8 +17,11 @@ from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
 
+from django.utils import timezone
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+
+from smtpapi import SMTPAPIHeader
 
 from .tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer
@@ -59,6 +64,22 @@ class UserRegistrationView(generics.CreateAPIView):
         email.attach_alternative(message, "text/html")
         email.send()
 
+        # schedule intro email to be sent
+        header = SMTPAPIHeader()
+        send_at = timezone.now() + datetime.timedelta(hours=3)
+        header.set_send_at(int(send_at.timestamp()))
+        message = render_to_string('intro_email.txt')
+        mail_subject = 'Welcome to TotalityHacks!'
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            to=[to_email],
+            headers={"X-SMTPAPI": header.json_string()}
+        )
+        email.attach_alternative(message, "text/html")
+        email.send()
+
+        # notify the slack channel
         if settings.SLACK_TOKEN:
             Slacker(settings.SLACK_TOKEN).chat.post_message(
                 settings.SLACK_CHANNEL,
