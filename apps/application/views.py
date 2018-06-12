@@ -132,7 +132,7 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         message = render_to_string('app_submitted.html', {})
         mail_subject = 'Application Submitted!'
         to_email = user.email
-        email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
+        email = EmailMultiAlternatives(mail_subject, message, "TotalityHacks <noreply@totalityhacks.com>", to=[to_email])
         email.attach_alternative(message, "text/html")
         email.send()
 
