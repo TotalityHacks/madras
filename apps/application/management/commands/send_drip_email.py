@@ -45,12 +45,12 @@ class Command(BaseCommand):
 
             if not kwargs["start"]:
                 self.stdout.write(
-                    "Sending drip email for users registered between {} and {}..."
+                    "Sending email for users registered between {} and {}..."
                     .format(start_range, end_range)
                 )
             else:
                 self.stdout.write(
-                    "Sending drip email for users registered before {}..."
+                    "Sending email for users registered before {}..."
                     .format(end_range)
                 )
 
