@@ -85,7 +85,7 @@ def wallet(request):
     cardInfo = EventTicket()
     cardInfo.addPrimaryField('name', user.name, 'Name')
     cardInfo.addHeaderField('header', 'October 12-14, 2018',
-                            'Brooklyn Expo Center')
+                            'Brooklyn Expo Center, New York')
 
     if user.school:
         cardInfo.addSecondaryField('loc', user.school, 'School')
@@ -113,7 +113,7 @@ def wallet(request):
 
     passfile.serialNumber = hashlib.sha256(user.username).hexdigest()
     passfile.locations = [location]
-    passfile.barcode = Barcode(message=user.username, format=BarcodeFormat.QR)
+    passfile.barcode = Barcode(message=group_id, format=BarcodeFormat.QR)
 
     dir = os.path.dirname(__file__)
 
