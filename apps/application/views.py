@@ -20,6 +20,8 @@ from . import serializers
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
 
+from botocore.exceptions import ClientError
+
 
 @api_view(['GET'])
 def home(request):
@@ -76,7 +78,12 @@ class ResumeViewSet(mixins.CreateModelMixin,
         except ValueError:
             raise Http404
         if not settings.DEBUG:
-            resume_file = FileUploader().download_file_from_s3(str(resume.id))
+            try:
+                resume_file = FileUploader().download_file_from_s3(
+                    str(resume.id)
+                    )
+            except ClientError:
+                raise Http404
         else:
             resume_file = "dummy"
         response = HttpResponse(resume_file, content_type="application/pdf")
@@ -132,7 +139,12 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         message = render_to_string('app_submitted.html', {})
         mail_subject = 'Application Submitted!'
         to_email = user.email
-        email = EmailMultiAlternatives(mail_subject, message, "TotalityHacks <noreply@totalityhacks.com>", to=[to_email])
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            "TotalityHacks <noreply@totalityhacks.com>",
+            to=[to_email]
+            )
         email.attach_alternative(message, "text/html")
         email.send()
 
