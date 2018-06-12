@@ -51,7 +51,12 @@ class UserRegistrationView(generics.CreateAPIView):
         })
         mail_subject = 'Activate your account!'
         to_email = user.email
-        email = EmailMultiAlternatives(mail_subject, message, "TotalityHacks <noreply@totalityhacks.com>", to=[to_email])
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            "TotalityHacks <noreply@totalityhacks.com>",
+            to=[to_email]
+            )
         email.attach_alternative(message, "text/html")
         email.send()
 
