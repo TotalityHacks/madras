@@ -66,7 +66,8 @@ def activate(request, uidb64, token):
     if user is not None and account_activation_token.check_token(user, token):
         # schedule intro email to be sent
         header = SMTPAPIHeader()
-        send_at = timezone.now() + datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
+        delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
+        send_at = timezone.now() + delay
         header.set_send_at(int(send_at.timestamp()))
         message = render_to_string('intro_email.txt')
         mail_subject = 'Thanks for applying!'
