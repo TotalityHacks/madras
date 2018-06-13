@@ -240,3 +240,6 @@ LOGIN_REDIRECT_URL = "/"
 
 # the number of days to wait until we should send the drip email
 DRIP_EMAIL_DAYS = [3, 7]
+
+# the number of hours to wait before sending the intro email
+INTRO_EMAIL_DELAY = 3
