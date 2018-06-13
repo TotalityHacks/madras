@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import JsonResponse
 from django.contrib.auth import login
 from django.urls import reverse
@@ -6,13 +8,17 @@ from django.conf import settings
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
+from django.core.mail import EmailMultiAlternatives
 from django.shortcuts import redirect, render
+from django.template.loader import render_to_string
+from django.utils import timezone
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
 from .tokens import account_activation_token
 from .models import User
 
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
+from smtpapi import SMTPAPIHeader
 
 
 @api_view(['GET'])
@@ -58,6 +64,22 @@ def activate(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
+        # schedule intro email to be sent
+        header = SMTPAPIHeader()
+        send_at = timezone.now() + datetime.timedelta(hours=3)
+        header.set_send_at(int(send_at.timestamp()))
+        message = render_to_string('intro_email.txt')
+        mail_subject = 'Thanks for applying!'
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            to=[user.email],
+            headers={"X-SMTPAPI": header.json_string()}
+        )
+        email.attach_alternative(message, "text/html")
+        email.send()
+
+        # activate user
         user.is_active = True
         user.email_confirmed = True
         user.save()
