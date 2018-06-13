@@ -243,3 +243,6 @@ DRIP_EMAIL_DAYS = [3, 7]
 
 # the number of hours to wait before sending the intro email
 INTRO_EMAIL_DELAY = 3
+
+# the from email that the intro email should be sent with
+INTRO_EMAIL_FROM = "John Reinstra <john@totalityhacks.com>"
