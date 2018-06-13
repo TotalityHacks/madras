@@ -54,7 +54,6 @@ class UserRegistrationView(generics.CreateAPIView):
         email = EmailMultiAlternatives(
             mail_subject,
             message,
-            "TotalityHacks <noreply@totalityhacks.com>",
             to=[to_email]
             )
         email.attach_alternative(message, "text/html")
@@ -109,7 +108,6 @@ class PasswordResetView(generics.GenericAPIView):
             email = EmailMultiAlternatives(
                 mail_subject,
                 message,
-                "TotalityHacks <noreply@totalityhacks.com>",
                 to=[to_email]
                 )
             email.attach_alternative(message, "text/html")
@@ -221,7 +219,6 @@ class ResendConfirmationView(APIView):
             email = EmailMultiAlternatives(
                 mail_subject,
                 message,
-                "TotalityHacks <noreply@totalityhacks.com>",
                 to=[to_email]
                 )
             email.attach_alternative(message, "text/html")
