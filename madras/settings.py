@@ -119,10 +119,11 @@ if 'SENDGRID_USERNAME' in os.environ:
     EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-
-    DEFAULT_FROM_EMAIL = 'noreply@totalityhacks.com'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+DEFAULT_FROM_EMAIL = 'TotalityHacks <noreply@totalityhacks.com>'
 
 
 REST_FRAMEWORK = {

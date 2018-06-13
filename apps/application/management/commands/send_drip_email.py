@@ -70,7 +70,6 @@ class Command(BaseCommand):
             email = EmailMultiAlternatives(
                 "Don't forget to submit your application for TotalityHacks!",
                 message,
-                "TotalityHacks <noreply@totalityhacks.com>",
                 to=[user.email],
             )
             email.attach_alternative(message, "text/html")
