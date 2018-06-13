@@ -73,6 +73,7 @@ def activate(request, uidb64, token):
         email = EmailMultiAlternatives(
             mail_subject,
             message,
+            "John Reinstra <john@totalityhacks.com>",
             to=[user.email],
             headers={"X-SMTPAPI": header.json_string()}
         )
