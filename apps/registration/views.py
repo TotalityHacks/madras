@@ -69,7 +69,7 @@ def activate(request, uidb64, token):
         delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
         send_at = timezone.now() + delay
         header.set_send_at(int(send_at.timestamp()))
-        message = render_to_string('intro_email.txt')
+        message = render_to_string('intro_email.html')
         mail_subject = 'Thanks for applying!'
         email = EmailMultiAlternatives(
             mail_subject,
