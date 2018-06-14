@@ -80,12 +80,14 @@ class NextApplicationView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        if rand_app.github:
+        submission = rand_app.submissions.first()
+
+        if submission.github:
             github_array = get_metrics_github(rand_app.github)
         else:
             github_array = {}
 
-        data = SubmissionSerializer(rand_app.submissions.first()).data
+        data = SubmissionSerializer(submission).data
         data.update(github_array)
         return Response(data)
 
