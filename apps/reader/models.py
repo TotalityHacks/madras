@@ -38,8 +38,8 @@ class Rating(models.Model):
 
 
 class Skip(models.Model):
-    application = models.ForeignKey(Application)
-    user = models.ForeignKey(User)
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
     class Meta:
         unique_together = ("application", "user")
