@@ -83,7 +83,7 @@ class NextApplicationView(APIView):
         submission = rand_app.submissions.first()
 
         if submission.github:
-            github_array = get_metrics_github(rand_app.github)
+            github_array = get_metrics_github(submission.github)
         else:
             github_array = {}
 
