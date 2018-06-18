@@ -1,4 +1,6 @@
+import datetime
 from slacker import Slacker
+from smtpapi import SMTPAPIHeader
 
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
@@ -14,6 +16,7 @@ from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -56,6 +59,23 @@ class UserRegistrationView(generics.CreateAPIView):
             message,
             to=[to_email]
             )
+        email.attach_alternative(message, "text/html")
+        email.send()
+
+        # schedule intro email to be sent
+        header = SMTPAPIHeader()
+        delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
+        send_at = timezone.now() + delay
+        header.set_send_at(int(send_at.timestamp()))
+        message = render_to_string('intro_email.html')
+        mail_subject = 'Thanks for applying!'
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            settings.INTRO_EMAIL_FROM,
+            to=[user.email],
+            headers={"X-SMTPAPI": header.json_string()}
+        )
         email.attach_alternative(message, "text/html")
         email.send()
 
