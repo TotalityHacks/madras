@@ -39,7 +39,11 @@ urlpatterns = [
         r'^application/',
         include('apps.application.urls', namespace="application"),
     ),
-    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin"))
+    url(r'^checkin/', include('apps.checkin.urls', namespace="checkin")),
+    url(r'^events/', include('apps.events.urls', namespace="events")),
+    url(r'^announcements/', include('apps.announcements.urls',
+                                    namespace="announcements")),
+    url(r'^maps/', include('apps.locations.urls', namespace="maps")),
 ]
 
 if settings.DEBUG:

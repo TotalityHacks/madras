@@ -2,7 +2,8 @@ from django.conf.urls import url
 from apps.checkin import views
 
 urlpatterns = [
-    url(r'^get_qr_code/$', views.GetQRCode.as_view(), name="get_qr_code"),
+    url(r'^get_qr_code/$', views.get_qr_code, name="get_qr_code"),
+    url(r'^wallet/$', views.wallet, name="wallet"),
     url(
         r'^get_qr_code_admin/$',
         views.GetQRCodeAdmin.as_view(),

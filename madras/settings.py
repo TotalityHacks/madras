@@ -57,8 +57,16 @@ INSTALLED_APPS = (
     'apps.registration',
     'apps.application',
     'apps.stats',
-    'apps.constants'
+    'apps.constants',
+    'apps.locations',
+    'apps.events',
+    'apps.announcements',
+    'fcm_django'
 )
+
+FCM_DJANGO_SETTINGS = {
+        "FCM_SERVER_KEY": os.environ.get("FCM_SERVER_KEY"),
+}
 
 if not DEBUG:
     INSTALLED_APPS = INSTALLED_APPS + (
