@@ -14,7 +14,6 @@ def announcements(request):
         form = request.POST
         body = form['Body']
         from_number = form['From']
-        # TODO: Set the below variables
         account_sid = form['AccountSid']
         if from_number in APPROVED_NUMBERS and \
                 account_sid == os.environ['TWILIO_SID']:

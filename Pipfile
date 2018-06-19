@@ -26,6 +26,8 @@ raven = "*"
 pyjwt = "*"
 wallet = {git = "https://github.com/ofw/wallet-py3k"}
 fcm-django = "*"
+slacker = "*"
+smtpapi = "*"
 
 [requires]
 python_version = "3.5"
