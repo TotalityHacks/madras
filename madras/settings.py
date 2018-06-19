@@ -127,10 +127,11 @@ if 'SENDGRID_USERNAME' in os.environ:
     EMAIL_HOST_PASSWORD = os.environ.get("SENDGRID_PASSWORD")
     EMAIL_PORT = 587
     EMAIL_USE_TLS = True
-
-    DEFAULT_FROM_EMAIL = 'noreply@totalityhacks.com'
 else:
     EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+
+DEFAULT_FROM_EMAIL = 'TotalityHacks <noreply@totalityhacks.com>'
 
 
 REST_FRAMEWORK = {
@@ -230,6 +231,9 @@ if not DEBUG:
 GITHUB_USERNAME = os.environ.get("GITHUB_USERNAME")
 GITHUB_PASSWORD = os.environ.get("GITHUB_PASSWORD")
 
+SLACK_CHANNEL = os.environ.get("SLACK_CHANNEL", "#tech-madras")
+SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
+
 # max size of resume (in bytes)
 MAX_RESUME_SIZE = 4 * 1024 * 1024
 
@@ -241,3 +245,12 @@ STAFF_EMAIL_SUFFIX = "totalityhacks.com"
 
 # redirect to root on login (without next parameter)
 LOGIN_REDIRECT_URL = "/"
+
+# the number of days to wait until we should send the drip email
+DRIP_EMAIL_DAYS = [3, 7]
+
+# the number of hours to wait before sending the intro email
+INTRO_EMAIL_DELAY = 3
+
+# the from email that the intro email should be sent with
+INTRO_EMAIL_FROM = "John Reinstra <john@totalityhacks.com>"

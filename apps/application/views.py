@@ -1,6 +1,7 @@
 import csv
 import uuid
 from collections import OrderedDict
+from slacker import Slacker
 
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
@@ -12,9 +13,14 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+
 from . import serializers
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
+
+from botocore.exceptions import ClientError
 
 
 @api_view(['GET'])
@@ -72,7 +78,12 @@ class ResumeViewSet(mixins.CreateModelMixin,
         except ValueError:
             raise Http404
         if not settings.DEBUG:
-            resume_file = FileUploader().download_file_from_s3(str(resume.id))
+            try:
+                resume_file = FileUploader().download_file_from_s3(
+                    str(resume.id)
+                    )
+            except ClientError:
+                raise Http404
         else:
             resume_file = "dummy"
         response = HttpResponse(resume_file, content_type="application/pdf")
@@ -114,7 +125,27 @@ class SubmissionViewSet(mixins.CreateModelMixin,
 
     def perform_create(self, serializer):
         app, _ = Application.objects.get_or_create(user=self.request.user)
+
+        if not app.submissions.exists() and settings.SLACK_TOKEN:
+            Slacker(settings.SLACK_TOKEN).chat.post_message(
+                settings.SLACK_CHANNEL,
+                ":tada: New application submission! {} :tada:".format(
+                    self.request.user.username),
+            )
         serializer.save(application=app, user=self.request.user)
+
+        # send confirmation email to user
+        user = self.request.user
+        message = render_to_string('app_submitted.html', {})
+        mail_subject = 'Application Submitted!'
+        to_email = user.email
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            to=[to_email]
+            )
+        email.attach_alternative(message, "text/html")
+        email.send()
 
 
 @api_view(['GET'])

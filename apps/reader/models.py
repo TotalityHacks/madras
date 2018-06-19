@@ -37,6 +37,14 @@ class Rating(models.Model):
         super(Rating, self).__setattr__(key, value)
 
 
+class Skip(models.Model):
+    application = models.ForeignKey(Application, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ("application", "user")
+
+
 class RatingField(models.Model):
     name = models.TextField()
     weight = models.IntegerField(

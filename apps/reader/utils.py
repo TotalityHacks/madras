@@ -19,22 +19,22 @@ def get_contributions(github_username):
 
 def get_metrics_github(github_username):
     """ Returns basic GitHub statistics given a GitHub username. """
+    no_data = {
+        "num_followers": None,
+        "num_repos": None,
+        "num_contributions": None,
+        "self_star_repos": None,
+    }
 
     if settings.GITHUB_USERNAME:
         gh = github3.login(
             settings.GITHUB_USERNAME, password=settings.GITHUB_PASSWORD)
     else:
-        return {
-            "num_followers": -1,
-            "num_repos": -1,
-            "num_contributions": -1,
-            "self_star_repos": -1,
-        }
-
+        return no_data
     try:
         user = gh.user(github_username)
     except github3.exceptions.NotFoundError:
-        return {}
+        return no_data
 
     user_repos = gh.repositories_by(github_username)
     user_starred = gh.starred_by(github_username)

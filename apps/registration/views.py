@@ -7,12 +7,11 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 
 from django.shortcuts import redirect, render
+from django.utils.encoding import force_text
+from django.utils.http import urlsafe_base64_decode
 
 from .tokens import account_activation_token
 from .models import User
-
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
 
 
 @api_view(['GET'])
@@ -58,6 +57,7 @@ def activate(request, uidb64, token):
     except(TypeError, ValueError, OverflowError, User.DoesNotExist):
         user = None
     if user is not None and account_activation_token.check_token(user, token):
+        # activate user
         user.is_active = True
         user.email_confirmed = True
         user.save()

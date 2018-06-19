@@ -1,0 +1,10 @@
+{% extends "email_base.html" %}
+
+{% block content %}
+<p>
+    You haven't submitted your application for TotalityHacks yet! Click the button below to complete your application.
+    <br />
+        <center><a style="padding: 10px; margin-top: 24px; margin-bottom: 24px; cursor: pointer; background-color: #e60c88; color: white;border-radius:12px; display:inline-block;text-decoration: none;" href="{{ registration_url }}">Complete Application</a></center>
+    <br />
+</p>
+{% endblock %}

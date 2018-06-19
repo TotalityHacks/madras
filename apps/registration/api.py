@@ -1,3 +1,7 @@
+import datetime
+from slacker import Slacker
+from smtpapi import SMTPAPIHeader
+
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
@@ -8,9 +12,11 @@ from rest_framework.authtoken.views import (
     ObtainAuthToken as ObtainAuthTokenBase)
 from rest_framework.views import APIView
 
+from django.conf import settings
 from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
 from django.template.loader import render_to_string
+from django.utils import timezone
 
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -48,9 +54,37 @@ class UserRegistrationView(generics.CreateAPIView):
         })
         mail_subject = 'Activate your account!'
         to_email = user.email
-        email = EmailMultiAlternatives(mail_subject, message, to=[to_email])
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            to=[to_email]
+            )
         email.attach_alternative(message, "text/html")
         email.send()
+
+        # schedule intro email to be sent
+        header = SMTPAPIHeader()
+        delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
+        send_at = timezone.now() + delay
+        header.set_send_at(int(send_at.timestamp()))
+        message = render_to_string('intro_email.html')
+        mail_subject = 'Thanks for applying!'
+        email = EmailMultiAlternatives(
+            mail_subject,
+            message,
+            settings.INTRO_EMAIL_FROM,
+            to=[user.email],
+            headers={"X-SMTPAPI": header.json_string()}
+        )
+        email.attach_alternative(message, "text/html")
+        email.send()
+
+        # notify the slack channel
+        if settings.SLACK_TOKEN:
+            Slacker(settings.SLACK_TOKEN).chat.post_message(
+                settings.SLACK_CHANNEL,
+                "A new user {} just made an account!".format(user.username),
+            )
 
         token, _ = Token.objects.get_or_create(user=user)
 
@@ -93,7 +127,10 @@ class PasswordResetView(generics.GenericAPIView):
             mail_subject = 'Password reset request for your account.'
             to_email = user.email
             email = EmailMultiAlternatives(
-                mail_subject, message, to=[to_email])
+                mail_subject,
+                message,
+                to=[to_email]
+                )
             email.attach_alternative(message, "text/html")
             email.send()
 
@@ -124,7 +161,7 @@ class AuthTokenSerializer(AuthTokenSerializerBase):
 
         if not user:
             if User.objects.filter(email__iexact=username).exists():
-                if not User.objects.get(email=username).is_active:
+                if not User.objects.get(email__iexact=username).is_active:
                     raise serializers.ValidationError(
                         (
                             'You cannot login until you have confirmed your '
@@ -201,7 +238,10 @@ class ResendConfirmationView(APIView):
             mail_subject = 'Activate your account!'
             to_email = user.email
             email = EmailMultiAlternatives(
-                mail_subject, message, to=[to_email])
+                mail_subject,
+                message,
+                to=[to_email]
+                )
             email.attach_alternative(message, "text/html")
             email.send()
 
