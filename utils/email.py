@@ -5,45 +5,45 @@ from smtpapi import SMTPAPIHeader
 import datetime
 
 def send_template_email(to_array, subject, template, context, sent_by):
-	body = render_to_string(template, context)
-	if sent_by:
-		email = EmailMultiAlternatives(
+    body = render_to_string(template, context)
+    if sent_by:
+        email = EmailMultiAlternatives(
             mail_subject,
-           	message,
+            message,
             sent_by,
             to=to_array
         )
     else:
-		email = EmailMultiAlternatives(
+        email = EmailMultiAlternatives(
             mail_subject,
-           	message,
+            message,
             to=to_array
-        )    	
+        )       
 
     email.attach_alternative(message, "text/html")
     email.send()
 
 def send_delayed_email(to_array, subject, template, context, hours, sent_by):
-	# hours = hours until send (self-explanatory)
-	header = SMTPAPIHeader().set_send_at(timezone.now() + datetime.timedelta(hours=hours))
-	body = render_to_string(template, context)
-	if sent_by:
-		email = EmailMultiAlternatives(
+    # hours = hours until send (self-explanatory)
+    header = SMTPAPIHeader().set_send_at(timezone.now() + datetime.timedelta(hours=hours))
+    body = render_to_string(template, context)
+    if sent_by:
+        email = EmailMultiAlternatives(
             mail_subject,
-           	message,
+            message,
             sent_by,
             to=to_array,
             headers={"X-SMTPAPI": header.json_string()}
         )
     else:
-		email = EmailMultiAlternatives(
+        email = EmailMultiAlternatives(
             mail_subject,
-           	message,
+            message,
             to=to_array,
             headers={"X-SMTPAPI": header.json_string()}
         )
 
     email.attach_alternative(message, "text/html")
-    email.send()    	
+    email.send()        
 
 
