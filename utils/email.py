@@ -9,18 +9,18 @@ def send_template_email(to_array, subject, template, context, sent_by=None):
     if sent_by != None:
         email = EmailMultiAlternatives(
             subject,
-            message,
+            body,
             sent_by,
             to=to_array
         )
     else:
         email = EmailMultiAlternatives(
             subject,
-            message,
+            body,
             to=to_array
         )       
 
-    email.attach_alternative(message, "text/html")
+    email.attach_alternative(body, "text/html")
     email.send()
 
 def send_delayed_email(to_array, subject, template, context, hours, sent_by=None):
@@ -30,7 +30,7 @@ def send_delayed_email(to_array, subject, template, context, hours, sent_by=None
     if sent_by != None:
         email = EmailMultiAlternatives(
             subject,
-            message,
+            body,
             sent_by,
             to=to_array,
             headers={"X-SMTPAPI": header.json_string()}
@@ -38,12 +38,12 @@ def send_delayed_email(to_array, subject, template, context, hours, sent_by=None
     else:
         email = EmailMultiAlternatives(
             subject,
-            message,
+            body,
             to=to_array,
             headers={"X-SMTPAPI": header.json_string()}
         )
 
-    email.attach_alternative(message, "text/html")
+    email.attach_alternative(body, "text/html")
     email.send()        
 
 
