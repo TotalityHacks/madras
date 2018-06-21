@@ -71,9 +71,9 @@ class Command(BaseCommand):
         for user in users.distinct():
             if not kwargs["dry_run"]:
                 send_template_email(
-                    [user.email], 
-                    "Don't forget to submit your application for TotalityHacks!", 
-                    'drip_email.html', 
+                    [user.email],
+                    "Don't forget to submit your application for TotalityHacks!",
+                    'drip_email.html',
                     {
                         "user": user,
                         "registration_url": settings.EMAIL_REDIRECT_URL,

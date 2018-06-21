@@ -129,7 +129,8 @@ class SubmissionViewSet(mixins.CreateModelMixin,
 
         if not app.submissions.exists() and settings.SLACK_TOKEN:
             send_to_slack(
-                ":tada: New application submission! {} :tada:".format(self.request.user.username),
+                ":tada: New application submission! {} :tada:"
+                .format(self.request.user.username),
                 settings.SLACK_TOKEN,
                 settings.SLACK_CHANNEL,
                 )
@@ -138,8 +139,6 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         # send confirmation email to user
         user = self.request.user
         send_template_email([user.email], 'Application Submitted!', 'app_submitted.html', {})
-
-
 
 @api_view(['GET'])
 def get_schools_list(request):

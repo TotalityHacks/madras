@@ -1,7 +1,5 @@
-import datetime
 from utils.slack import send_to_slack
 from utils.email import send_template_email, send_delayed_email
-from smtpapi import SMTPAPIHeader
 
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
@@ -14,9 +12,7 @@ from rest_framework.authtoken.views import (
 from rest_framework.views import APIView
 
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
 from django.utils import timezone
 
 from django.utils.encoding import force_bytes
@@ -25,8 +21,6 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer
 from .models import User
-
-
 
 class UserRegistrationView(generics.CreateAPIView):
     """
@@ -59,7 +53,13 @@ class UserRegistrationView(generics.CreateAPIView):
             })
 
         # send intro email
-        send_delayed_email([user.email], 'Thanks for applying!', 'intro_email.html', {}, settings.INTRO_EMAIL_DELAY, settings.INTRO_EMAIL_FROM)
+        send_delayed_email([user.email],
+            'Thanks for applying!',
+            'intro_email.html',
+            {},
+            settings.INTRO_EMAIL_DELAY,
+            settings.INTRO_EMAIL_FROM
+            )
 
         # notify the slack channel
         if settings.SLACK_TOKEN:
@@ -111,7 +111,6 @@ class PasswordResetView(generics.GenericAPIView):
                     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                     'token': account_activation_token.make_token(user),
                 })
-
 
         return Response({
             "success": True,
