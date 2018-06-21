@@ -1,7 +1,7 @@
 import csv
 import uuid
 from collections import OrderedDict
-from slacker import Slacker
+from utils.slack import send_to_slack
 
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
@@ -127,11 +127,11 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         app, _ = Application.objects.get_or_create(user=self.request.user)
 
         if not app.submissions.exists() and settings.SLACK_TOKEN:
-            Slacker(settings.SLACK_TOKEN).chat.post_message(
+            send_to_slack(
+                ":tada: New application submission! {} :tada:".format(self.request.user.username),
+                settings.SLACK_TOKEN,
                 settings.SLACK_CHANNEL,
-                ":tada: New application submission! {} :tada:".format(
-                    self.request.user.username),
-            )
+                )
         serializer.save(application=app, user=self.request.user)
 
         # send confirmation email to user

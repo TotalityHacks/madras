@@ -1,5 +1,5 @@
 import datetime
-from slacker import Slacker
+from utils.slack import send_to_slack
 from smtpapi import SMTPAPIHeader
 
 from rest_framework import generics, status, renderers, serializers
@@ -24,6 +24,7 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer
 from .models import User
+
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -81,10 +82,11 @@ class UserRegistrationView(generics.CreateAPIView):
 
         # notify the slack channel
         if settings.SLACK_TOKEN:
-            Slacker(settings.SLACK_TOKEN).chat.post_message(
-                settings.SLACK_CHANNEL,
-                "A new user {} just made an account!".format(user.username),
-            )
+            send_to_slack(
+                    "A new user {} just made an account!".format(user.username),
+                    settings.SLACK_TOKEN,
+                    settings.SLACK_CHANNEL,
+                )
 
         token, _ = Token.objects.get_or_create(user=user)
 
