@@ -26,7 +26,7 @@ def send_template_email(to_array, subject, template, context, sent_by=None):
 def send_delayed_email(to_array, subject, template, context, hours, sent_by=None):
     # hours = hours until send (self-explanatory)
     header = SMTPAPIHeader()
-    delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
+    delay = datetime.timedelta(hours=hours)
     send_at = timezone.now() + delay
     header.set_send_at(int(send_at.timestamp()))
     body = render_to_string(template, context)
