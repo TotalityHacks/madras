@@ -19,6 +19,7 @@ from django.core.mail import EmailMultiAlternatives
 from . import serializers
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
+from utils.email import send_template_email
 
 from botocore.exceptions import ClientError
 
@@ -136,16 +137,8 @@ class SubmissionViewSet(mixins.CreateModelMixin,
 
         # send confirmation email to user
         user = self.request.user
-        message = render_to_string('app_submitted.html', {})
-        mail_subject = 'Application Submitted!'
-        to_email = user.email
-        email = EmailMultiAlternatives(
-            mail_subject,
-            message,
-            to=[to_email]
-            )
-        email.attach_alternative(message, "text/html")
-        email.send()
+        send_template_email([user.email], 'Application Submitted!', 'app_submitted.html', {})
+
 
 
 @api_view(['GET'])

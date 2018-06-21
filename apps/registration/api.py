@@ -1,5 +1,6 @@
 import datetime
 from utils.slack import send_to_slack
+from utils.email import send_template_email, send_delayed_email
 from smtpapi import SMTPAPIHeader
 
 from rest_framework import generics, status, renderers, serializers
@@ -45,40 +46,20 @@ class UserRegistrationView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # send activation email to user
         current_site = get_current_site(request)
-        message = render_to_string('acc_active_email.html', {
-            'user': user,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': account_activation_token.make_token(user),
-        })
-        mail_subject = 'Activate your account!'
-        to_email = user.email
-        email = EmailMultiAlternatives(
-            mail_subject,
-            message,
-            to=[to_email]
-            )
-        email.attach_alternative(message, "text/html")
-        email.send()
+        send_template_email(
+            [user.email],
+            'Activate your account!',
+            'acc_active_email.html',
+            {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
 
-        # schedule intro email to be sent
-        header = SMTPAPIHeader()
-        delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
-        send_at = timezone.now() + delay
-        header.set_send_at(int(send_at.timestamp()))
-        message = render_to_string('intro_email.html')
-        mail_subject = 'Thanks for applying!'
-        email = EmailMultiAlternatives(
-            mail_subject,
-            message,
-            settings.INTRO_EMAIL_FROM,
-            to=[user.email],
-            headers={"X-SMTPAPI": header.json_string()}
-        )
-        email.attach_alternative(message, "text/html")
-        email.send()
+        # send intro email
+        send_delayed_email([user.email], 'Thanks for applying!', 'intro_email.html', {}, settings.INTRO_EMAIL_DELAY, settings.INTRO_EMAIL_FROM)
 
         # notify the slack channel
         if settings.SLACK_TOKEN:
@@ -120,21 +101,17 @@ class PasswordResetView(generics.GenericAPIView):
 
             # send account recovery email to user
             current_site = get_current_site(request)
-            message = render_to_string('acc_recover_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            mail_subject = 'Password reset request for your account.'
-            to_email = user.email
-            email = EmailMultiAlternatives(
-                mail_subject,
-                message,
-                to=[to_email]
-                )
-            email.attach_alternative(message, "text/html")
-            email.send()
+            send_template_email(
+                [user.email],
+                'Password reset request for your account.',
+                'acc_recover_email.html',
+                {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                })
+
 
         return Response({
             "success": True,
@@ -231,22 +208,16 @@ class ResendConfirmationView(APIView):
 
             # send activation email to user
             current_site = get_current_site(request)
-            message = render_to_string('acc_active_email.html', {
+            send_template_email(
+            [user.email],
+            'Activate your account!',
+            'acc_active_email.html',
+            {
                 'user': user,
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
             })
-            mail_subject = 'Activate your account!'
-            to_email = user.email
-            email = EmailMultiAlternatives(
-                mail_subject,
-                message,
-                to=[to_email]
-                )
-            email.attach_alternative(message, "text/html")
-            email.send()
-
         return Response({
             "success": True,
             "message": "If your email address exists in our database,"

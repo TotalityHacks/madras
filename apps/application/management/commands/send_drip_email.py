@@ -9,6 +9,8 @@ from django.utils import timezone
 
 from apps.registration.models import User
 
+from utils.email import send_template_email
+
 
 class Command(BaseCommand):
     help = "Sends a drip email to people who have registered but not applied."
@@ -67,18 +69,15 @@ class Command(BaseCommand):
             all_users |= users
 
         for user in users.distinct():
-            message = render_to_string("drip_email.html", {
-                "user": user,
-                "registration_url": settings.EMAIL_REDIRECT_URL,
-            })
-            email = EmailMultiAlternatives(
-                "Don't forget to submit your application for TotalityHacks!",
-                message,
-                to=[user.email],
-            )
-            email.attach_alternative(message, "text/html")
             if not kwargs["dry_run"]:
-                email.send()
+                send_template_email(
+                    [user.email], 
+                    "Don't forget to submit your application for TotalityHacks!", 
+                    'drip_email.html', 
+                    {
+                        "user": user,
+                        "registration_url": settings.EMAIL_REDIRECT_URL,
+                    })
 
         self.stdout.write(
             "Sent drip email to {} user(s).".format(users.count())
