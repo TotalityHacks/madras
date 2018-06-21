@@ -15,7 +15,7 @@ def send_template_email(to_array, subject, template, context, sent_by=None):
         )
     else:
         email = EmailMultiAlternatives(
-            mail_subject,
+            subject,
             message,
             to=to_array
         )       
