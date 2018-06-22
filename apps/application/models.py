@@ -34,6 +34,31 @@ STUDY_LEVEL_CHOICES = (
 )
 
 
+class Applicant(models.Model):
+
+    ADMISSION_STATUS_ADMITTED = "admitted"
+    ADMISSION_STATUS_DENIED = "denied"
+    ADMISSION_STATUS_PENDING = "pending"
+    ADMISSION_STATUS_WAITLISTED = "waitlisted"
+
+    ADMISSION_STATUS_CHOICES = (
+        (ADMISSION_STATUS_ADMITTED, "Admitted"),
+        (ADMISSION_STATUS_DENIED, "Denied"),
+        (ADMISSION_STATUS_PENDING, "Pending"),
+        (ADMISSION_STATUS_WAITLISTED, "Waitlisted"),
+    )
+
+    id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
+    user = models.OneToOneField(
+        User, on_delete=models.PROTECT, related_name="applicant")
+
+    admission_status = models.CharField(
+        max_length=16,
+        choices=ADMISSION_STATUS_CHOICES,
+        default=ADMISSION_STATUS_PENDING,
+    )
+
+
 class Application(models.Model):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
