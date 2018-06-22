@@ -50,17 +50,18 @@ class UserRegistrationView(generics.CreateAPIView):
                 'domain': current_site.domain,
                 'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                 'token': account_activation_token.make_token(user),
-            })
+            },
+        )
 
         # send intro email
         send_template_email(
-                user.email,
-                'Thanks for applying!',
-                'intro_email.html',
-                {},
-                settings.INTRO_EMAIL_FROM,
-                settings.INTRO_EMAIL_DELAY
-            )
+            user.email,
+            'Thanks for applying!',
+            'intro_email.html',
+            {},
+            sent_by=settings.INTRO_EMAIL_FROM,
+            hours=settings.INTRO_EMAIL_DELAY,
+        )
 
         # notify the slack channel
         if settings.SLACK_TOKEN:

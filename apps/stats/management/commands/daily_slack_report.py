@@ -47,4 +47,4 @@ class Command(BaseCommand):
                 ),
                 settings.SLACK_TOKEN,
                 slack_channel,
-                )
+            )

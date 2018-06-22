@@ -77,7 +77,8 @@ class Command(BaseCommand):
                     {
                         "user": user,
                         "registration_url": settings.EMAIL_REDIRECT_URL,
-                    })
+                    },
+                )
 
         self.stdout.write(
             "Sent drip email to {} user(s).".format(users.count())

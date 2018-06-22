@@ -6,10 +6,9 @@ import datetime
 
 
 def send_template_email(
-        to_email, subject, template, context, sent_by=None,
-        hours=None):
+        to_email, subject, template, context, sent_by=None, hours=None):
     body = render_to_string(template, context)
-    if hours is not None and sent_by is not None:
+    if hours and sent_by:
         header = SMTPAPIHeader()
         delay = datetime.timedelta(hours=hours)
         send_at = timezone.now() + delay
@@ -21,7 +20,7 @@ def send_template_email(
             to=[to_email],
             headers={"X-SMTPAPI": header.json_string()},
         )
-    if hours is not None:
+    elif hours:
         header = SMTPAPIHeader()
         delay = datetime.timedelta(hours=hours)
         send_at = timezone.now() + delay
@@ -32,7 +31,7 @@ def send_template_email(
             to=[to_email],
             headers={"X-SMTPAPI": header.json_string()},
         )
-    if sent_by is not None:
+    elif sent_by:
         email = EmailMultiAlternatives(
             subject,
             body,
