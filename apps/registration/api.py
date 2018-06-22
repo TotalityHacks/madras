@@ -1,6 +1,3 @@
-from utils.slack import send_to_slack
-from utils.email import send_template_email
-
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
@@ -20,6 +17,9 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer
 from .models import User
+
+from utils.slack import send_to_slack
+from utils.email import send_template_email
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -42,7 +42,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
         current_site = get_current_site(request)
         send_template_email(
-            [user.email],
+            user.email,
             'Activate your account!',
             'acc_active_email.html',
             {
@@ -54,7 +54,7 @@ class UserRegistrationView(generics.CreateAPIView):
 
         # send intro email
         send_template_email(
-                [user.email],
+                user.email,
                 'Thanks for applying!',
                 'intro_email.html',
                 {},
@@ -103,7 +103,7 @@ class PasswordResetView(generics.GenericAPIView):
             # send account recovery email to user
             current_site = get_current_site(request)
             send_template_email(
-                [user.email],
+                user.email,
                 'Password reset request for your account.',
                 'acc_recover_email.html',
                 {
@@ -111,7 +111,8 @@ class PasswordResetView(generics.GenericAPIView):
                     'domain': current_site.domain,
                     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                     'token': account_activation_token.make_token(user),
-                })
+                },
+            )
 
         return Response({
             "success": True,
@@ -209,7 +210,7 @@ class ResendConfirmationView(APIView):
             # send activation email to user
             current_site = get_current_site(request)
             send_template_email(
-                [user.email],
+                user.email,
                 'Activate your account!',
                 'acc_active_email.html',
                 {
@@ -217,7 +218,8 @@ class ResendConfirmationView(APIView):
                     'domain': current_site.domain,
                     'uid': urlsafe_base64_encode(force_bytes(user.pk)),
                     'token': account_activation_token.make_token(user),
-                })
+                },
+            )
         return Response({
             "success": True,
             "message": "If your email address exists in our database,"

@@ -1,7 +1,6 @@
 import csv
 import uuid
 from collections import OrderedDict
-from utils.slack import send_to_slack
 
 from rest_framework import mixins, status, viewsets
 from rest_framework.response import Response
@@ -17,6 +16,7 @@ from . import serializers
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
 from utils.email import send_template_email
+from utils.slack import send_to_slack
 
 from botocore.exceptions import ClientError
 
@@ -136,7 +136,7 @@ class SubmissionViewSet(mixins.CreateModelMixin,
         # send confirmation email to user
         user = self.request.user
         subject = 'Application Submitted!'
-        send_template_email([user.email], subject, 'app_submitted.html', {})
+        send_template_email(user.email, subject, 'app_submitted.html', {})
 
 
 @api_view(['GET'])

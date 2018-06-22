@@ -6,11 +6,7 @@ import datetime
 
 
 def send_template_email(
-        to_email,
-        subject,
-        template,
-        context,
-        sent_by=None,
+        to_email, subject, template, context, sent_by=None,
         hours=None):
     body = render_to_string(template, context)
     if hours is not None and sent_by is not None:
@@ -23,7 +19,7 @@ def send_template_email(
             body,
             sent_by,
             to=[to_email],
-            headers={"X-SMTPAPI": header.json_string()}
+            headers={"X-SMTPAPI": header.json_string()},
         )
     if hours is not None:
         header = SMTPAPIHeader()
@@ -34,20 +30,20 @@ def send_template_email(
             subject,
             body,
             to=[to_email],
-            headers={"X-SMTPAPI": header.json_string()}
+            headers={"X-SMTPAPI": header.json_string()},
         )
     if sent_by is not None:
         email = EmailMultiAlternatives(
             subject,
             body,
             sent_by,
-            to=[to_email]
+            to=[to_email],
         )
     else:
         email = EmailMultiAlternatives(
             subject,
             body,
-            to=[to_email]
+            to=[to_email],
         )
 
     email.attach_alternative(body, "text/html")

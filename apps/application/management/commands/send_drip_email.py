@@ -71,7 +71,7 @@ class Command(BaseCommand):
                 subject = ("Don't forget to submit"
                            " your application for TotalityHacks!")
                 send_template_email(
-                    [user.email],
+                    user.email,
                     subject,
                     'drip_email.html',
                     {
