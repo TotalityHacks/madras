@@ -13,9 +13,6 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
-from django.template.loader import render_to_string
-from django.core.mail import EmailMultiAlternatives
-
 from . import serializers
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
@@ -138,7 +135,9 @@ class SubmissionViewSet(mixins.CreateModelMixin,
 
         # send confirmation email to user
         user = self.request.user
-        send_template_email([user.email], 'Application Submitted!', 'app_submitted.html', {})
+        subject = 'Application Submitted!'
+        send_template_email([user.email], subject, 'app_submitted.html', {})
+
 
 @api_view(['GET'])
 def get_schools_list(request):

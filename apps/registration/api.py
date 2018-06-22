@@ -1,5 +1,5 @@
 from utils.slack import send_to_slack
-from utils.email import send_template_email, send_delayed_email
+from utils.email import send_template_email
 
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
@@ -13,7 +13,6 @@ from rest_framework.views import APIView
 
 from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
-from django.utils import timezone
 
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -21,6 +20,7 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer
 from .models import User
+
 
 class UserRegistrationView(generics.CreateAPIView):
     """
@@ -53,21 +53,22 @@ class UserRegistrationView(generics.CreateAPIView):
             })
 
         # send intro email
-        send_delayed_email([user.email],
-            'Thanks for applying!',
-            'intro_email.html',
-            {},
-            settings.INTRO_EMAIL_DELAY,
-            settings.INTRO_EMAIL_FROM
+        send_template_email(
+                [user.email],
+                'Thanks for applying!',
+                'intro_email.html',
+                {},
+                settings.INTRO_EMAIL_FROM,
+                settings.INTRO_EMAIL_DELAY
             )
 
         # notify the slack channel
         if settings.SLACK_TOKEN:
             send_to_slack(
-                    "A new user {} just made an account!".format(user.username),
-                    settings.SLACK_TOKEN,
-                    settings.SLACK_CHANNEL,
-                )
+                "A new user {} just made an account!".format(user.username),
+                settings.SLACK_TOKEN,
+                settings.SLACK_CHANNEL,
+            )
 
         token, _ = Token.objects.get_or_create(user=user)
 
@@ -208,15 +209,15 @@ class ResendConfirmationView(APIView):
             # send activation email to user
             current_site = get_current_site(request)
             send_template_email(
-            [user.email],
-            'Activate your account!',
-            'acc_active_email.html',
-            {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
+                [user.email],
+                'Activate your account!',
+                'acc_active_email.html',
+                {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                })
         return Response({
             "success": True,
             "message": "If your email address exists in our database,"
