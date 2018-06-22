@@ -85,7 +85,8 @@ class ResumeViewSet(mixins.CreateModelMixin,
         else:
             resume_file = "dummy"
         response = HttpResponse(resume_file, content_type="application/pdf")
-        response['Content-Disposition'] = "inline;filename=resume.pdf"
+        response['Content-Disposition'] = (
+            "inline;filename={}.pdf".format(uuid.uuid4()))
         response['X-Frame-Options'] = '*'
         return response
 
