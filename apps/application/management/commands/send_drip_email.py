@@ -1,13 +1,13 @@
 from datetime import timedelta
 
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.core.management.base import BaseCommand
 from django.db.models import Count
-from django.template.loader import render_to_string
 from django.utils import timezone
 
 from apps.registration.models import User
+
+from utils.email import send_template_email
 
 
 class Command(BaseCommand):
@@ -67,18 +67,17 @@ class Command(BaseCommand):
             all_users |= users
 
         for user in users.distinct():
-            message = render_to_string("drip_email.html", {
-                "user": user,
-                "registration_url": settings.EMAIL_REDIRECT_URL,
-            })
-            email = EmailMultiAlternatives(
-                "Don't forget to submit your application for TotalityHacks!",
-                message,
-                to=[user.email],
-            )
-            email.attach_alternative(message, "text/html")
             if not kwargs["dry_run"]:
-                email.send()
+                subject = ("Don't forget to submit"
+                           " your application for TotalityHacks!")
+                send_template_email(
+                    user.email,
+                    subject,
+                    'drip_email.html',
+                    {
+                        "user": user,
+                        "registration_url": settings.EMAIL_REDIRECT_URL,
+                    })
 
         self.stdout.write(
             "Sent drip email to {} user(s).".format(users.count())

@@ -1,6 +1,6 @@
 import datetime
 
-from slacker import Slacker
+from utils.slack import send_to_slack
 
 from django.conf import settings
 from django.core.management.base import BaseCommand
@@ -38,12 +38,13 @@ class Command(BaseCommand):
             .values_list("application_id", flat=True)
         ))
         for slack_channel in SLACK_REPORT_CHANNELS:
-            Slacker(settings.SLACK_TOKEN).chat.post_message(
-                slack_channel,
+            send_to_slack(
                 SLACK_MESSAGE_FORMAT.format(
                     num_apps=Application.objects.all().count(),
                     num_submitted_apps=num_submitted,
                     num_apps_24hrs=num_apps_24hrs,
                     num_submitted_apps_24hrs=num_submitted_24hrs,
+                ),
+                settings.SLACK_TOKEN,
+                slack_channel,
                 )
-            )

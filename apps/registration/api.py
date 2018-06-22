@@ -1,7 +1,3 @@
-import datetime
-from slacker import Slacker
-from smtpapi import SMTPAPIHeader
-
 from rest_framework import generics, status, renderers, serializers
 from rest_framework.authtoken.models import Token
 from rest_framework.compat import authenticate
@@ -13,10 +9,7 @@ from rest_framework.authtoken.views import (
 from rest_framework.views import APIView
 
 from django.conf import settings
-from django.core.mail import EmailMultiAlternatives
 from django.contrib.sites.shortcuts import get_current_site
-from django.template.loader import render_to_string
-from django.utils import timezone
 
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
@@ -24,6 +17,9 @@ from django.utils.http import urlsafe_base64_encode
 from .tokens import account_activation_token
 from .serializers import UserSerializer, PasswordResetSerializer
 from .models import User
+
+from utils.slack import send_to_slack
+from utils.email import send_template_email
 
 
 class UserRegistrationView(generics.CreateAPIView):
@@ -44,46 +40,34 @@ class UserRegistrationView(generics.CreateAPIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # send activation email to user
         current_site = get_current_site(request)
-        message = render_to_string('acc_active_email.html', {
-            'user': user,
-            'domain': current_site.domain,
-            'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-            'token': account_activation_token.make_token(user),
-        })
-        mail_subject = 'Activate your account!'
-        to_email = user.email
-        email = EmailMultiAlternatives(
-            mail_subject,
-            message,
-            to=[to_email]
-            )
-        email.attach_alternative(message, "text/html")
-        email.send()
+        send_template_email(
+            user.email,
+            'Activate your account!',
+            'acc_active_email.html',
+            {
+                'user': user,
+                'domain': current_site.domain,
+                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                'token': account_activation_token.make_token(user),
+            })
 
-        # schedule intro email to be sent
-        header = SMTPAPIHeader()
-        delay = datetime.timedelta(hours=settings.INTRO_EMAIL_DELAY)
-        send_at = timezone.now() + delay
-        header.set_send_at(int(send_at.timestamp()))
-        message = render_to_string('intro_email.html')
-        mail_subject = 'Thanks for applying!'
-        email = EmailMultiAlternatives(
-            mail_subject,
-            message,
-            settings.INTRO_EMAIL_FROM,
-            to=[user.email],
-            headers={"X-SMTPAPI": header.json_string()}
-        )
-        email.attach_alternative(message, "text/html")
-        email.send()
+        # send intro email
+        send_template_email(
+                user.email,
+                'Thanks for applying!',
+                'intro_email.html',
+                {},
+                settings.INTRO_EMAIL_FROM,
+                settings.INTRO_EMAIL_DELAY
+            )
 
         # notify the slack channel
         if settings.SLACK_TOKEN:
-            Slacker(settings.SLACK_TOKEN).chat.post_message(
-                settings.SLACK_CHANNEL,
+            send_to_slack(
                 "A new user {} just made an account!".format(user.username),
+                settings.SLACK_TOKEN,
+                settings.SLACK_CHANNEL,
             )
 
         token, _ = Token.objects.get_or_create(user=user)
@@ -118,21 +102,17 @@ class PasswordResetView(generics.GenericAPIView):
 
             # send account recovery email to user
             current_site = get_current_site(request)
-            message = render_to_string('acc_recover_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            mail_subject = 'Password reset request for your account.'
-            to_email = user.email
-            email = EmailMultiAlternatives(
-                mail_subject,
-                message,
-                to=[to_email]
-                )
-            email.attach_alternative(message, "text/html")
-            email.send()
+            send_template_email(
+                user.email,
+                'Password reset request for your account.',
+                'acc_recover_email.html',
+                {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                },
+            )
 
         return Response({
             "success": True,
@@ -229,22 +209,17 @@ class ResendConfirmationView(APIView):
 
             # send activation email to user
             current_site = get_current_site(request)
-            message = render_to_string('acc_active_email.html', {
-                'user': user,
-                'domain': current_site.domain,
-                'uid': urlsafe_base64_encode(force_bytes(user.pk)),
-                'token': account_activation_token.make_token(user),
-            })
-            mail_subject = 'Activate your account!'
-            to_email = user.email
-            email = EmailMultiAlternatives(
-                mail_subject,
-                message,
-                to=[to_email]
-                )
-            email.attach_alternative(message, "text/html")
-            email.send()
-
+            send_template_email(
+                user.email,
+                'Activate your account!',
+                'acc_active_email.html',
+                {
+                    'user': user,
+                    'domain': current_site.domain,
+                    'uid': urlsafe_base64_encode(force_bytes(user.pk)),
+                    'token': account_activation_token.make_token(user),
+                },
+            )
         return Response({
             "success": True,
             "message": "If your email address exists in our database,"
