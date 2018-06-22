@@ -234,6 +234,8 @@ GITHUB_PASSWORD = os.environ.get("GITHUB_PASSWORD")
 SLACK_CHANNEL = os.environ.get("SLACK_CHANNEL", "#tech-madras")
 SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
 
+REPORT_MIN_APPLICANTS = 5
+
 # max size of resume (in bytes)
 MAX_RESUME_SIZE = 4 * 1024 * 1024
 

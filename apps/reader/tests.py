@@ -43,6 +43,7 @@ class UtilsTests(TestCase):
         self.assertEquals(len(metrics), 4)
 
     def test_next_applicant(self):
+        self.submission2.delete()
         request = self.factory.get('/reader/next_application/')
         force_authenticate(request, user=self.user)
         response = NextApplicationView.as_view()(request)
