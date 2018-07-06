@@ -11,7 +11,7 @@ from apps.application.models import Application, Submission
 
 SLACK_MESSAGE_FORMAT = (
     ":trumpet: Daily Applications Report :trumpet: ```"
-    "In-progress applications: {num_apps}\n"
+    "Total applications: {num_apps}\n"
     "Submitted applications: {num_submitted_apps}\n"
     "In-progress applications (last 24 hrs): {num_apps_24hrs}\n"
     "Submitted applications (last 24 hrs): {num_submitted_apps_24hrs}\n\n"
