@@ -134,8 +134,6 @@ class Submission(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
 
-
-
 class Resume(models.Model):
 
     id = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)

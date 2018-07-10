@@ -236,7 +236,7 @@ SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
 
 REPORT_MIN_APPLICANTS = 5
 
-#priority date
+# priority date
 PRIORITY_DATE = "7-20-2018"
 
 # max size of resume (in bytes)
