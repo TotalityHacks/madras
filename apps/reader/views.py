@@ -71,7 +71,7 @@ class NextApplicationView(APIView):
                 reviews__lt=settings.TOTAL_NUM_REVIEWS,
                 submissions_count__gt=0,
             )
-            .order_by('skips')
+            .order_by('priority', 'skips')
         ).first()
 
         if rand_app is None:
