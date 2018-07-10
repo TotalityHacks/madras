@@ -1,5 +1,6 @@
 import csv
 import uuid
+import datetime
 from collections import OrderedDict
 
 from rest_framework import mixins, status, viewsets
@@ -132,6 +133,13 @@ class SubmissionViewSet(mixins.CreateModelMixin,
                 settings.SLACK_TOKEN,
                 settings.SLACK_CHANNEL,
             )
+
+        #handle priority status
+        now = datetime.datetime.now()
+        priority_date = datetime.datetime.strptime(settings.PRIORITY_DATE, '%m-%d-%Y')
+        if now < priority_date:
+            app.priority = True
+
         serializer.save(application=app, user=self.request.user)
 
         # send confirmation email to user
