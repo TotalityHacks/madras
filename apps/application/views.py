@@ -13,6 +13,7 @@ from django.shortcuts import get_object_or_404
 from django.urls import reverse
 
 from . import serializers
+from .permissions import IsAuthenticatedOrViewing
 from .models import Application, Resume, Submission
 from utils.upload import FileUploader
 from utils.email import send_template_email
@@ -49,7 +50,7 @@ class ResumeViewSet(mixins.CreateModelMixin,
                     viewsets.GenericViewSet):
 
     serializer_class = serializers.ResumeSerializer
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticatedOrViewing,)
 
     def create(self, request):
         serializer = self.get_serializer(data=request.data)
