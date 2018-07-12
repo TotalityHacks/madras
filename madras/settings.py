@@ -266,3 +266,8 @@ INTRO_EMAIL_FROM = "John Reinstra <john@totalityhacks.com>"
 EASTERN = pytz.timezone("US/Eastern")
 PRIORITY_DEADLINE = EASTERN.localize(datetime.datetime(2018, 7, 13, 23, 59))
 FINAL_DEADLINE = EASTERN.localize(datetime.datetime(2018, 8, 24, 23, 59))
+DEADLINE_REMINDER_DATES = [
+    datetime.date(2018, 7, 13),
+    datetime.date(2018, 8, 17),
+    datetime.date(2018, 8, 23)
+]

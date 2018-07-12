@@ -22,6 +22,9 @@ class Command(BaseCommand):
     def handle(self, *args, **kwargs):
         now = timezone.now()
 
+        if now.date() not in settings.DEADLINE_REMINDER_DATES:
+            return
+
         users = (
             User.objects
             .annotate(num_submissions=Count("submissions"))
