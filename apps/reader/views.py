@@ -13,7 +13,7 @@ from apps.application.serializers import SubmissionSerializer
 
 from django.conf import settings
 from django.urls import reverse
-from django.db.models import Count, Sum, Case, When, IntegerField
+from django.db.models import Count, Sum, Case, When, IntegerField, BooleanField
 
 
 @api_view(['GET'])
@@ -63,6 +63,11 @@ class NextApplicationView(APIView):
                         output_field=IntegerField(),
                     ),
                 ),
+                priority=Case(
+                    When(created_at__lt=settings.PRIORITY_DEADLINE, then=True),
+                    default=False,
+                    output_field=BooleanField(),
+                ),
             )
             .exclude(
                 ratings__reader=request.user
@@ -71,7 +76,7 @@ class NextApplicationView(APIView):
                 reviews__lt=settings.TOTAL_NUM_REVIEWS,
                 submissions_count__gt=0,
             )
-            .order_by('skips')
+            .order_by('priority', 'skips')
         ).first()
 
         if rand_app is None:

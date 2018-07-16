@@ -133,6 +133,7 @@ class SubmissionViewSet(mixins.CreateModelMixin,
                 settings.SLACK_TOKEN,
                 settings.SLACK_CHANNEL,
             )
+
         serializer.save(application=app, user=self.request.user)
 
         # send confirmation email to user
