@@ -64,7 +64,7 @@ class NextApplicationView(APIView):
                     ),
                 ),
                 priority=Case(
-                    When(created_at__lt=settings.PRIORITY_DATE, then=True),
+                    When(created_at__lt=settings.PRIORITY_DEADLINE, then=True),
                     default=False,
                     output_field=BooleanField(),
                 ),
