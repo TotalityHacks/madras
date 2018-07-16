@@ -90,8 +90,6 @@ class Application(models.Model):
     race_ethnicity = models.CharField(
         max_length=32, choices=RACE_ETHNICITY_CHOICES, null=True, blank=True)
 
-    priority = models.BooleanField(default=False)
-
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -14,6 +14,8 @@ https://docs.djangoproject.com/en/1.8/ref/settings/
 import os
 import dj_database_url
 import raven
+import datetime
+import pytz
 
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
@@ -236,8 +238,9 @@ SLACK_TOKEN = os.environ.get("SLACK_TOKEN")
 
 REPORT_MIN_APPLICANTS = 5
 
-# priority date
-PRIORITY_DATE = "7-20-2018"
+EASTERN = pytz.timezone("US/Eastern")
+PRIORITY_DEADLINE = EASTERN.localize(datetime.datetime(2018, 7, 20, 23, 59))
+FINAL_DEADLINE = EASTERN.localize(datetime.datetime(2018, 8, 24, 23, 59))
 
 # max size of resume (in bytes)
 MAX_RESUME_SIZE = 4 * 1024 * 1024

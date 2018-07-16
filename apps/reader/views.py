@@ -13,7 +13,7 @@ from apps.application.serializers import SubmissionSerializer
 
 from django.conf import settings
 from django.urls import reverse
-from django.db.models import Count, Sum, Case, When, IntegerField
+from django.db.models import Count, Sum, Case, When, IntegerField, BooleanField
 
 
 @api_view(['GET'])
@@ -62,6 +62,11 @@ class NextApplicationView(APIView):
                         default=0,
                         output_field=IntegerField(),
                     ),
+                ),
+                priority=Case(
+                    When(created_at__lt=settings.PRIORITY_DATE, then=True),
+                    default=False,
+                    output_field=BooleanField(),
                 ),
             )
             .exclude(
