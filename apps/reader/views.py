@@ -85,7 +85,7 @@ class NextApplicationView(APIView):
                 status=status.HTTP_404_NOT_FOUND,
             )
 
-        submission = rand_app.submissions.first()
+        submission = rand_app.submissions.order_by("-created_at").first()
 
         if submission.github:
             github_array = get_metrics_github(submission.github)

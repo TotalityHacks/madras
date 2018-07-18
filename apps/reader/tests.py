@@ -24,6 +24,11 @@ class UtilsTests(TestCase):
         self.application2 = Application.objects.create(
             user=self.user2)
 
+        self.older_submission = Submission.objects.create(
+            application=self.application,
+            user=self.user,
+            age=21,
+        )
         self.submission = Submission.objects.create(
             application=self.application,
             user=self.user,
