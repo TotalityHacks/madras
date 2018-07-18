@@ -28,6 +28,7 @@ wallet = {git = "https://github.com/ofw/wallet-py3k"}
 fcm-django = "*"
 slacker = "*"
 smtpapi = "*"
+pyppeteer = "*"
 
 [requires]
-python_version = "3.5"
+python_version = "3.6"

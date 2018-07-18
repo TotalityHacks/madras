@@ -1,6 +1,6 @@
 language: python
 python:
-- '3.5'
+- '3.6'
 sudo: false
 cache:
   directories:
@@ -9,7 +9,7 @@ install:
 - pip install pipenv flake8
 - pipenv install
 script:
-- pipenv run flake8 --exclude=venv,*/migrations/* .
+- pipenv run flake8 --exclude=*/migrations/* .
 - pipenv run ./manage.py test
 notifications:
   slack:

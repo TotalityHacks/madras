@@ -273,3 +273,7 @@ DEADLINE_REMINDER_DATES = [
     datetime.date(2018, 8, 17),
     datetime.date(2018, 8, 23)
 ]
+
+# used to take screenshots on linkedin
+LINKEDIN_USERNAME = os.environ.get("LINKEDIN_USERNAME")
+LINKEDIN_PASSWORD = os.environ.get("LINKEDIN_PASSWORD")
